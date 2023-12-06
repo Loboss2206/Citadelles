@@ -1,7 +1,7 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import fr.cotedazur.univ.polytech.model.DistrictCard;
-import fr.cotedazur.univ.polytech.model.RoleCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.RoleCard;
 
 import java.util.ArrayList;
 import java.util.List;

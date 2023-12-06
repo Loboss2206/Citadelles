@@ -2,6 +2,10 @@ package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.view.GameView;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.RoleCard;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
+import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -13,12 +17,31 @@ public class Game {
 
     private final Round round;
 
+    //Decks
+    private Deck<DistrictCard> districtDeck;
+    private Deck<DistrictCard> districtDiscardDeck;
+    private Deck<RoleCard> characterDeck;
+    private Deck<RoleCard> characterDiscardDeck;
+
     public Game(List<Player> players) {
         this.view = new GameView(this);
         //Add players
         this.players = (ArrayList<Player>) players;
 
-        this.round = new Round(this.players, this.view);
+        //Build the decks and shuffle them
+        buildDecks();
+
+        //Create a round
+        this.round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck);
+    }
+    
+    protected void buildDecks() {
+        this.districtDeck = DeckFactory.createDistrictDeck();
+        this.districtDiscardDeck = DeckFactory.createEmptyDistrictDeck();
+        this.characterDeck = DeckFactory.createCharacterDeck();
+        this.characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
+        this.districtDeck.shuffle();
+        this.characterDeck.shuffle();
     }
 
     public List<Player> getPlayers() {
