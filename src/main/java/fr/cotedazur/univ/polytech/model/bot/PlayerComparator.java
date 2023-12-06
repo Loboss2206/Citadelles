@@ -1,4 +1,4 @@
-package fr.cotedazur.univ.polytech.startingpoint.model.bot;
+package fr.cotedazur.univ.polytech.model.bot;
 
 import java.util.Comparator;
 

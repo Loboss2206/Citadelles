@@ -1,6 +1,5 @@
-package fr.cotedazur.univ.polytech.startingpoint.model.bot;
+package fr.cotedazur.univ.polytech.model.bot;
 
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

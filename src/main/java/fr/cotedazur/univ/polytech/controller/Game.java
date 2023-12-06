@@ -1,13 +1,13 @@
-package fr.cotedazur.univ.polytech.startingpoint.controller;
+package fr.cotedazur.univ.polytech.controller;
 
-import fr.cotedazur.univ.polytech.startingpoint.model.bot.Player;
-import fr.cotedazur.univ.polytech.startingpoint.view.GameView;
+import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Game {
-    private final ArrayList<Player> players;//all the players that play in the game
+    private final ArrayList<Player> players; //all the players that play in the game
 
     private final GameView view;
 

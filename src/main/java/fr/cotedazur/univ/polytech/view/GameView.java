@@ -1,8 +1,8 @@
-package fr.cotedazur.univ.polytech.startingpoint.view;
+package fr.cotedazur.univ.polytech.view;
 
-import fr.cotedazur.univ.polytech.startingpoint.controller.Game;
-import fr.cotedazur.univ.polytech.startingpoint.model.bot.Player;
-import fr.cotedazur.univ.polytech.startingpoint.model.bot.PlayerComparator;
+import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
+import fr.cotedazur.univ.polytech.controller.Game;
 
 import java.util.ArrayList;
 import java.util.Collections;

@@ -1,13 +1,12 @@
-package fr.cotedazur.univ.polytech.startingpoint.controller;
+package fr.cotedazur.univ.polytech.controller;
 
-import fr.cotedazur.univ.polytech.startingpoint.model.bot.BotRandom;
-import fr.cotedazur.univ.polytech.startingpoint.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.bot.BotRandom;
+import fr.cotedazur.univ.polytech.model.bot.Player;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
     ArrayList<Player> players;
@@ -25,6 +24,6 @@ class GameTest {
     @Test
     void testRankingWithOnePlayerWithOnlyGoldsAndOnlyOneRound() {
         game.startGame();
-        assertEquals(2, game.getPlayers().get(0).getGolds());
+        Assertions.assertEquals(2, game.getPlayers().get(0).getGolds());
     }
 }
