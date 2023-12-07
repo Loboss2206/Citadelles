@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import fr.cotedazur.univ.polytech.model.card.RoleCard;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 
 /**
@@ -17,8 +17,8 @@ public class DeckFactory {
      * 
      * @return The character deck.
      */
-    public static Deck<RoleCard> createCharacterDeck() {
-        List<RoleCard> cards = new ArrayList<>(Arrays.asList(RoleCard.values()));
+    public static CharacterDeck createCharacterDeck() {
+        List<CharacterCard> cards = new ArrayList<>(Arrays.asList(CharacterCard.values()));
         return new CharacterDeck(cards);
     }
 
@@ -27,7 +27,7 @@ public class DeckFactory {
      * 
      * @return The district deck.
      */
-    public static Deck<DistrictCard> createDistrictDeck() {
+    public static DistrictDeck createDistrictDeck() {
         List<DistrictCard> cards = new ArrayList<>();
         for (DistrictCard card : DistrictCard.values()) {
             for (int i = 0; i < card.getQuantityInDeck(); i++) {
@@ -42,7 +42,7 @@ public class DeckFactory {
      * 
      * @return The empty district deck.
      */
-    public static Deck<DistrictCard> createEmptyDistrictDeck() {
+    public static DistrictDeck createEmptyDistrictDeck() {
         return new DistrictDeck();
     }
 
@@ -51,7 +51,7 @@ public class DeckFactory {
      * 
      * @return The empty character deck.
      */
-    public static Deck<RoleCard> createEmptyCharacterDeck() {
+    public static CharacterDeck createEmptyCharacterDeck() {
         return new CharacterDeck();
     }
 

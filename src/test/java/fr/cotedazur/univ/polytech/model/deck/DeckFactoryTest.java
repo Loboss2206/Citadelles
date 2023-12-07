@@ -3,7 +3,7 @@ package fr.cotedazur.univ.polytech.model.deck;
 import org.junit.jupiter.api.Test;
 
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.card.RoleCard;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -11,11 +11,11 @@ class DeckFactoryTest {
 
     @Test
     void createCharacterDeck() {
-        Deck<RoleCard> characterDeck = DeckFactory.createCharacterDeck();
+        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
         assertNotNull(characterDeck, "The character deck is null (and it shouldn't be)");
         assertEquals(8, characterDeck.size(), "The character deck doesn't have the right size");
         assertFalse(characterDeck.isEmpty(), "The character deck is empty (and it shouldn't be)");
-        for (RoleCard card : RoleCard.values()) {
+        for (CharacterCard card : CharacterCard.values()) {
             assertTrue(characterDeck.contains(card), "The character deck doesn't contain the card " + card);
         }
         for (int i = 0; i < characterDeck.size(); i++) {
@@ -47,7 +47,7 @@ class DeckFactoryTest {
 
     @Test
     void createEmptyCharacterDeck() {
-        Deck<RoleCard> emptyCharacterDeck = DeckFactory.createEmptyCharacterDeck();
+        Deck<CharacterCard> emptyCharacterDeck = DeckFactory.createEmptyCharacterDeck();
         assertNotNull(emptyCharacterDeck, "The empty character deck is null (and it shouldn't be)");
         assertEquals(0, emptyCharacterDeck.size(), "The empty character deck doesn't have the right size");
         assertTrue(emptyCharacterDeck.isEmpty(), "The empty character deck is not empty (and it should be)");
