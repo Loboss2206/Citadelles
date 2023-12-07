@@ -2,7 +2,7 @@ package fr.cotedazur.univ.polytech.model.deck;
 
 import org.junit.jupiter.api.Test;
 
-import fr.cotedazur.univ.polytech.model.card.RoleCard;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,18 +10,18 @@ class CharacterDeckTest {
 
     @Test
     void shuffle() {
-        Deck<RoleCard> deck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> deck = DeckFactory.createCharacterDeck();
         deck.shuffle();
         assertNotEquals(deck, DeckFactory.createCharacterDeck());
     }
 
     @Test
     void draw() {
-        Deck<RoleCard> deck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> deck = DeckFactory.createCharacterDeck();
         assertEquals(8, deck.size());
-        RoleCard card = deck.draw(1);
-        assertEquals(RoleCard.THIEF, card);
+        CharacterCard card = deck.draw(1);
+        assertEquals(CharacterCard.THIEF, card);
         assertEquals(7, deck.size());
-        assertFalse(deck.contains(RoleCard.THIEF));
+        assertFalse(deck.contains(CharacterCard.THIEF));
     }
 }

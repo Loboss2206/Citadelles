@@ -1,7 +1,8 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.card.RoleCard;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -12,7 +13,7 @@ public abstract class Player implements GameActions {
     private final String name;
     private int golds;
     private final ArrayList<DistrictCard> hands;
-    private RoleCard playerRole;
+    private CharacterCard playerRole;
     private final ArrayList<DistrictCard> board;//This is for when a player choose to put a district
 
     protected Player() {
@@ -32,7 +33,7 @@ public abstract class Player implements GameActions {
         return hands;
     }
 
-    public RoleCard getPlayerRole() {
+    public CharacterCard getPlayerRole() {
         return playerRole;
     }
 
@@ -40,7 +41,7 @@ public abstract class Player implements GameActions {
         this.golds = golds;
     }
 
-    public void setPlayerRole(RoleCard playerRole) {
+    public void setPlayerRole(CharacterCard playerRole) {
         this.playerRole = playerRole;
     }
 
@@ -57,8 +58,8 @@ public abstract class Player implements GameActions {
     }
 
     @Override
-    public void drawCard() {
-
+    public void drawCard(DistrictDeck districtDeck) {
+        hands.add(districtDeck.draw());
     }
 
     /**
@@ -71,8 +72,11 @@ public abstract class Player implements GameActions {
 
     //These functions are abstract because it depends on ont the bot type
     @Override
-    public abstract void putADisctrict();
+    public abstract boolean putADisctrict();
 
     @Override
     public abstract void useRoleEffect();
+
+    @Override
+    public abstract void chooseCharacter();
 }

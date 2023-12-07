@@ -3,7 +3,7 @@ package fr.cotedazur.univ.polytech.model.card;
 /**
  * Represents a role card in the game.
  */
-public enum RoleCard {
+public enum CharacterCard {
     ASSASSIN("Assassin", 1, Color.GRAY, "Kill a character"),
     THIEF("Thief", 2, Color.GRAY, "Steal gold from a character"),
     MAGICIAN("Magician", 3, Color.GRAY, "Exchange cards with another character"),
@@ -26,7 +26,7 @@ public enum RoleCard {
      * @param color                the color of the character
      * @param characterDescription the description of the character's ability
      */
-    private RoleCard(String characterName, int characterNumber, Color color, String characterDescription) {
+    private CharacterCard(String characterName, int characterNumber, Color color, String characterDescription) {
         this.characterName = characterName;
         this.characterNumber = characterNumber;
         this.color = color;

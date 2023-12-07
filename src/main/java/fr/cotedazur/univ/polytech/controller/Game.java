@@ -1,9 +1,11 @@
 package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.card.RoleCard;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 
@@ -18,10 +20,10 @@ public class Game {
     private final Round round;
 
     //Decks
-    private Deck<DistrictCard> districtDeck;
-    private Deck<DistrictCard> districtDiscardDeck;
-    private Deck<RoleCard> characterDeck;
-    private Deck<RoleCard> characterDiscardDeck;
+    private DistrictDeck districtDeck;
+    private DistrictDeck districtDiscardDeck;
+    private CharacterDeck characterDeck;
+    private CharacterDeck characterDiscardDeck;
 
     public Game(List<Player> players) {
         this.view = new GameView(this);
@@ -54,6 +56,11 @@ public class Game {
 
     public void startGame() {
         view.printStartGame();
+        for (Player player : players) {
+            for (int i = 0; i < 4; i++){
+                player.drawCard(this.districtDeck);
+            }
+        }
         for (int nbRound = 1; nbRound < 2; nbRound++) {
             view.printStartRound(nbRound);
             view.printEndRound(nbRound);
