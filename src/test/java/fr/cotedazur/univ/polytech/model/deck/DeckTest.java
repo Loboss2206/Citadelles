@@ -22,7 +22,7 @@ class DeckTest {
     // Test case for an empty deck
     @Test
     void testEmptyDeck() {
-        Deck<DistrictCard> emptyDeck = new DistrictDeck();
+        DistrictDeck emptyDeck = new DistrictDeck();
         assertTrue(emptyDeck.isEmpty());
         assertEquals(0, emptyDeck.size());
     }
@@ -30,7 +30,7 @@ class DeckTest {
     // Test case for adding and removing a card
     @Test
     void testAddAndRemoveCard() {
-        Deck<DistrictCard> deck = new DistrictDeck();
+        DistrictDeck deck = new DistrictDeck();
         DistrictCard card = DistrictCard.CASTLE;
 
         deck.add(card);
@@ -47,7 +47,7 @@ class DeckTest {
     // Test case for drawing a card at a specific index
     @Test
     void testDrawAtIndex() {
-        Deck<DistrictCard> deck = new DistrictDeck();
+        DistrictDeck deck = new DistrictDeck();
         DistrictCard card1 = DistrictCard.DOCKS;
         DistrictCard card2 = DistrictCard.CHURCH;
 
@@ -63,7 +63,7 @@ class DeckTest {
     // Test case for shuffling the deck
     @Test
     void testShuffleDeck() {
-        Deck<DistrictCard> deck = new DistrictDeck();
+        DistrictDeck deck = new DistrictDeck();
         DistrictCard card1 = DistrictCard.DRAGON_GATE;
         DistrictCard card2 = DistrictCard.CHURCH;
         DistrictCard card3 = DistrictCard.CATHEDRAL;
@@ -86,7 +86,7 @@ class DeckTest {
     // Test case for clearing the deck
     @Test
     void testClearDeck() {
-        Deck<DistrictCard> deck = new DistrictDeck();
+        DistrictDeck deck = new DistrictDeck();
         DistrictCard card = DistrictCard.BATTLEFIELD;
 
         deck.add(card);
@@ -99,7 +99,7 @@ class DeckTest {
     // Test case for adding a card at a random position
     @Test
     void testAddRandomCard() {
-        Deck<DistrictCard> deck = new DistrictDeck();
+        DistrictDeck deck = new DistrictDeck();
         DistrictCard card1 = DistrictCard.FORTRESS;
         DistrictCard card2 = DistrictCard.HARBOR;
 
