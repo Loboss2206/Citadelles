@@ -9,6 +9,10 @@ public interface GameActions {
 
     public boolean putADisctrict();
 
+    public String startChoice(DistrictDeck districtDeck);
+
+    public String choiceToPutADistrict();
+
     public void useRoleEffect();
 
     public void chooseCharacter();

@@ -1,12 +1,43 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import java.util.Random;
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 
-public class BotRandom extends Player {
+import fr.cotedazur.univ.polytech.controller.Round;
+import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+
+public class BotRandom extends Player implements GameActions {
+    Round round;
 
     public BotRandom() {
         super();
+    }
+
+    @Override
+    public String startChoice(DistrictDeck districtDeck) {
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(2);
+        switch (randomIndex) {
+            case 0 -> {
+                collectTwoGolds();
+                return "2golds";
+            }
+            case 1 -> {
+                drawCard(districtDeck);
+                return "drawCard";
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public String choiceToPutADistrict() {
+        Random rand = new Random();
+        int randomIndex = rand.nextInt(2);
+        if (randomIndex == 0) {
+            putADisctrict();
+            return "putDistrict";
+        }
+        return null;
     }
 
     @Override
@@ -30,6 +61,4 @@ public class BotRandom extends Player {
     public void chooseCharacter() {
 
     }
-
-
 }

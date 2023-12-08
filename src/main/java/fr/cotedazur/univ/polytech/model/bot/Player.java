@@ -7,7 +7,7 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Player implements GameActions {
+public abstract class Player {
 
     private static int id = 0;
     private final String name;
@@ -57,7 +57,6 @@ public abstract class Player implements GameActions {
         Player.id = id;
     }
 
-    @Override
     public void drawCard(DistrictDeck districtDeck) {
         hands.add(districtDeck.draw());
     }
@@ -65,18 +64,18 @@ public abstract class Player implements GameActions {
     /**
      * function that take 2 golds, if the player has chosen this option instead of draw a card
      */
-    @Override
     public void collectTwoGolds() {
         this.golds += 2;
     }
 
     //These functions are abstract because it depends on ont the bot type
-    @Override
     public abstract boolean putADisctrict();
 
-    @Override
+    public abstract String startChoice(DistrictDeck districtDeck);
+
+    public abstract String choiceToPutADistrict();
+
     public abstract void useRoleEffect();
 
-    @Override
     public abstract void chooseCharacter();
 }

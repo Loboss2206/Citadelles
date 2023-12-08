@@ -50,8 +50,12 @@ public class GameView {
      * @param player the player concerned
      */
     public void printPlayerAction(String action, Player player) {
-        if (action.equals("2golds")) System.out.println("Le joueur " + player.getName() + " a choisis de prendre 2 pièces d'or, ce qui lui fait " + player.getGolds() + " pièces d'or.");
-        if(action.equals("putDistrict")) System.out.println("Le joueur " + player.getName() + " a choisis de placer "+player.getBoard().get(player.getBoard().size() - 1));
+        if (action.equals("2golds"))
+            System.out.println("Le joueur " + player.getName() + " a choisis de prendre 2 pièces d'or, ce qui lui fait " + player.getGolds() + " pièces d'or.");
+        else if (action.equals("drawCard"))
+            System.out.println("Le joueur " + player.getName() + " a choisis de piocher une carte.");
+        if (action.equals("putDistrict"))
+            System.out.println("Le joueur " + player.getName() + " a choisis de placer " + player.getBoard().get(player.getBoard().size() - 1));
     }
 
     /**
@@ -64,7 +68,9 @@ public class GameView {
         Collections.reverse(listOfPlayers);
         int i = 0;
         for (Player player : listOfPlayers) {
-            System.out.println(++i + " : " + player.getName() + ", golds = " + player.getGolds()+", quartiers placés = "+player.getBoard().get(0).getDistrictName());
+            if (player.getBoard().size() > 0) System.out.println(++i + " : " + player.getName() + ", golds = " + player.getGolds() + ", quartiers placés = " + player.getBoard().get(0).getDistrictName());
+            else System.out.println(++i + " : " + player.getName() + ", golds = " + player.getGolds() + ", quartiers placés = aucun");
+
         }
     }
 }
