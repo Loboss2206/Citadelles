@@ -12,7 +12,7 @@ public class CharacterDeck extends Deck<CharacterCard> {
 
     /**
      * Constructs a CharacterDeck with the given list of cards.
-     * 
+     *
      * @param cards The list of RoleCard objects to be included in the deck.
      */
     public CharacterDeck(List<CharacterCard> cards) {

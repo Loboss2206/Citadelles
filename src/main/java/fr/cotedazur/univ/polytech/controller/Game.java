@@ -36,7 +36,7 @@ public class Game {
         //Create a round
         this.round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck);
     }
-    
+
     protected void buildDecks() {
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDiscardDeck = DeckFactory.createEmptyDistrictDeck();
@@ -57,7 +57,7 @@ public class Game {
     public void startGame() {
         view.printStartGame();
         for (Player player : players) {
-            for (int i = 0; i < 4; i++){
+            for (int i = 0; i < 4; i++) {
                 player.drawCard(this.districtDeck);
             }
         }

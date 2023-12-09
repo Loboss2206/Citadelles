@@ -7,7 +7,7 @@ public interface GameActions {
 
     public void collectTwoGolds();
 
-    public boolean putADisctrict();
+    public void putADistrict();
 
     public String startChoice(DistrictDeck districtDeck);
 

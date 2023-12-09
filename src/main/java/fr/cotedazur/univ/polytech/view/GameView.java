@@ -67,10 +67,12 @@ public class GameView {
         listOfPlayers.sort(playerComparator);
         Collections.reverse(listOfPlayers);
         int i = 0;
+        Player previousPlayer = null;
         for (Player player : listOfPlayers) {
-            if (player.getBoard().size() > 0) System.out.println(++i + " : " + player.getName() + ", golds = " + player.getGolds() + ", quartiers placés = " + player.getBoard().get(0).getDistrictName());
+            if(previousPlayer != null && playerComparator.compare(previousPlayer,player) == 0) i--;
+            if (!player.getBoard().isEmpty()) System.out.println(++i + " : " + player.getName() + ", golds = " + player.getGolds() + ", quartiers placés = " + player.getBoard().get(0).getDistrictName());
             else System.out.println(++i + " : " + player.getName() + ", golds = " + player.getGolds() + ", quartiers placés = aucun");
-
+            previousPlayer = player;
         }
     }
 }
