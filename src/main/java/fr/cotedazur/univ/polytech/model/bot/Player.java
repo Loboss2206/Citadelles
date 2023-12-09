@@ -69,7 +69,7 @@ public abstract class Player {
     }
 
     //These functions are abstract because it depends on ont the bot type
-    public abstract boolean putADisctrict();
+    public abstract void putADistrict();
 
     public abstract String startChoice(DistrictDeck districtDeck);
 

@@ -26,7 +26,7 @@ class BotRandomTest {
     @Test
     void testPutADistrict() {
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
-        botRandom2.putADisctrict();
+        botRandom2.putADistrict();
         assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
         botRandom2.getBoard().clear();
 
@@ -34,7 +34,7 @@ class BotRandomTest {
         botRandom2.drawCard(districtDeck);
         botRandom2.drawCard(districtDeck);
         botRandom2.drawCard(districtDeck);
-        botRandom2.putADisctrict();
+        botRandom2.putADistrict();
         assertEquals(3, botRandom2.getHands().size());
         assertEquals(1, botRandom2.getBoard().size());
     }

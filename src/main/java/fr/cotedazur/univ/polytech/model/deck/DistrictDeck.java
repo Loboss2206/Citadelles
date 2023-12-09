@@ -8,9 +8,10 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCard;
  * Represents a deck of district cards.
  * Extends the generic Deck class with DistrictCard type.
  */
-public class DistrictDeck extends Deck<DistrictCard>{
+public class DistrictDeck extends Deck<DistrictCard> {
     /**
      * Constructs a DistrictDeck object with the given list of cards.
+     *
      * @param cards The list of district cards to initialize the deck with.
      */
     public DistrictDeck(List<DistrictCard> cards) {

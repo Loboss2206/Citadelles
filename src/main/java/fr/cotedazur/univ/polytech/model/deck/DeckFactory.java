@@ -11,10 +11,10 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCard;
  * The DeckFactory class is responsible for creating different types of decks.
  */
 public class DeckFactory {
-    
+
     /**
      * Creates a character deck containing all the role cards.
-     * 
+     *
      * @return The character deck.
      */
     public static CharacterDeck createCharacterDeck() {
@@ -24,7 +24,7 @@ public class DeckFactory {
 
     /**
      * Creates a district deck containing all the dist rict cards.
-     * 
+     *
      * @return The district deck.
      */
     public static DistrictDeck createDistrictDeck() {
@@ -36,10 +36,10 @@ public class DeckFactory {
         }
         return new DistrictDeck(cards);
     }
-    
+
     /**
      * Creates an empty district deck.
-     * 
+     *
      * @return The empty district deck.
      */
     public static DistrictDeck createEmptyDistrictDeck() {
@@ -48,7 +48,7 @@ public class DeckFactory {
 
     /**
      * Creates an empty character deck.
-     * 
+     *
      * @return The empty character deck.
      */
     public static CharacterDeck createEmptyCharacterDeck() {

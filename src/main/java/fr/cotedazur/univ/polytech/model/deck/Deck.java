@@ -25,7 +25,7 @@ public abstract class Deck<T extends Enum<T>> {
     /**
      * Constructs an empty deck.
      */
-    public Deck(){
+    public Deck() {
         this.cards = new ArrayList<T>();
     }
 

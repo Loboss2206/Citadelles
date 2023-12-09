@@ -2,11 +2,11 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import java.util.Random;
 
-import fr.cotedazur.univ.polytech.controller.Round;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 
 public class BotRandom extends Player implements GameActions {
-    Round round;
+
+    private final Random random = new Random();
 
     public BotRandom() {
         super();
@@ -14,8 +14,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String startChoice(DistrictDeck districtDeck) {
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(2);
+        int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
                 collectTwoGolds();
@@ -25,31 +24,29 @@ public class BotRandom extends Player implements GameActions {
                 drawCard(districtDeck);
                 return "drawCard";
             }
+            default -> {
+                return null;
+            }
         }
-        return null;
     }
 
     @Override
     public String choiceToPutADistrict() {
-        Random rand = new Random();
-        int randomIndex = rand.nextInt(2);
+        int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
-            putADisctrict();
+            putADistrict();
             return "putDistrict";
         }
         return null;
     }
 
     @Override
-    public boolean putADisctrict() {
+    public void putADistrict() {
         if (!getHands().isEmpty()) {
-            Random rand = new Random();
-            int randomIndex = rand.nextInt(getHands().size());
+            int randomIndex = random.nextInt(getHands().size());
             getBoard().add(getHands().get(randomIndex));
             getHands().remove(randomIndex);
-            return true;
         }
-        return false;
     }
 
     @Override

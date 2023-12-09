@@ -10,8 +10,10 @@ public class Main {
 
     public static void main(String... args) {
         ArrayList<Player> players = new ArrayList<>();
-        BotRandom botRandom1 = new BotRandom();
-        players.add(botRandom1);
+        for(int i = 0;i<4;i++){
+            Player player = new BotRandom();
+            players.add(player);
+        }
 
         Game game = new Game(players);
         game.startGame();
