@@ -17,13 +17,13 @@ public class Game {
 
     private final GameView view;
 
-    private final Round round;
-
     //Decks
     private DistrictDeck districtDeck;
     private DistrictDeck districtDiscardDeck;
     private CharacterDeck characterDeck;
     private CharacterDeck characterDiscardDeck;
+    int winner = -1;
+    int roundNumber = 0;
 
     private int maxNbRound; //Will be deleted when #10 issue will be introduced
 
@@ -34,9 +34,6 @@ public class Game {
 
         //Build the decks and shuffle them
         buildDecks();
-
-        //Create a round
-        this.round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck);
     }
 
     //Will be deleted when #10 issue will be introduced
@@ -58,23 +55,31 @@ public class Game {
         return players;
     }
 
-    public Round getRound() {
-        return round;
-    }
 
+    /**
+     * Start the game and the rounds
+     */
     public void startGame() {
+        //Print the greeting
         view.printStartGame();
+        //Draw 4 cards of District for each player at the beginning of the game
         for (Player player : players) {
             for (int i = 0; i < 4; i++) {
                 player.drawCard(this.districtDeck);
             }
         }
-        for (int nbRound = 1; nbRound <= maxNbRound ; nbRound++) {
-            view.printStartRound(nbRound);
-            view.printEndRound(nbRound);
-        }
+
+        //Start the rounds until a player has won or the max number of rounds is reached
+        do {
+            //Build the decks and shuffle them
+            characterDeck = DeckFactory.createCharacterDeck();
+            characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
+            characterDeck.shuffle();
+            //Start the round
+            winner = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck,++roundNumber).startRound();
+        } while (roundNumber < maxNbRound && winner == -1);
+
+        //Print the ranking of the game
         view.printPlayersRanking();
     }
-
-
 }

@@ -77,5 +77,10 @@ public abstract class Player {
 
     public abstract void useRoleEffect();
 
-    public abstract void chooseCharacter();
+    /**
+     * The function take a list of character cards and return the number of the character card chosen by the player (the number is the index of the list)
+     * @param cards the list of character cards
+     * @return the number of the character card chosen by the player (the number is the index of the list)
+      */
+    public abstract int chooseCharacter(List<CharacterCard> cards);
 }

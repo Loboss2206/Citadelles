@@ -1,6 +1,9 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+
+import java.util.List;
 
 public interface GameActions {
     public void drawCard(DistrictDeck districtDeck);
@@ -15,5 +18,5 @@ public interface GameActions {
 
     public void useRoleEffect();
 
-    public void chooseCharacter();
+    public int chooseCharacter(List<CharacterCard> characters);
 }
