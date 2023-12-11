@@ -38,6 +38,7 @@ public class Round {
 
             result = player.choiceToPutADistrict();
             if (result != null) view.printPlayerAction(result, player);
+            view.printEndTurnOfPlayer(player);
         }
     }
 }

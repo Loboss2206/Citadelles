@@ -25,6 +25,8 @@ public class Game {
     private CharacterDeck characterDeck;
     private CharacterDeck characterDiscardDeck;
 
+    private int maxNbRound; //Will be deleted when #10 issue will be introduced
+
     public Game(List<Player> players) {
         this.view = new GameView(this);
         //Add players
@@ -35,6 +37,12 @@ public class Game {
 
         //Create a round
         this.round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck);
+    }
+
+    //Will be deleted when #10 issue will be introduced
+    public Game(List<Player> players,int nbMaxRound) {
+       this(players);
+       this.maxNbRound = nbMaxRound;
     }
 
     protected void buildDecks() {
@@ -61,7 +69,7 @@ public class Game {
                 player.drawCard(this.districtDeck);
             }
         }
-        for (int nbRound = 1; nbRound < 2; nbRound++) {
+        for (int nbRound = 1; nbRound <= maxNbRound ; nbRound++) {
             view.printStartRound(nbRound);
             view.printEndRound(nbRound);
         }

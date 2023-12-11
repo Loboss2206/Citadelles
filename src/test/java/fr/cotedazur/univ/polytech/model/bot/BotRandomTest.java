@@ -7,6 +7,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 
 class BotRandomTest {
@@ -37,5 +38,13 @@ class BotRandomTest {
         botRandom2.putADistrict();
         assertEquals(3, botRandom2.getHands().size());
         assertEquals(1, botRandom2.getBoard().size());
+
+        botRandom2.getHands().clear();
+        assertFalse(botRandom2.putADistrict());
+    }
+
+    @Test
+    void testChoiceToPutADistrictIfNoCardsInHand() {
+        assertNull(botRandom2.choiceToPutADistrict());
     }
 }

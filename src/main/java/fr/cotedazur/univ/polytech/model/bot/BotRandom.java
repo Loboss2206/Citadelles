@@ -34,19 +34,20 @@ public class BotRandom extends Player implements GameActions {
     public String choiceToPutADistrict() {
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
-            putADistrict();
-            return "putDistrict";
+            return putADistrict() ? "putDistrict" : null;
         }
         return null;
     }
 
     @Override
-    public void putADistrict() {
+    public boolean putADistrict() {
         if (!getHands().isEmpty()) {
             int randomIndex = random.nextInt(getHands().size());
             getBoard().add(getHands().get(randomIndex));
             getHands().remove(randomIndex);
+            return true;
         }
+        return false;
     }
 
     @Override

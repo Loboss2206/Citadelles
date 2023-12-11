@@ -15,7 +15,7 @@ public class Main {
             players.add(player);
         }
 
-        Game game = new Game(players);
+        Game game = new Game(players,9);
         game.startGame();
     }
 
