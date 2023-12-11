@@ -55,6 +55,9 @@ public abstract class Deck<T extends Enum<T>> {
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public T draw(int index) {
+        if (index < 0 || index >= cards.size()) {
+            return null;
+        }
         return cards.remove(index);
     }
 

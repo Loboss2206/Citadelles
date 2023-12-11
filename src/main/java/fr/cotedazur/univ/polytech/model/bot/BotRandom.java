@@ -1,7 +1,9 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import java.util.List;
 import java.util.Random;
 
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 
 public class BotRandom extends Player implements GameActions {
@@ -56,7 +58,7 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public void chooseCharacter() {
-
+    public int chooseCharacter(List<CharacterCard> cards) {
+        return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 }

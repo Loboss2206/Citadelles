@@ -32,7 +32,6 @@ public class GameView {
      */
     public void printStartRound(int i) {
         System.out.println("Début du round n°" + i);
-        controller.getRound().startRound();
     }
 
     /**
@@ -84,5 +83,46 @@ public class GameView {
             }
             previousPlayer = player;
         }
+    }
+
+    /**
+     * Show the player that the character card he chose is not available
+     */
+    public void pickARoleCardError() {
+        displayMessage("No character card with this number, please try again");
+    }
+
+    /**
+     * Print the message
+     * @param message the message to display
+     */
+    private void displayMessage(String message) {
+        System.out.println(message);
+    }
+
+    /**
+     * Print the details of the character card
+     * @param number the number of the character card
+     * @param name the name of the character card
+     * @param description the description of the character card
+     */
+    public void printCharacterCard(int number, String name, String description) {
+        displayMessage(number + " " + name + " " + description);
+    }
+
+    /**
+     * print the announcement for the player to pick a character card
+     * @param name the name of the player
+     */
+    public void printPlayerPickACard(String name) {
+        displayMessage("Player " + name + " pick a character card");
+    }
+
+    /**
+     * print the name of the character card picked by the player
+     * @param name the name of the character card
+     */
+    public void printCharacterCard(String name) {
+        displayMessage("You picked the character card " + name);
     }
 }
