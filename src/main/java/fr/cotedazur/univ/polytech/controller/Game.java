@@ -22,10 +22,7 @@ public class Game {
     private DistrictDeck districtDiscardDeck;
     private CharacterDeck characterDeck;
     private CharacterDeck characterDiscardDeck;
-    int winner = -1;
     int roundNumber = 0;
-
-    private int maxNbRound; //Will be deleted when #10 issue will be introduced
 
     public Game(List<Player> players) {
         this.view = new GameView(this);
@@ -34,12 +31,6 @@ public class Game {
 
         //Build the decks and shuffle them
         buildDecks();
-    }
-
-    //Will be deleted when #10 issue will be introduced
-    public Game(List<Player> players,int nbMaxRound) {
-       this(players);
-       this.maxNbRound = nbMaxRound;
     }
 
     protected void buildDecks() {
@@ -76,10 +67,24 @@ public class Game {
             characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
             characterDeck.shuffle();
             //Start the round
-            winner = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck,++roundNumber).startRound();
-        } while (roundNumber < maxNbRound && winner == -1);
+            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck,++roundNumber);
+            round.startRound();
+        } while (!isGameFinished());
 
         //Print the ranking of the game
         view.printPlayersRanking();
+    }
+
+    /**
+     * Check if the game is finished
+     * @return true if a player has 8 districts or more in his board, false otherwise
+     */
+    public boolean isGameFinished() {
+        for (Player player : players) {
+            if (player.getBoard().size() >= 8) {
+                return true;
+            }
+        }
+        return false;
     }
 }
