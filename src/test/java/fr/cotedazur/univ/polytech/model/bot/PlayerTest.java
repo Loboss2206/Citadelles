@@ -14,7 +14,7 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() {
-        Player.setId(0);//because the static variable changes during all the tests (of this class or another) which is fail this class tests
+        Player.setCount(0); // because the static variable changes during all the tests (of this class or another) which is fail this class tests
         botRandom0 = new BotRandom();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();

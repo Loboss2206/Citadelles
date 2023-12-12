@@ -21,34 +21,18 @@ class PlayerComparatorTest {
     }
 
     @Test
-    void testComparatorOnlyWithGolds() {
-
-        //Bot 1 > Bot 2
-        botRandom1.collectTwoGolds();
+    void testComparatorOnTheNumberOfPoints() {
+        // Bot 1 > Bot 2
+        botRandom1.setPoints(10);
+        botRandom2.setPoints(5);
         assertEquals(1, playerComparator.compare(botRandom1, botRandom2));
+
         //Bot 1 == Bot2
-        botRandom2.collectTwoGolds();
+        botRandom2.setPoints(10);
         assertEquals(0, playerComparator.compare(botRandom1, botRandom2));
 
         //Bot 1 < Bot 2
-        botRandom2.collectTwoGolds();
-        assertEquals(-1, playerComparator.compare(botRandom1, botRandom2));
-    }
-
-    @Test
-    void testComparatorOnlyWithGoldsAndDistrictPlaced() {
-
-        //Bot 1 > Bot 2
-        botRandom1.collectTwoGolds();
-        botRandom1.getBoard().add(DistrictCard.PALACE);
-        botRandom2.collectTwoGolds();
-        assertEquals(1, playerComparator.compare(botRandom1, botRandom2));
-        //Bot 1 == Bot2
-        botRandom2.getBoard().add(DistrictCard.PALACE);
-        assertEquals(0, playerComparator.compare(botRandom1, botRandom2));
-
-        //Bot 1 < Bot 2
-        botRandom2.getBoard().add(DistrictCard.TEMPLE);
+        botRandom2.setPoints(15);
         assertEquals(-1, playerComparator.compare(botRandom1, botRandom2));
     }
 }
