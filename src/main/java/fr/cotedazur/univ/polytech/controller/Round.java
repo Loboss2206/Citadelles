@@ -8,11 +8,15 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 public class Round {
     private final ArrayList<Player> players;
+
     private final GameView view;
+
 
     //Decks
     private Deck<DistrictCard> districtDeck;
@@ -64,6 +68,9 @@ public class Round {
 
             }
         }
+
+        players.sort(Comparator.comparingInt(player->player.getPlayerRole().getCharacterNumber()));
+
 
         //Each player make a choice (draw a card or take 2 golds) and put a district
         for (Player player : players) {
