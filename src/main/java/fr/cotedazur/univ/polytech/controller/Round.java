@@ -36,7 +36,7 @@ public class Round {
         this.nbRound = nbRound;
     }
 
-    public int startRound() {
+    public void startRound() {
 
         //Announce the start of the round
         view.printStartRound(nbRound);
@@ -87,7 +87,5 @@ public class Round {
         //Announce the end of the round
         view.printEndRound(nbRound);
 
-        // TODO To change to 1 if a player has won (8 districts) (issue #10)
-        return -1;
     }
 }
