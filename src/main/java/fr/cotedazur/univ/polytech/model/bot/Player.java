@@ -68,15 +68,21 @@ public abstract class Player {
         Player.count = count;
     }
 
-    public void drawCard(DistrictDeck districtDeck) {
-        hands.add(districtDeck.draw());
+    public String drawCard(DistrictDeck districtDeck) {
+        if(districtDeck.isEmpty()) {
+            return collectTwoGolds();
+        }else {
+            hands.add(districtDeck.draw());
+            return "drawCard";
+        }
     }
 
     /**
      * function that take 2 golds, if the player has chosen this option instead of draw a card
      */
-    public void collectTwoGolds() {
+    public String collectTwoGolds() {
         this.golds += 2;
+        return "2golds";
     }
 
     //These functions are abstract because it depends on ont the bot type

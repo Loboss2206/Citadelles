@@ -8,7 +8,6 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
@@ -19,10 +18,10 @@ public class Round {
 
 
     //Decks
-    private Deck<DistrictCard> districtDeck;
-    private Deck<DistrictCard> districtDiscardDeck;
-    private Deck<CharacterCard> characterDeck;
-    private Deck<CharacterCard> characterDiscardDeck;
+    private final Deck<DistrictCard> districtDeck;
+    private final Deck<DistrictCard> districtDiscardDeck;
+    private final Deck<CharacterCard> characterDeck;
+    private final Deck<CharacterCard> characterDiscardDeck;
 
     private final int nbRound;
 
@@ -51,7 +50,7 @@ public class Round {
                 //Print the all character cards in the deck
                 view.printPlayerPickACard(player.getName());
                 for (CharacterCard character : characterDeck.getCards()) {
-                    view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterDescription());
+                    view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
                 }
                 //The player choose a character from the deck
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());

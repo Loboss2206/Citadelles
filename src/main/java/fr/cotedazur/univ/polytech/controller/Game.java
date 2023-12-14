@@ -64,7 +64,6 @@ public class Game {
             //Build the decks and shuffle them
             characterDeck = DeckFactory.createCharacterDeck();
             characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
-            characterDeck.shuffle();
             //Start the round
             Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck, ++roundNumber);
             round.startRound();

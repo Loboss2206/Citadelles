@@ -6,9 +6,9 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import java.util.List;
 
 public interface GameActions {
-    public void drawCard(DistrictDeck districtDeck);
+    public String drawCard(DistrictDeck districtDeck);
 
-    public void collectTwoGolds();
+    public String collectTwoGolds();
 
     public boolean putADistrict();
 
