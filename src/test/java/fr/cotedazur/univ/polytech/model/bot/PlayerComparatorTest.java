@@ -1,6 +1,5 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

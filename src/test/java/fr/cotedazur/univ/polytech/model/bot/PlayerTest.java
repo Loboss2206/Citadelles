@@ -1,13 +1,10 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 

@@ -8,7 +8,7 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 
 public class BotRandom extends Player implements GameActions {
 
-    private final Random random = new Random();
+    private Random random = new Random();
 
     public BotRandom() {
         super();
@@ -58,5 +58,9 @@ public class BotRandom extends Player implements GameActions {
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
     }
 }
