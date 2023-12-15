@@ -19,12 +19,10 @@ public class BotRandom extends Player implements GameActions {
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
-                collectTwoGolds();
-                return "2golds";
+                return collectTwoGolds();
             }
             case 1 -> {
-                drawCard(districtDeck);
-                return "drawCard";
+               return drawCard(districtDeck);
             }
             default -> {
                 return null;

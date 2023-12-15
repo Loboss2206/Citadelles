@@ -14,11 +14,13 @@ class BotRandomTest {
 
 
     BotRandom botRandom2;
+    BotRandom botRandom1;
 
     private DistrictDeck districtDeck;
 
     @BeforeEach
     void setUp() {
+        botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
@@ -46,5 +48,18 @@ class BotRandomTest {
     @Test
     void testChoiceToPutADistrictIfNoCardsInHand() {
         assertNull(botRandom2.choiceToPutADistrict());
+    }
+
+    @Test
+    void testBotRandomActionIfDistrictDeckIsEmpty() {
+        districtDeck.clear();
+        int currentGolds1 = botRandom1.getGolds();
+        int currentGolds2 = botRandom2.getGolds();
+        botRandom2.startChoice(districtDeck);
+        botRandom1.startChoice(districtDeck);
+
+        //If the deck is empty the bot should collect 2 golds
+        assertEquals(currentGolds1 + 2, botRandom1.getGolds());
+        assertEquals(currentGolds2 + 2, botRandom2.getGolds());
     }
 }

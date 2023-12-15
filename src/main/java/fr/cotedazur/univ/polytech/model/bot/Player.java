@@ -8,16 +8,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player {
-
-    private static int id = 0;
+    private int id = 0;
     private final String name;
     private int golds;
     private final ArrayList<DistrictCard> hands;
     private CharacterCard playerRole;
     private final ArrayList<DistrictCard> board;//This is for when a player choose to put a district
+    private int points;
+
+    // Increment for each player created
+    private static int count = 0;
 
     protected Player() {
-        this.name = "BOT" + id++;
+        id = count++;
+        this.name = "BOT" + id;
         this.golds = 0;
         this.hands = new ArrayList<>();
         this.playerRole = null;
@@ -48,24 +52,37 @@ public abstract class Player {
     public List<DistrictCard> getBoard() {
         return board;
     }
-
     public String getName() {
         return name;
     }
 
-    public static void setId(int id) {
-        Player.id = id;
+    public int getPoints() {
+        return points;
     }
 
-    public void drawCard(DistrictDeck districtDeck) {
-        hands.add(districtDeck.draw());
+    public void setPoints(int points) {
+        this.points = points;
+    }
+
+    public static void setCount(int count) {
+        Player.count = count;
+    }
+
+    public String drawCard(DistrictDeck districtDeck) {
+        if(districtDeck.isEmpty()) {
+            return collectTwoGolds();
+        }else {
+            hands.add(districtDeck.draw());
+            return "drawCard";
+        }
     }
 
     /**
      * function that take 2 golds, if the player has chosen this option instead of draw a card
      */
-    public void collectTwoGolds() {
+    public String collectTwoGolds() {
         this.golds += 2;
+        return "2golds";
     }
 
     //These functions are abstract because it depends on ont the bot type
@@ -83,4 +100,17 @@ public abstract class Player {
      * @return the number of the character card chosen by the player (the number is the index of the list)
       */
     public abstract int chooseCharacter(List<CharacterCard> cards);
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj instanceof Player player) {
+            return player.id == this.id;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
 }

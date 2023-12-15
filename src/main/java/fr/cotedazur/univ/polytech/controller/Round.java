@@ -8,17 +8,20 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class Round {
     private final ArrayList<Player> players;
+
     private final GameView view;
 
+
     //Decks
-    private Deck<DistrictCard> districtDeck;
-    private Deck<DistrictCard> districtDiscardDeck;
-    private Deck<CharacterCard> characterDeck;
-    private Deck<CharacterCard> characterDiscardDeck;
+    private final Deck<DistrictCard> districtDeck;
+    private final Deck<DistrictCard> districtDiscardDeck;
+    private final Deck<CharacterCard> characterDeck;
+    private final Deck<CharacterCard> characterDiscardDeck;
 
     private final int nbRound;
 
@@ -32,7 +35,7 @@ public class Round {
         this.nbRound = nbRound;
     }
 
-    public int startRound() {
+    public void startRound() {
 
         //Announce the start of the round
         view.printStartRound(nbRound);
@@ -47,7 +50,7 @@ public class Round {
                 //Print the all character cards in the deck
                 view.printPlayerPickACard(player.getName());
                 for (CharacterCard character : characterDeck.getCards()) {
-                    view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterDescription());
+                    view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
                 }
                 //The player choose a character from the deck
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
@@ -65,6 +68,9 @@ public class Round {
             }
         }
 
+        players.sort(Comparator.comparingInt(player->player.getPlayerRole().getCharacterNumber()));
+
+
         //Each player make a choice (draw a card or take 2 golds) and put a district
         for (Player player : players) {
             //Take the choice
@@ -80,7 +86,5 @@ public class Round {
         //Announce the end of the round
         view.printEndRound(nbRound);
 
-        // TODO To change to 1 if a player has won (8 districts) (issue #10)
-        return -1;
     }
 }

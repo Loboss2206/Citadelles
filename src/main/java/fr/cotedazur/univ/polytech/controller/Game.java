@@ -1,47 +1,42 @@
 package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class Game {
     private final ArrayList<Player> players; //all the players that play in the game
 
     private final GameView view;
+    private final PlayerComparator playerComparator;
 
     //Decks
     private DistrictDeck districtDeck;
     private DistrictDeck districtDiscardDeck;
     private CharacterDeck characterDeck;
     private CharacterDeck characterDiscardDeck;
-    int winner = -1;
     int roundNumber = 0;
-
-    private int maxNbRound; //Will be deleted when #10 issue will be introduced
 
     public Game(List<Player> players) {
         this.view = new GameView(this);
         //Add players
         this.players = (ArrayList<Player>) players;
+        this.playerComparator = new PlayerComparator();
 
         //Build the decks and shuffle them
         buildDecks();
     }
 
-    //Will be deleted when #10 issue will be introduced
-    public Game(List<Player> players,int nbMaxRound) {
-       this(players);
-       this.maxNbRound = nbMaxRound;
-    }
-
+    /**
+     * Build all the decks and shuffle them
+     */
     protected void buildDecks() {
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDiscardDeck = DeckFactory.createEmptyDistrictDeck();
@@ -50,11 +45,6 @@ public class Game {
         this.districtDeck.shuffle();
         this.characterDeck.shuffle();
     }
-
-    public List<Player> getPlayers() {
-        return players;
-    }
-
 
     /**
      * Start the game and the rounds
@@ -74,12 +64,55 @@ public class Game {
             //Build the decks and shuffle them
             characterDeck = DeckFactory.createCharacterDeck();
             characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
-            characterDeck.shuffle();
             //Start the round
-            winner = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck,++roundNumber).startRound();
-        } while (roundNumber < maxNbRound && winner == -1);
+            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck, ++roundNumber);
+            round.startRound();
+        } while (!isGameFinished());
 
-        //Print the ranking of the game
-        view.printPlayersRanking();
+        // End of the game
+        calculatePoints();
+        sortByPoints(players);
+        view.printPlayersRanking(players);
+    }
+
+    /**
+     * Check if the game is finished
+     *
+     * @return true if a player has 8 districts or more in his board, false otherwise
+     */
+    public boolean isGameFinished() {
+        for (Player player : players) {
+            if (player.getBoard().size() >= 8) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Calculate the points of each player
+     */
+    public void calculatePoints() {
+        int max = -1;
+        for (Player player : players) {
+            if (player.getBoard().size() > max) {
+                max = player.getBoard().size();
+            }
+            player.setPoints(player.getBoard().size());
+        }
+    }
+
+    /**
+     * Sort the players by their amount of points
+     *
+     * @param playersList the list of players to sort
+     */
+    public void sortByPoints(List<Player> playersList) {
+        playersList.sort(playerComparator);
+        Collections.reverse(playersList);
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 }
