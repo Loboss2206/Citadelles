@@ -3,16 +3,17 @@ package fr.cotedazur.univ.polytech.controller;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
-
-import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+
+import static org.junit.jupiter.api.Assertions.*;
 class RoundTest {
     Game game;
     ArrayList<Player> players;
@@ -40,7 +41,8 @@ class RoundTest {
     }
 
     @Test
-    void testOrderForCaracterCard() {
+    void testOrderForCharacterCard() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3));
         players.get(0).setPlayerRole(CharacterCard.ARCHITECT);
         players.get(1).setPlayerRole(CharacterCard.KING);
         players.get(2).setPlayerRole(CharacterCard.THIEF);
@@ -53,6 +55,8 @@ class RoundTest {
 
     @Test
     void testNoDoubleOnBoardForOnePlayer() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3));
+        game = new Game(players);
         game.startGame();
         for (Player p : players) {
             for (int i = 0; i < p.getBoard().size() - 1; i++) {
