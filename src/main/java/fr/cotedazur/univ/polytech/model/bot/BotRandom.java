@@ -42,9 +42,11 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String putADistrict() {
-        if (!getHands().isEmpty()) {
-            int randomIndex = random.nextInt(getHands().size());
-            DistrictCard card = getHands().get(randomIndex);
+        discoverValidCard();
+        if (!validCards.isEmpty()) {
+            int randomIndex = random.nextInt(validCards.size());
+            DistrictCard card = validCards.get(randomIndex);
+            removeGold(card.getDistrictValue());
 
             return card.name();
         }
