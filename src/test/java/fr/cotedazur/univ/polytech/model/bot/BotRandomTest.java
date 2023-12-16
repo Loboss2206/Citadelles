@@ -40,6 +40,12 @@ class BotRandomTest {
         assertEquals(0, botRandom2.getGolds());
 
         botRandom2.getHands().clear();
+        botRandom2.getHands().add(DistrictCard.CASTLE);
+        botRandom2.setGolds(2);
+        assertNull(botRandom2.putADistrict());
+        assertEquals(2, botRandom2.getGolds());
+
+        botRandom2.getHands().clear();
         assertNull(botRandom2.putADistrict());
     }
 
