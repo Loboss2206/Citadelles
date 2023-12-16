@@ -22,7 +22,6 @@ public class Round {
     private final Deck<DistrictCard> districtDiscardDeck;
     private final Deck<CharacterCard> characterDeck;
     private final Deck<CharacterCard> characterDiscardDeck;
-
     private final int nbRound;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, Deck<CharacterCard> characterDeck, Deck<CharacterCard> characterDiscardDeck, int nbRound) {
@@ -36,14 +35,34 @@ public class Round {
     }
 
     public void startRound() {
-
         //Announce the start of the round
         view.printStartRound(nbRound);
 
-        String result = "";
-
         //Each player choose a character
-        for(Player player: players){
+        choiceOfCharactersForEachPlayer();
+
+        //Sort the players by the number of the character card
+        sortPlayersByNumbersOfCharacterCard();
+
+        //Each player make a choice (draw a card or take 2 golds) and put a district
+        choiceActionsForTheRound();
+
+        //Announce the end of the round
+        view.printEndRound(nbRound);
+    }
+
+    /**
+     * Sort the players by the number of the character card
+     */
+    public void sortPlayersByNumbersOfCharacterCard() {
+        players.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
+    }
+
+    /**
+     * function that allows each player to choose a character in the list of character available
+     */
+    public void choiceOfCharactersForEachPlayer() {
+        for (Player player : players) {
             //while the player has not chosen a character (or the character is not available)
             boolean again = true;
             while (again) {
@@ -64,27 +83,29 @@ public class Round {
                     player.setPlayerRole(drawn);
                     view.printCharacterCard(drawn.getCharacterName());
                 }
-
             }
         }
+    }
 
-        players.sort(Comparator.comparingInt(player->player.getPlayerRole().getCharacterNumber()));
-
-
-        //Each player make a choice (draw a card or take 2 golds) and put a district
+    /**
+     * function that allows each player to choose their actions for the current round (choose 2golds or draw a card and choose to put a district or not)
+     */
+    public void choiceActionsForTheRound() {
+        String result;
         for (Player player : players) {
             //Take the choice
             result = player.startChoice((DistrictDeck) districtDeck);
             if (result != null) view.printPlayerAction(result, player);
 
-            //Put a district
-            result = player.choiceToPutADistrict();
-            if (result != null) view.printPlayerAction(result, player);
+            // Put a district
+            do {
+                result = player.choiceToPutADistrict();
+            } while ((result == null || player.hasCardOnTheBoard(result)) && player.hasPlayableCard());
+            if (result != null && !player.hasCardOnTheBoard(result)) {
+                player.addCardToBoard(result);
+                view.printPlayerAction("putDistrict", player);
+            }
             view.printEndTurnOfPlayer(player);
         }
-
-        //Announce the end of the round
-        view.printEndRound(nbRound);
-
     }
 }

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 
 public class BotRandom extends Player implements GameActions {
@@ -34,25 +35,25 @@ public class BotRandom extends Player implements GameActions {
     public String choiceToPutADistrict() {
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
-            return putADistrict() ? "putDistrict" : null;
+            return putADistrict();
         }
         return null;
     }
 
     @Override
-    public boolean putADistrict() {
+    public String putADistrict() {
         if (!getHands().isEmpty()) {
             int randomIndex = random.nextInt(getHands().size());
-            getBoard().add(getHands().get(randomIndex));
-            getHands().remove(randomIndex);
-            return true;
+            DistrictCard card = getHands().get(randomIndex);
+
+            return card.name();
         }
-        return false;
+        return null;
     }
 
     @Override
     public void useRoleEffect() {
-
+        // TODO when the bot will be able to use the effects of its character
     }
 
     @Override
