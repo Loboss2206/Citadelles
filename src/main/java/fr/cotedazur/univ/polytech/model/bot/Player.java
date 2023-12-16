@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player {
-    private int id = 0;
+    private final int id;
     private final String name;
     private int golds;
     private final ArrayList<DistrictCard> hands;
@@ -28,7 +28,6 @@ public abstract class Player {
         this.board = new ArrayList<>();
     }
 
-
     public int getGolds() {
         return golds;
     }
@@ -41,10 +40,6 @@ public abstract class Player {
         return playerRole;
     }
 
-    public void setGolds(int golds) {
-        this.golds = golds;
-    }
-
     public void setPlayerRole(CharacterCard playerRole) {
         this.playerRole = playerRole;
     }
@@ -52,6 +47,7 @@ public abstract class Player {
     public List<DistrictCard> getBoard() {
         return board;
     }
+
     public String getName() {
         return name;
     }
@@ -68,6 +64,11 @@ public abstract class Player {
         Player.count = count;
     }
 
+    /**
+     * function that draw a card from the district deck if its possible, else the player take 2 golds
+     * @param districtDeck the district deck
+     * @return the name of the card drawn
+     */
     public String drawCard(DistrictDeck districtDeck) {
         if(districtDeck.isEmpty()) {
             return collectTwoGolds();
@@ -85,20 +86,65 @@ public abstract class Player {
         return "2golds";
     }
 
-    //These functions are abstract because it depends on ont the bot type
-    public abstract boolean putADistrict();
-
-    public abstract String startChoice(DistrictDeck districtDeck);
-
-    public abstract String choiceToPutADistrict();
-
-    public abstract void useRoleEffect();
+    /**
+     * add a card to the board
+     * @param cardName the name of the card to add
+     */
+    public void addCardToBoard(String cardName) {
+        for (DistrictCard card : hands) {
+            if (card.name().equals(cardName)) {
+                board.add(card);
+                hands.remove(card);
+                break;
+            }
+        }
+    }
 
     /**
-     * The function take a list of character cards and return the number of the character card chosen by the player (the number is the index of the list)
-     * @param cards the list of character cards
-     * @return the number of the character card chosen by the player (the number is the index of the list)
-      */
+     * check if a card is on the board of a player
+     * @param cardName the name of the card to check
+     * @return true if the card is on the board, else false
+     */
+    public boolean hasCardOnTheBoard(String cardName) {
+        for (DistrictCard card : board) {
+            if (card.name().equals(cardName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * check if the player has a playable card
+     * @return true if the player has a playable card, else false
+     */
+    public boolean hasPlayableCard() {
+        for (DistrictCard card : hands) {
+            if (!hasCardOnTheBoard(card.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * function where the player choose between take 2 golds or draw a card
+     * @param districtDeck the district deck
+     * @return his choice
+     */
+    public abstract String startChoice(DistrictDeck districtDeck);
+
+    /**
+     * function where the player choose to put or not a district on his board
+     * @return his choice or null if he doesn't want to put a district
+     */
+    public abstract String choiceToPutADistrict();
+
+    /**
+     * function where the player choose his character
+     * @param cards the characters available
+     * @return the index of the character chosen
+     */
     public abstract int chooseCharacter(List<CharacterCard> cards);
 
     @Override

@@ -3,31 +3,28 @@ package fr.cotedazur.univ.polytech.controller;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
+
+import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import java.util.ArrayList;
-import static org.junit.jupiter.api.Assertions.*;
-public class RoundTest {
 
+import java.util.ArrayList;
+class RoundTest {
+    Game game;
     ArrayList<Player> players;
     BotRandom botRandom1;
     BotRandom botRandom2;
-
     BotRandom botRandom3;
-
     BotRandom botRandom4;
-
     BotRandom botRandom5;
-
     BotRandom botRandom6;
-
     BotRandom botRandom7;
 
     CharacterDeck charactersDiscardDeck;
-
 
     @BeforeEach
     void setUp() {
@@ -40,9 +37,29 @@ public class RoundTest {
         botRandom6 = new BotRandom();
         botRandom7 = new BotRandom();
         charactersDiscardDeck = DeckFactory.createEmptyCharacterDeck();
-
     }
 
+    @Test
+    void testOrderForCaracterCard() {
+        players.get(0).setPlayerRole(CharacterCard.ARCHITECT);
+        players.get(1).setPlayerRole(CharacterCard.KING);
+        players.get(2).setPlayerRole(CharacterCard.THIEF);
+        players.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
+        assertEquals(players.get(0), botRandom3);
+        assertEquals(players.get(1), botRandom2);
+        assertEquals(players.get(2), botRandom1);
+        assertNotEquals(players.get(0), botRandom1);
+    }
+
+    @Test
+    void testNoDoubleOnBoardForOnePlayer() {
+        game.startGame();
+        for (Player p : players) {
+            for (int i = 0; i < p.getBoard().size() - 1; i++) {
+                assertNotEquals(p.getBoard().get(i), p.getBoard().get(i + 1));
+            }
+        }
+    }
 
     @Test
     void testPresenceOfDiscardedKingWith4Player(){
