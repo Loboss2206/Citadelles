@@ -50,17 +50,17 @@ public class GameView {
      * @param player the player concerned
      */
     public void printPlayerAction(String action, Player player) {
-        String playerString = "Le joueur " + player.getName() +" ("+player.getPlayerRole().getCharacterName()+")";
+        String playerString = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
         if (action.equals("2golds"))
             System.out.println(playerString + " a choisi de prendre 2 pièces d'or, il possède maintenant " + player.getGolds() + " pièces d'or.");
         else if (action.equals("drawCard"))
             System.out.println(playerString + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
-        if (action.equals("putDistrict"))
+        else if (action.equals("putDistrict"))
             System.out.println(playerString + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
     }
 
     public void printEndTurnOfPlayer(Player player) {
-        System.out.println("Le joueur " + player.getName() +" ("+player.getPlayerRole().getCharacterName()+") décide de terminer son tour");
+        System.out.println("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") décide de terminer son tour");
     }
 
     /**
@@ -126,5 +126,13 @@ public class GameView {
      */
     public void printCharacterCard(String name) {
         displayMessage("Vous avez choisi la carte personnage : " + name + "\n");
+    }
+
+    public void printDiscardedCard(String name) {
+        displayMessage("la carte defaussé est : " + name + "\n");
+    }
+
+    public void printDiscardedCard(String name1, String name2) {
+        displayMessage("les cartes defaussés sont : " + name1 + " et " + name2 + "\n");
     }
 }

@@ -54,4 +54,42 @@ class PlayerTest {
         assertEquals(66, copyDeck.size());
         assertEquals(65, districtDeck.size());
     }
+
+    @Test
+    void testAddCardOnTheBoard() {
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.addCardToBoard("TRADING_POST");
+        assertNotNull(botRandom2.getBoard().get(0));
+        assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
+
+        botRandom2.getBoard().clear();
+        botRandom2.addCardToBoard("TRADING_POST");
+        assertEquals(botRandom2.getBoard().size(), 0);
+    }
+
+    @Test
+    void hasCardOnTheBoard() {
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.addCardToBoard("TRADING_POST");
+        assertNotNull(botRandom2.getBoard().get(0));
+        assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
+        assertTrue(botRandom2.hasCardOnTheBoard("TRADING_POST"));
+
+        botRandom2.getBoard().clear();
+        assertFalse(botRandom2.hasCardOnTheBoard("TRADING_POST"));
+    }
+
+    @Test
+    void hasPlayableCard() {
+        botRandom2.getHands().clear();
+        assertFalse(botRandom2.hasPlayableCard());
+
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        assertTrue(botRandom2.hasPlayableCard());
+
+        botRandom2.addCardToBoard("TRADING_POST");
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        assertFalse(botRandom2.hasPlayableCard());
+    }
 }

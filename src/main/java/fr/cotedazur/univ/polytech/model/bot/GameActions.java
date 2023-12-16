@@ -6,17 +6,14 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import java.util.List;
 
 public interface GameActions {
-    public String drawCard(DistrictDeck districtDeck);
 
-    public String collectTwoGolds();
+    String putADistrict();
 
-    public boolean putADistrict();
+    String startChoice(DistrictDeck districtDeck);
 
-    public String startChoice(DistrictDeck districtDeck);
+    String choiceToPutADistrict();
 
-    public String choiceToPutADistrict();
+    void useRoleEffect();
 
-    public void useRoleEffect();
-
-    public int chooseCharacter(List<CharacterCard> characters);
+    int chooseCharacter(List<CharacterCard> characters);
 }
