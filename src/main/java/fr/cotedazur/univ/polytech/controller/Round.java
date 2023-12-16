@@ -17,6 +17,7 @@ public class Round {
     private final GameView view;
 
 
+
     //Decks
     private final Deck<DistrictCard> districtDeck;
     private final Deck<DistrictCard> districtDiscardDeck;
@@ -38,8 +39,72 @@ public class Round {
         //Announce the start of the round
         view.printStartRound(nbRound);
 
+        int numberOfPlayers = players.size();
+
+        characterDeck.shuffle();
+
+        characterDiscardDeck.add(characterDeck.draw());
+
+        if (numberOfPlayers == 4) {
+            for (int i = 0; i < 2;i++){
+                CharacterCard drawnCard = characterDeck.draw();
+                if (drawnCard == CharacterCard.KING) {
+                    drawnCard = characterDeck.draw();
+                    characterDeck.add(CharacterCard.KING);
+
+                }
+                characterDiscardDeck.add(drawnCard);
+
+            }
+            view.printDiscardedCard(characterDiscardDeck.getCards().get(1).getCharacterName(), characterDiscardDeck.getCards().get(2).getCharacterName());
+
+        }
+
+        if (numberOfPlayers == 5) {
+            CharacterCard drawnCard = characterDeck.draw();
+            if (drawnCard == CharacterCard.KING) {
+                drawnCard = characterDeck.draw();
+                characterDeck.add(CharacterCard.KING);
+            }
+            characterDiscardDeck.add(drawnCard);
+            view.printDiscardedCard(drawnCard.getCharacterName());
+        }
+
+
+
+        int i = 0;
         //Each player choose a character
-        choiceOfCharactersForEachPlayer();
+        for(Player player: players){
+            //while the player has not chosen a character (or the character is not available)
+            boolean again = true;
+            while (again) {
+                //Print the all character cards in the deck
+                view.printPlayerPickACard(player.getName());
+                for (CharacterCard character : characterDeck.getCards()) {
+                    view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
+                }
+                if (i == 6){
+                    view.printCharacterCard(characterDiscardDeck.getCards().get(0).getCharacterNumber(), characterDiscardDeck.getCards().get(0).getCharacterName(), characterDiscardDeck.getCards().get(0).getCharacterEffect());
+                }
+                //The player choose a character from the deck
+                if (i == 6){
+                    characterDiscardDeck.add(characterDeck.getCards().get(0));
+                }
+                int characterNumber = player.chooseCharacter(characterDeck.getCards());
+                CharacterCard drawn = characterDeck.draw(characterNumber);
+                //If the card is not available, the player choose again, after an error message
+                if (drawn == null) {
+                    view.pickARoleCardError();
+                } else {
+                    //Else, we set the role of the player and print the character card chosen
+                    again = false;
+                    player.setPlayerRole(drawn);
+                    view.printCharacterCard(drawn.getCharacterName());
+                }
+
+            }
+            i++;
+        }
 
         //Sort the players by the number of the character card
         sortPlayersByNumbersOfCharacterCard();
@@ -62,7 +127,7 @@ public class Round {
      * function that allows each player to choose a character in the list of character available
      */
     public void choiceOfCharactersForEachPlayer() {
-        for (Player player : players) {
+        for(Player player: players){
             //while the player has not chosen a character (or the character is not available)
             boolean again = true;
             while (again) {
@@ -71,7 +136,13 @@ public class Round {
                 for (CharacterCard character : characterDeck.getCards()) {
                     view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
                 }
+                if (i == 6){
+                    view.printCharacterCard(characterDiscardDeck.getCards().get(0).getCharacterNumber(), characterDiscardDeck.getCards().get(0).getCharacterName(), characterDiscardDeck.getCards().get(0).getCharacterEffect());
+                }
                 //The player choose a character from the deck
+                if (i == 6){
+                    characterDiscardDeck.add(characterDeck.getCards().get(0));
+                }
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
                 CharacterCard drawn = characterDeck.draw(characterNumber);
                 //If the card is not available, the player choose again, after an error message
@@ -83,7 +154,9 @@ public class Round {
                     player.setPlayerRole(drawn);
                     view.printCharacterCard(drawn.getCharacterName());
                 }
+
             }
+            i++;
         }
     }
 
