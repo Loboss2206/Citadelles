@@ -7,7 +7,7 @@ import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Player {
+public abstract class Player implements GameActions {
     private final int id;
     private final String name;
     private int golds;
@@ -98,16 +98,12 @@ public abstract class Player {
 
     /**
      * add a card to the board
-     * @param cardName the name of the card to add
+     * @param card the card to add
      */
-    public void addCardToBoard(String cardName) {
-        for (DistrictCard card : hands) {
-            if (card.name().equals(cardName)) {
-                board.add(card);
-                hands.remove(card);
-                break;
-            }
-        }
+    public void addCardToBoard(DistrictCard card) {
+        board.add(card);
+        hands.remove(card);
+        removeGold(card.getDistrictValue());
     }
 
     /**
@@ -124,12 +120,13 @@ public abstract class Player {
 
     /**
      * check if a card is on the board of a player
-     * @param cardName the name of the card to check
+     * @param card the card to check
      * @return true if the card is on the board, else false
      */
-    public boolean hasCardOnTheBoard(String cardName) {
-        for (DistrictCard card : board) {
-            if (card.name().equals(cardName)) {
+    public boolean hasCardOnTheBoard(DistrictCard card) {
+        if (board.isEmpty() || card == null) return false;
+        for (DistrictCard c : board) {
+            if (c.name().equals(card.name())) {
                 return true;
             }
         }
@@ -142,32 +139,12 @@ public abstract class Player {
      */
     public boolean hasPlayableCard() {
         for (DistrictCard card : hands) {
-            if (!hasCardOnTheBoard(card.name()) && validCards.contains(card)) {
+            if (!hasCardOnTheBoard(card) && validCards.contains(card)) {
                 return true;
             }
         }
         return false;
     }
-
-    /**
-     * function where the player choose between take 2 golds or draw a card
-     * @param districtDeck the district deck
-     * @return his choice
-     */
-    public abstract String startChoice(DistrictDeck districtDeck);
-
-    /**
-     * function where the player choose to put or not a district on his board
-     * @return his choice or null if he doesn't want to put a district
-     */
-    public abstract String choiceToPutADistrict();
-
-    /**
-     * function where the player choose his character
-     * @param cards the characters available
-     * @return the index of the character chosen
-     */
-    public abstract int chooseCharacter(List<CharacterCard> cards);
 
     @Override
     public boolean equals(Object obj) {

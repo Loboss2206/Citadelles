@@ -19,8 +19,6 @@ import static org.mockito.Mockito.*;
 
 
 class BotRandomTest {
-
-
     @Mock Random random = mock(Random.class);
 
     BotRandom botRandom2;
@@ -40,21 +38,15 @@ class BotRandomTest {
     @Test
     void testPutADistrict() {
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
-        botRandom2.setGolds(3);
+        botRandom2.setGolds(DistrictCard.TRADING_POST.getDistrictValue());
         assertNotNull(botRandom2.putADistrict());
-        assertEquals(1, botRandom2.getGolds());
+        botRandom2.setGolds(DistrictCard.TRADING_POST.getDistrictValue());
+        assertEquals(botRandom2.putADistrict(), botRandom2.getHands().get(0));
+        botRandom2.getBoard().clear();
 
-        botRandom2.getHands().clear();
-        botRandom2.getHands().add(DistrictCard.CASTLE);
-        botRandom2.setGolds(4);
-        assertEquals(botRandom2.putADistrict(), botRandom2.getHands().get(0).name());
-        assertEquals(0, botRandom2.getGolds());
-
-        botRandom2.getHands().clear();
-        botRandom2.getHands().add(DistrictCard.CASTLE);
-        botRandom2.setGolds(2);
-        assertNull(botRandom2.putADistrict());
-        assertEquals(2, botRandom2.getGolds());
+        botRandom2.drawCard(districtDeck);
+        botRandom2.setGolds(botRandom2.getHands().get(0).getDistrictValue());
+        assertNotNull(botRandom2.putADistrict());
 
         botRandom2.getHands().clear();
         assertNull(botRandom2.putADistrict());
@@ -133,15 +125,15 @@ class BotRandomTest {
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
 
         botRandom1.setGolds(20); //add golds to be able to put a district
-        
+
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
 
-        //Take a card to test if the bot has chosen to puts a district
+        //Take a card to test if the bot has chosen to put a district
         DistrictCard card = botRandom1.getHands().get(1);
-        assertEquals(card.name(),botRandom1.choiceToPutADistrict());
-        botRandom1.addCardToBoard(card.name());
-        botRandom1.addCardToBoard(botRandom1.getHands().get(0).name());
+        assertEquals(card,botRandom1.choiceToPutADistrict());
+        botRandom1.addCardToBoard(card);
+        botRandom1.addCardToBoard(botRandom1.getHands().get(0));
 
         //Test when there is no card in hand
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);

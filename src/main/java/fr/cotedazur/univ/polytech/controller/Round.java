@@ -128,18 +128,19 @@ public class Round {
      * function that allows each player to choose their actions for the current round (choose 2golds or draw a card and choose to put a district or not)
      */
     public void choiceActionsForTheRound() {
-        String result;
+        String choice;
+        DistrictCard districtToPut;
         for (Player player : players) {
             //Take the choice
-            result = player.startChoice((DistrictDeck) districtDeck);
-            if (result != null) view.printPlayerAction(result, player);
+            choice = player.startChoice((DistrictDeck) districtDeck);
+            if (choice != null) view.printPlayerAction(choice , player);
 
             // Put a district
             do {
-                result = player.choiceToPutADistrict();
-            } while ((result == null || player.hasCardOnTheBoard(result)) && player.hasPlayableCard());
-            if (result != null && !player.hasCardOnTheBoard(result)) {
-                player.addCardToBoard(result);
+                districtToPut = player.choiceToPutADistrict();
+            } while (player.hasCardOnTheBoard(districtToPut) && player.hasPlayableCard());
+            if (districtToPut != null && !player.hasCardOnTheBoard(districtToPut)) {
+                player.addCardToBoard(districtToPut);
                 view.printPlayerAction("putDistrict", player);
             }
             view.printEndTurnOfPlayer(player);
