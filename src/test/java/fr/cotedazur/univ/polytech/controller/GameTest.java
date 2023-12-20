@@ -72,10 +72,4 @@ class GameTest {
         assertEquals(player4, game.getPlayers().get(0));
     }
 
-    //Difficult to test if we don't know the player action
-    /*@Test
-    void testRankingWithOnePlayerWithOnlyGoldsAndOnlyOneRound() {
-        game.startGame();
-        Assertions.assertEquals(2, game.getPlayers().get(0).getGolds());
-    }*/
 }

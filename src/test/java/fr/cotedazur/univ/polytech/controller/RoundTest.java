@@ -12,8 +12,8 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
-
 import static org.junit.jupiter.api.Assertions.*;
+
 class RoundTest {
     Game game;
     ArrayList<Player> players;
@@ -47,10 +47,10 @@ class RoundTest {
         players.get(1).setPlayerRole(CharacterCard.KING);
         players.get(2).setPlayerRole(CharacterCard.THIEF);
         players.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
-        assertEquals(players.get(0), botRandom3);
-        assertEquals(players.get(1), botRandom2);
-        assertEquals(players.get(2), botRandom1);
-        assertNotEquals(players.get(0), botRandom1);
+        assertSame(players.get(0), botRandom3);
+        assertSame(players.get(1), botRandom2);
+        assertSame(players.get(2), botRandom1);
+        assertNotSame(players.get(0), botRandom1);
     }
 
     @Test

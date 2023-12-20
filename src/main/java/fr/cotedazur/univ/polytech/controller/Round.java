@@ -68,6 +68,7 @@ public class Round {
             view.printDiscardedCard(drawnCard.getCharacterName());
         }
 
+
         //Each player choose a character
         choiceOfCharactersForEachPlayer();
 
@@ -104,9 +105,6 @@ public class Round {
                 }
                 if (i == 6){
                     view.printCharacterCard(characterDiscardDeck.getCards().get(0).getCharacterNumber(), characterDiscardDeck.getCards().get(0).getCharacterName(), characterDiscardDeck.getCards().get(0).getCharacterEffect());
-                }
-                //The player choose a character from the deck
-                if (i == 6){
                     characterDiscardDeck.add(characterDeck.getCards().get(0));
                 }
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
