@@ -81,7 +81,8 @@ class BotRandomTest {
     @Test
     void testBotRandomPutADistrict(){
         //Taking the third card from the hand of the random bot
-        when(random.nextInt(4)).thenReturn(2);
+        when(random.nextInt(anyInt())).thenReturn(2);
+        botRandom1.setGolds(20); //add golds to be able to put a district
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
@@ -131,6 +132,8 @@ class BotRandomTest {
         //Put a district for the first call of the fonction and choose the
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
 
+        botRandom1.setGolds(20); //add golds to be able to put a district
+        
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
 
