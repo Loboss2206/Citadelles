@@ -23,7 +23,7 @@ public class BotRandom extends Player implements GameActions {
                 return collectTwoGolds();
             }
             case 1 -> {
-               return drawCard(districtDeck);
+                return drawCard(districtDeck);
             }
             default -> {
                 return null;
@@ -32,7 +32,7 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String choiceToPutADistrict() {
+    public DistrictCard choiceToPutADistrict() {
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             return putADistrict();
@@ -41,14 +41,11 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String putADistrict() {
+    public DistrictCard putADistrict() {
         discoverValidCard();
         if (!validCards.isEmpty()) {
             int randomIndex = random.nextInt(validCards.size());
-            DistrictCard card = validCards.get(randomIndex);
-            removeGold(card.getDistrictValue());
-
-            return card.name();
+            return validCards.get(randomIndex);
         }
         return null;
     }
@@ -65,5 +62,15 @@ public class BotRandom extends Player implements GameActions {
 
     public void setRandom(Random random) {
         this.random = random;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

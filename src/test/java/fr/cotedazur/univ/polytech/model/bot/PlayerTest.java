@@ -59,26 +59,26 @@ class PlayerTest {
     @Test
     void testAddCardOnTheBoard() {
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
-        botRandom2.addCardToBoard("TRADING_POST");
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
         assertNotNull(botRandom2.getBoard().get(0));
         assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
 
         botRandom2.getBoard().clear();
-        botRandom2.addCardToBoard("TRADING_POST");
-        assertEquals(botRandom2.getBoard().size(), 0);
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
+        assertEquals(botRandom2.getBoard().size(), 1);
     }
 
     @Test
     void hasCardOnTheBoard() {
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
-        botRandom2.addCardToBoard("TRADING_POST");
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
         assertNotNull(botRandom2.getBoard().get(0));
         assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
-        assertTrue(botRandom2.hasCardOnTheBoard("TRADING_POST"));
+        assertTrue(botRandom2.hasCardOnTheBoard(DistrictCard.TRADING_POST));
 
         botRandom2.getBoard().clear();
-        assertFalse(botRandom2.hasCardOnTheBoard("TRADING_POST"));
+        assertFalse(botRandom2.hasCardOnTheBoard(DistrictCard.TRADING_POST));
     }
 
     @Test
@@ -92,7 +92,7 @@ class PlayerTest {
 
         assertTrue(botRandom2.hasPlayableCard());
 
-        botRandom2.addCardToBoard("TRADING_POST");
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
         assertFalse(botRandom2.hasPlayableCard());
     }
