@@ -45,6 +45,9 @@ class RoundTest {
 
     @Test
     void testOrderForCaracterCard() {
+        players.add(botRandom1);
+        players.add(botRandom2);
+        players.add(botRandom3);
         players.get(0).setPlayerRole(CharacterCard.ARCHITECT);
         players.get(1).setPlayerRole(CharacterCard.KING);
         players.get(2).setPlayerRole(CharacterCard.THIEF);
@@ -57,6 +60,10 @@ class RoundTest {
 
     @Test
     void testNoDoubleOnBoardForOnePlayer() {
+        players.add(botRandom1);
+        players.add(botRandom2);
+        players.add(botRandom3);
+        game = new Game(players);
         game.startGame();
         for (Player p : players) {
             for (int i = 0; i < p.getBoard().size() - 1; i++) {

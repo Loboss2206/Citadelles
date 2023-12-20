@@ -1,6 +1,7 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import org.junit.jupiter.api.BeforeEach;

@@ -72,7 +72,7 @@ class BotRandomTest {
     @Test
     void testBotRandomPutADistrict(){
         //Taking the third card from the hand of the random bot
-        when(random.nextInt(anyInt())).thenReturn(2);
+        when(random.nextInt(4)).thenReturn(2);
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
@@ -80,7 +80,7 @@ class BotRandomTest {
 
         //Store the card that will be drawn from the hand
         DistrictCard districtCard = botRandom1.getHands().get(2);
-        botRandom1.putADistrict();
+        botRandom1.addCardToBoard(botRandom1.putADistrict());
         assertEquals(districtCard,botRandom1.getBoard().get(0));
     }
 
@@ -119,12 +119,25 @@ class BotRandomTest {
 
     @Test
     void testChoiceToPutADistrict(){
+        //Put a district for the first call of the fonction and choose the
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
+
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
 
-        assertEquals("putDistrict",botRandom1.choiceToPutADistrict());
+        //Take a card to test if the bot has chosen to puts a district
+        DistrictCard card = botRandom1.getHands().get(1);
+        assertEquals(card.name(),botRandom1.choiceToPutADistrict());
+        botRandom1.addCardToBoard(card.name());
+        botRandom1.addCardToBoard(botRandom1.getHands().get(0).name());
+
+        //Test when there is no card in hand
+        when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
         assertNull(botRandom1.choiceToPutADistrict());
+
+        //Test when bot choose to not put a district
+        botRandom1.drawCard(districtDeck);
+        botRandom1.drawCard(districtDeck);
         when(random.nextInt(anyInt())).thenReturn(1);
         assertNull(botRandom1.choiceToPutADistrict());
     }
