@@ -16,8 +16,6 @@ public class Round {
 
     private final GameView view;
 
-
-
     //Decks
     private final Deck<DistrictCard> districtDeck;
     private final Deck<DistrictCard> districtDiscardDeck;
@@ -71,7 +69,7 @@ public class Round {
         }
 
 
-
+        //Each player choose a character
         choiceOfCharactersForEachPlayer();
 
         //Sort the players by the number of the character card

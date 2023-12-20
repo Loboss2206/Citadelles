@@ -15,6 +15,7 @@ public abstract class Player {
     private CharacterCard playerRole;
     private final ArrayList<DistrictCard> board;//This is for when a player choose to put a district
     private int points;
+    protected ArrayList<DistrictCard> validCards;
 
     // Increment for each player created
     private static int count = 0;
@@ -26,10 +27,19 @@ public abstract class Player {
         this.hands = new ArrayList<>();
         this.playerRole = null;
         this.board = new ArrayList<>();
+        this.validCards = new ArrayList<>();
     }
 
     public int getGolds() {
         return golds;
+    }
+
+    public void removeGold(int golds) {
+        this.golds -= golds;
+    }
+
+    public void setGolds(int golds) {
+        this.golds = golds;
     }
 
     public List<DistrictCard> getHands() {
@@ -101,6 +111,18 @@ public abstract class Player {
     }
 
     /**
+     * Function that check all the cards in the hand of the player and add the cards that are buy-able by the player to the list validCards
+     */
+    public void discoverValidCard() {
+        validCards.clear();
+        for (DistrictCard card : getHands()) {
+            if (card.getDistrictValue() <= getGolds()) {
+                validCards.add(card);
+            }
+        }
+    }
+
+    /**
      * check if a card is on the board of a player
      * @param cardName the name of the card to check
      * @return true if the card is on the board, else false
@@ -120,7 +142,7 @@ public abstract class Player {
      */
     public boolean hasPlayableCard() {
         for (DistrictCard card : hands) {
-            if (!hasCardOnTheBoard(card.name())) {
+            if (!hasCardOnTheBoard(card.name()) && validCards.contains(card)) {
                 return true;
             }
         }

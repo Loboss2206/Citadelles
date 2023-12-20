@@ -46,7 +46,7 @@ class PlayerTest {
     }
 
     @Test
-    void testDrawCard(){
+    void testDrawCard() {
         DistrictDeck copyDeck = new DistrictDeck();
         copyDeck = DeckFactory.createDistrictDeck();
         botRandom2.drawCard(districtDeck);
@@ -87,10 +87,32 @@ class PlayerTest {
         assertFalse(botRandom2.hasPlayableCard());
 
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.setGolds(3);
+        botRandom2.discoverValidCard();
+
         assertTrue(botRandom2.hasPlayableCard());
 
         botRandom2.addCardToBoard("TRADING_POST");
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
         assertFalse(botRandom2.hasPlayableCard());
+    }
+
+    @Test
+    void testDiscoverValidCard() {
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.getHands().add(DistrictCard.MANOR);
+        botRandom2.getHands().add(DistrictCard.CASTLE);
+
+        botRandom2.setGolds(5);
+        botRandom2.discoverValidCard();
+        assertEquals(3, botRandom2.validCards.size());
+
+        botRandom2.setGolds(4);
+        botRandom2.discoverValidCard();
+        assertEquals(3, botRandom2.validCards.size());
+
+        botRandom2.setGolds(3);
+        botRandom2.discoverValidCard();
+        assertEquals(2, botRandom2.validCards.size());
     }
 }

@@ -40,12 +40,21 @@ class BotRandomTest {
     @Test
     void testPutADistrict() {
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.setGolds(3);
         assertNotNull(botRandom2.putADistrict());
-        assertEquals(botRandom2.putADistrict(), botRandom2.getHands().get(0).name());
-        botRandom2.getBoard().clear();
+        assertEquals(1, botRandom2.getGolds());
 
-        botRandom2.drawCard(districtDeck);
-        assertNotNull(botRandom2.putADistrict());
+        botRandom2.getHands().clear();
+        botRandom2.getHands().add(DistrictCard.CASTLE);
+        botRandom2.setGolds(4);
+        assertEquals(botRandom2.putADistrict(), botRandom2.getHands().get(0).name());
+        assertEquals(0, botRandom2.getGolds());
+
+        botRandom2.getHands().clear();
+        botRandom2.getHands().add(DistrictCard.CASTLE);
+        botRandom2.setGolds(2);
+        assertNull(botRandom2.putADistrict());
+        assertEquals(2, botRandom2.getGolds());
 
         botRandom2.getHands().clear();
         assertNull(botRandom2.putADistrict());
