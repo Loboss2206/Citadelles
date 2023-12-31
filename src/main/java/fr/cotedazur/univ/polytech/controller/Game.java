@@ -10,6 +10,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class Game {
     private final ArrayList<Player> players; //all the players that play in the game
@@ -30,6 +31,9 @@ public class Game {
         this.players = (ArrayList<Player>) players;
         this.playerComparator = new PlayerComparator();
 
+        int randomIndex = new Random().nextInt(players.size());
+        players.get(randomIndex).setCrowned(true);
+
         //Build the decks and shuffle them
         buildDecks();
     }
@@ -47,11 +51,21 @@ public class Game {
     }
 
     /**
+     * Set the crowned player as the first player of the list
+     */
+    public void setCrownedPlayerToFirstPlace() {
+        while (!players.get(0).isCrowned()) {
+            players.add(players.remove(0));
+        }
+    }
+
+    /**
      * Start the game and the rounds
      */
     public void startGame() {
         //Print the greeting
         view.printStartGame();
+
         //Draw 4 cards of District for each player at the beginning of the game
         for (Player player : players) {
             for (int i = 0; i < 4; i++) {
@@ -64,6 +78,10 @@ public class Game {
             //Build the decks and shuffle them
             characterDeck = DeckFactory.createCharacterDeck();
             characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
+
+            //Set the crowned player as the first player of the list
+            setCrownedPlayerToFirstPlace();
+
             //Start the round
             Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck, ++roundNumber);
             round.startRound();

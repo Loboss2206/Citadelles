@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.*;
 
@@ -144,6 +143,14 @@ class BotRandomTest {
         botRandom1.drawCard(districtDeck);
         when(random.nextInt(anyInt())).thenReturn(1);
         assertNull(botRandom1.choiceToPutADistrict());
+    }
+
+    @Test
+    void testUseRoleEffect() {
+        CharacterCard characterCard = spy(CharacterCard.KING);
+        botRandom1.setPlayerRole(characterCard);
+        botRandom1.useRoleEffect();
+        verify(characterCard, times(1)).useEffect(botRandom1);
     }
 
     @Test

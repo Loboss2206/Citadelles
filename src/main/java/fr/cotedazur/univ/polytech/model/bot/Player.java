@@ -15,6 +15,7 @@ public abstract class Player implements GameActions {
     private CharacterCard playerRole;
     private final ArrayList<DistrictCard> board;//This is for when a player choose to put a district
     private int points;
+    private boolean isCrowned = false;
     protected ArrayList<DistrictCard> validCards;
 
     // Increment for each player created
@@ -144,6 +145,14 @@ public abstract class Player implements GameActions {
             }
         }
         return false;
+    }
+
+    public void setCrowned(boolean isCrowned) {
+        this.isCrowned = isCrowned;
+    }
+
+    public boolean isCrowned() {
+        return isCrowned;
     }
 
     @Override
