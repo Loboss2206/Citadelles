@@ -30,6 +30,25 @@ class CharacterCardTest {
     }
 
     @Test
+    void useEffectForBishop() {
+        player.setGolds(28);
+        player.setPlayerRole(CharacterCard.BISHOP);
+        player.addCardToBoard(DistrictCard.CASTLE);
+        player.addCardToBoard(DistrictCard.MARKET);
+        player.addCardToBoard(DistrictCard.MONASTERY);
+        player.addCardToBoard(DistrictCard.TEMPLE);
+        player.getPlayerRole().useEffect(player);
+        //Should be 20 because when we add a district on the board we withdraw from his golds
+        assertEquals(20, player.getGolds());
+
+        player.addCardToBoard(DistrictCard.CATHEDRAL);
+        player.getPlayerRole().useEffect(player);
+
+        //Should be 18 because when we add a district on the board we withdraw from his golds, and now we have 3 blue district, so we add 3 in the number of golds instead of 2
+        assertEquals(18, player.getGolds());
+    }
+
+    @Test
     void earnGoldsFromDistricts() {
         CharacterCard characterCard;
 
