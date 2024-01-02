@@ -1,5 +1,7 @@
 package fr.cotedazur.univ.polytech.model.card;
 
+import fr.cotedazur.univ.polytech.model.bot.Player;
+
 /**
  * Represents a role card in the game.
  */
@@ -21,9 +23,9 @@ public enum CharacterCard {
     /**
      * Constructs a role card with the specified name, number, color, and description.
      *
-     * @param characterName        the name of the character
-     * @param characterNumber      the number of the character
-     * @param color                the color of the character
+     * @param characterName   the name of the character
+     * @param characterNumber the number of the character
+     * @param color           the color of the character
      * @param characterEffect the description of the character's ability
      */
     private CharacterCard(String characterName, int characterNumber, Color color, String characterEffect) {
@@ -67,5 +69,53 @@ public enum CharacterCard {
      */
     public String getCharacterEffect() {
         return characterEffect;
+    }
+
+    /**
+     * Use the effect of the character card.
+     *
+     * @param player the player who use the effect
+     */
+    public void useEffect(Player player) {
+        switch (this) {
+            case ASSASSIN -> {
+                //TODO
+            }
+            case THIEF -> {
+                //TODO
+            }
+            case MAGICIAN -> {
+                //TODO
+            }
+            case KING -> {
+                earnGoldsFromDistricts(player, Color.YELLOW);
+            }
+            case BISHOP -> {
+                //TODO
+            }
+            case MERCHANT -> {
+                //TODO
+            }
+            case ARCHITECT -> {
+                //TODO
+            }
+            case WARLORD -> {
+                //TODO
+            }
+        }
+    }
+
+    /**
+     * Earn golds from the districts of the specified color.
+     *
+     * @param player the player who earn golds
+     * @param color  the color of the districts
+     */
+    public void earnGoldsFromDistricts(Player player, Color color) {
+        for (DistrictCard district : player.getBoard()) {
+            if (district.getDistrictColor() == color) {
+                player.setGolds(player.getGolds() + 1);
+            }
+        }
     }
 }

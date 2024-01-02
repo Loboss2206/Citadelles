@@ -12,8 +12,8 @@ import java.util.Comparator;
 import java.util.List;
 
 public class Round {
-    private final ArrayList<Player> players;
-
+    private final List<Player> players;
+    private final List<Player> playersSortedByCharacterNumber;
     private final GameView view;
 
     //Decks
@@ -24,7 +24,8 @@ public class Round {
     private final int nbRound;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, Deck<CharacterCard> characterDeck, Deck<CharacterCard> characterDiscardDeck, int nbRound) {
-        this.players = (ArrayList<Player>) players;
+        this.players = players;
+        this.playersSortedByCharacterNumber = new ArrayList<>(players);
         this.view = view;
         this.districtDeck = districtDeck;
         this.districtDiscardDeck = districtDiscardDeck;
@@ -33,6 +34,9 @@ public class Round {
         this.nbRound = nbRound;
     }
 
+    /**
+     * Play the round
+     */
     public void startRound() {
         //Announce the start of the round
         view.printStartRound(nbRound);
@@ -72,6 +76,9 @@ public class Round {
         //Each player choose a character
         choiceOfCharactersForEachPlayer();
 
+        // Set the new crowned player if there is one
+        setNewCrownedPlayer();
+
         //Sort the players by the number of the character card
         sortPlayersByNumbersOfCharacterCard();
 
@@ -86,15 +93,15 @@ public class Round {
      * Sort the players by the number of the character card
      */
     public void sortPlayersByNumbersOfCharacterCard() {
-        players.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
+        playersSortedByCharacterNumber.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
     }
 
     /**
-     * function that allows each player to choose a character in the list of character available
+     * Function that allows each player to choose a character in the list of character available
      */
     public void choiceOfCharactersForEachPlayer() {
         int i = 0;
-        for(Player player: players){
+        for (Player player: players){
             //while the player has not chosen a character (or the character is not available)
             boolean again = true;
             while (again) {
@@ -125,12 +132,12 @@ public class Round {
     }
 
     /**
-     * function that allows each player to choose their actions for the current round (choose 2golds or draw a card and choose to put a district or not)
+     * Function that allows each player to choose their actions for the current round (choose 2golds or draw a card and choose to put a district or not)
      */
     public void choiceActionsForTheRound() {
         String choice;
         DistrictCard districtToPut;
-        for (Player player : players) {
+        for (Player player : playersSortedByCharacterNumber) {
             //Take the choice
             choice = player.startChoice((DistrictDeck) districtDeck);
             if (choice != null) view.printPlayerAction(choice , player);
@@ -143,7 +150,32 @@ public class Round {
                 player.addCardToBoard(districtToPut);
                 view.printPlayerAction("putDistrict", player);
             }
+
+            // Use the effect of the character
+            player.useRoleEffect();
+
             view.printEndTurnOfPlayer(player);
+        }
+    }
+
+    /**
+     * Set the crown to the new king
+     */
+    public void setNewCrownedPlayer() {
+        boolean kingFound = false;
+        for (Player player : players) {
+            if (player.getPlayerRole() == CharacterCard.KING) {
+                kingFound = true;
+                break;
+            }
+        }
+        if (kingFound) {
+            for (Player player : players) {
+                if (player.getPlayerRole() == CharacterCard.KING) {
+                    player.setCrowned(true);
+                }
+                else player.setCrowned(false);
+            }
         }
     }
 }

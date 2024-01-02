@@ -56,8 +56,8 @@ class GameTest {
         player3.setPoints(4);
         player4.setPoints(11);
 
-        List<Player> players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
-        Game game = new Game(players);
+        players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
+        game = new Game(players);
 
         assertEquals(player1, game.getPlayers().get(0));
         assertEquals(player2, game.getPlayers().get(1));
@@ -70,6 +70,43 @@ class GameTest {
         assertEquals(player2, game.getPlayers().get(1));
         assertEquals(player3, game.getPlayers().get(2));
         assertEquals(player4, game.getPlayers().get(0));
+    }
+
+    @Test
+    void testSetCrownedPlayerToFirstPlace() {
+        Player player1 = new BotRandom();
+        Player player2 = new BotRandom();
+        Player player3 = new BotRandom();
+        Player player4 = new BotRandom();
+
+        players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
+        game = new Game(players);
+
+        for (Player player : game.getPlayers()) {
+            player.setCrowned(false);
+        }
+
+        assertEquals(player1, game.getPlayers().get(0));
+        assertEquals(player2, game.getPlayers().get(1));
+        assertEquals(player3, game.getPlayers().get(2));
+        assertEquals(player4, game.getPlayers().get(3));
+
+        player3.setCrowned(true);
+        game.setCrownedPlayerToFirstPlace();
+
+        assertEquals(player3, game.getPlayers().get(0));
+        assertEquals(player4, game.getPlayers().get(1));
+        assertEquals(player1, game.getPlayers().get(2));
+        assertEquals(player2, game.getPlayers().get(3));
+
+        player3.setCrowned(false);
+        player4.setCrowned(true);
+        game.setCrownedPlayerToFirstPlace();
+
+        assertEquals(player4, game.getPlayers().get(0));
+        assertEquals(player1, game.getPlayers().get(1));
+        assertEquals(player2, game.getPlayers().get(2));
+        assertEquals(player3, game.getPlayers().get(3));
     }
 
 }

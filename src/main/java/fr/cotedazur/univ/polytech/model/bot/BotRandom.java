@@ -52,7 +52,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public void useRoleEffect() {
-        // TODO when the bot will be able to use the effects of its character
+        getPlayerRole().useEffect(this);
     }
 
     @Override
