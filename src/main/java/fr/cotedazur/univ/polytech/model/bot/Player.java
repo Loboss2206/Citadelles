@@ -3,6 +3,7 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -161,6 +162,17 @@ public abstract class Player implements GameActions {
             return player.id == this.id;
         }
         return false;
+    }
+
+    public void DrawAndPlaceADistrict(GameView view) {
+        DistrictCard districtToPut;
+        do {
+            districtToPut = choiceToPutADistrict();
+        } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
+        if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
+            addCardToBoard(districtToPut);
+            if (view != null) view.printPlayerAction("putDistrict", this);
+        }
     }
 
     @Override

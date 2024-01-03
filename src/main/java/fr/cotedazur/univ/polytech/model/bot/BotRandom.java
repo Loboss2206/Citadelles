@@ -1,11 +1,13 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 public class BotRandom extends Player implements GameActions {
 
@@ -51,8 +53,15 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect() {
-        getPlayerRole().useEffect(this);
+    public void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view) {
+        if (districtDeck.isPresent() && view.isPresent())
+            getPlayerRole().useEffect(this, districtDeck.get(), view.get());
+        else if (districtDeck.isPresent())
+            getPlayerRole().useEffect(this, districtDeck.get(), null);
+        else if (view.isPresent())
+            throw new IllegalArgumentException("The district deck is not present but the view is present in the bot's useRoleEffect method");
+        else
+            getPlayerRole().useEffect(this);
     }
 
     @Override

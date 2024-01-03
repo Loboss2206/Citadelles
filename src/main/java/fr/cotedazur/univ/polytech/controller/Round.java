@@ -10,6 +10,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class Round {
     private final List<Player> players;
@@ -136,23 +137,16 @@ public class Round {
      */
     public void choiceActionsForTheRound() {
         String choice;
-        DistrictCard districtToPut;
         for (Player player : playersSortedByCharacterNumber) {
             //Take the choice
             choice = player.startChoice((DistrictDeck) districtDeck);
             if (choice != null) view.printPlayerAction(choice , player);
 
-            // Put a district
-            do {
-                districtToPut = player.choiceToPutADistrict();
-            } while (player.hasCardOnTheBoard(districtToPut) && player.hasPlayableCard());
-            if (districtToPut != null && !player.hasCardOnTheBoard(districtToPut)) {
-                player.addCardToBoard(districtToPut);
-                view.printPlayerAction("putDistrict", player);
-            }
+            // Draw and place a district
+            player.DrawAndPlaceADistrict(view);
 
             // Use the effect of the character
-            player.useRoleEffect();
+            player.useRoleEffect(Optional.of((DistrictDeck) districtDeck), Optional.of(view));
 
             view.printEndTurnOfPlayer(player);
         }
