@@ -12,7 +12,7 @@ public enum CharacterCard {
     THIEF("Voleur", 2, Color.GRAY, "Volez l'argent d'un autre joueur"),
     MAGICIAN("Magicien", 3, Color.GRAY, "Echangez vos cartes avec celles d'un autre joueur"),
     KING("Roi", 4, Color.YELLOW, "Prenez 1 pièce d'or pour chaque quartier jaune que vous possédez"),
-    BISHOP("Évêque", 5, Color.BLUE, "Prenez 1 pièce d'or pour chaque quartier bleu que vous possédez"),
+    BISHOP("Évêque", 5, Color.BLUE, "Prenez 1 pièce d'or pour chaque quartier bleu que vous possédez. Les quartiers de l'Évêque ne peuvent pas être détruits par le Condottiere."),
     MERCHANT("Marchand", 6, Color.GREEN, "Prenez 1 pièce d'or pour chaque quartier vert que vous possédez"),
     ARCHITECT("Architecte", 7, Color.GRAY, "Piochez 2 cartes et possibilité de poser jusqu'à 3 bâtiments (si vous avez l'argent nécessaire)"),
     WARLORD("Condottiere", 8, Color.RED, "Détruisez un quartier en payant 1 pièce d'or de moins que son coût");
@@ -81,25 +81,25 @@ public enum CharacterCard {
     public void useEffect(Player player) {
         switch (this) {
             case ASSASSIN -> {
-                //TODO
+                //TODO TO TEST
             }
             case THIEF -> {
-                //TODO
+                //TODO TO TEST
             }
             case MAGICIAN -> {
-                //TODO
+                //TODO TO TEST
             }
             case KING -> {
                 earnGoldsFromDistricts(player, Color.YELLOW);
             }
             case BISHOP -> {
-                //TODO
+                earnGoldsFromDistricts(player, Color.BLUE);
             }
             case MERCHANT -> {
-                //TODO
+                //TODO TO TEST
             }
             case WARLORD -> {
-                //TODO
+                //TODO TO TEST
             }
         }
     }
