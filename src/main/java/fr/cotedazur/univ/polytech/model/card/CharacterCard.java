@@ -1,6 +1,8 @@
 package fr.cotedazur.univ.polytech.model.card;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 /**
  * Represents a role card in the game.
@@ -97,14 +99,28 @@ public enum CharacterCard {
                 earnGoldsFromDistricts(player, Color.GREEN);
                 player.setGolds(player.getGolds() + 1);
             }
-            case ARCHITECT -> {
-                //TODO TO TEST
-            }
             case WARLORD -> {
                 //TODO TO TEST
             }
         }
     }
+
+    /**
+     * Use the effect of the character card.
+     *
+     * @param player the player who use the effect
+     */
+    public void useEffect(Player player, DistrictDeck districtDeck, GameView view) {
+        if (this == CharacterCard.ARCHITECT) {
+            for (int i = 0; i < 2; i++) {
+                player.drawCard(districtDeck);
+            }
+            for (int i = 0; i < 2; i++) {
+                player.DrawAndPlaceADistrict(view);
+            }
+        }
+    }
+
 
     /**
      * Earn golds from the districts of the specified color.

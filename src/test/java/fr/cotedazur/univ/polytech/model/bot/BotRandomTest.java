@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -149,8 +150,8 @@ class BotRandomTest {
     void testUseRoleEffect() {
         CharacterCard characterCard = spy(CharacterCard.KING);
         botRandom1.setPlayerRole(characterCard);
-        botRandom1.useRoleEffect();
-        verify(characterCard, times(1)).useEffect(botRandom1);
+        botRandom1.useRoleEffect(Optional.of(districtDeck), Optional.empty());
+        verify(characterCard, times(1)).useEffect(botRandom1, districtDeck, null);
     }
 
     @Test
