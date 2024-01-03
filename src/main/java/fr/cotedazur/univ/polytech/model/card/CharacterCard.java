@@ -11,7 +11,7 @@ public enum CharacterCard {
     MAGICIAN("Magicien", 3, Color.GRAY, "Echangez vos cartes avec celles d'un autre joueur"),
     KING("Roi", 4, Color.YELLOW, "Prenez 1 pièce d'or pour chaque quartier jaune que vous possédez"),
     BISHOP("Évêque", 5, Color.BLUE, "Prenez 1 pièce d'or pour chaque quartier bleu que vous possédez. Les quartiers de l'Évêque ne peuvent pas être détruits par le Condottiere."),
-    MERCHANT("Marchand", 6, Color.GREEN, "Prenez 1 pièce d'or pour chaque quartier vert que vous possédez"),
+    MERCHANT("Marchand", 6, Color.GREEN, "Prenez 1 pièce d'or pour chaque quartier vert dans votre quartier et une pièce d'or supplémentaire après une action"),
     ARCHITECT("Architecte", 7, Color.GRAY, "Piochez 2 cartes et possibilité de poser jusqu'à 3 bâtiments (si vous avez l'argent nécessaire)"),
     WARLORD("Condottiere", 8, Color.RED, "Détruisez un quartier en payant 1 pièce d'or de moins que son coût");
 
@@ -94,7 +94,8 @@ public enum CharacterCard {
                 earnGoldsFromDistricts(player, Color.BLUE);
             }
             case MERCHANT -> {
-                //TODO TO TEST
+                earnGoldsFromDistricts(player, Color.GREEN);
+                player.setGolds(player.getGolds() + 1);
             }
             case ARCHITECT -> {
                 //TODO TO TEST
