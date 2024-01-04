@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
@@ -25,7 +26,7 @@ class RoundTest {
     BotRandom botRandom6;
     BotRandom botRandom7;
 
-    CharacterDeck charactersDiscardDeck;
+    Deck<CharacterCard> charactersDiscardDeck;
 
     @BeforeEach
     void setUp() {
@@ -79,7 +80,7 @@ class RoundTest {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck,1);
         round.startRound();
-        assertSame(charactersDiscardDeck.size(),3);
+        assertSame(3, charactersDiscardDeck.size());
         assertFalse(charactersDiscardDeck.getCards().get(1) == CharacterCard.KING  || charactersDiscardDeck.getCards().get(2) == CharacterCard.KING);
     }
 
@@ -88,24 +89,24 @@ class RoundTest {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
         round.startRound();
-        assertSame(charactersDiscardDeck.size(), 2);
-        assertNotSame(charactersDiscardDeck.getCards().get(1), CharacterCard.KING);
+        assertSame(2, charactersDiscardDeck.size());
+        assertNotSame(CharacterCard.KING, charactersDiscardDeck.getCards().get(1));
     }
 
     @Test
-    void testPresenceOfDiscardedKingWith6Player() {
+    void testNumberDiscardWith6Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
         round.startRound();
-        assertSame(charactersDiscardDeck.size(), 1);
+        assertSame(1, charactersDiscardDeck.size());
     }
 
     @Test
-    void testPresenceOfDiscardedKingWith7Player() {
+    void testNumberDiscardWith7Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6, botRandom7));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
         round.startRound();
-        assertSame(charactersDiscardDeck.size(), 2);
+        assertSame(1, charactersDiscardDeck.size());
     }
 
     @Test
