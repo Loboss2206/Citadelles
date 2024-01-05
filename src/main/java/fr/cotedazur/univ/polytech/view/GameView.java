@@ -136,11 +136,11 @@ public class GameView {
      * @param discard the deck of discarded cards
      */
     public void printDiscardedCard(Deck<CharacterCard> discard) {
-        if (discard.size()==2){
-            displayMessage("la carte defaussé est : " + discard.getCards().get(1).getCharacterName() + "\n");
+        if (discard.size()==1){
+            displayMessage("la carte defaussé est : " + discard.getCards().get(0).getCharacterName() + "\n");
         }
         else {
-            displayMessage("les cartes defaussés sont : " + discard.getCards().get(1).getCharacterName() + " et " + discard.getCards().get(2).getCharacterName() + "\n");
+            displayMessage("les cartes defaussés sont : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName() + "\n");
         }
     }
 }

@@ -22,6 +22,8 @@ public class Round {
     private final Deck<DistrictCard> districtDiscardDeck;
     private final Deck<CharacterCard> characterDeck;
     private final Deck<CharacterCard> characterDiscardDeck;
+
+    private CharacterCard faceDownCharacter;
     private final int nbRound;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, Deck<CharacterCard> characterDeck, Deck<CharacterCard> characterDiscardDeck, int nbRound) {
@@ -46,8 +48,6 @@ public class Round {
 
         characterDeck.shuffle();
 
-        //1 card has to be discarded face-down
-        characterDiscardDeck.add(characterDeck.draw());
 
         //2 card has to be discarded face-up if there is 4 players and 1 if they are 5
         if (numberOfPlayers < 6) {
@@ -65,7 +65,8 @@ public class Round {
             view.printDiscardedCard(characterDiscardDeck);
         }
 
-
+        //1 card has to be discarded face-down
+        faceDownCharacter = characterDeck.draw();
 
         //Each player choose a character
         choiceOfCharactersForEachPlayer();
@@ -105,8 +106,8 @@ public class Round {
                     view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
                 }
                 if (i == 6){
-                    view.printCharacterCard(characterDiscardDeck.getCards().get(0).getCharacterNumber(), characterDiscardDeck.getCards().get(0).getCharacterName(), characterDiscardDeck.getCards().get(0).getCharacterEffect());
-                    characterDeck.add(characterDiscardDeck.getCards().get(0));
+                    view.printCharacterCard(faceDownCharacter.getCharacterNumber(), faceDownCharacter.getCharacterName(), faceDownCharacter.getCharacterEffect());
+                    characterDeck.add(faceDownCharacter);
                 }
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
                 CharacterCard drawn = characterDeck.draw(characterNumber);

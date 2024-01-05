@@ -80,8 +80,8 @@ class RoundTest {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck,1);
         round.startRound();
-        assertSame(3, charactersDiscardDeck.size());
-        assertFalse(charactersDiscardDeck.getCards().get(1) == CharacterCard.KING  || charactersDiscardDeck.getCards().get(2) == CharacterCard.KING);
+        assertSame(2, charactersDiscardDeck.size());
+        assertFalse(charactersDiscardDeck.getCards().get(0) == CharacterCard.KING  || charactersDiscardDeck.getCards().get(1) == CharacterCard.KING);
     }
 
     @Test
@@ -89,24 +89,24 @@ class RoundTest {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
         round.startRound();
-        assertSame(2, charactersDiscardDeck.size());
-        assertNotSame(CharacterCard.KING, charactersDiscardDeck.getCards().get(1));
+        assertSame(1, charactersDiscardDeck.size());
+        assertNotSame(CharacterCard.KING, charactersDiscardDeck.getCards().get(0));
     }
 
     @Test
-    void testNumberDiscardWith6Player() {
+    void testNumberDiscardFaceUpWith6Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
         round.startRound();
-        assertSame(1, charactersDiscardDeck.size());
+        assertSame(0, charactersDiscardDeck.size());
     }
 
     @Test
-    void testNumberDiscardWith7Player() {
+    void testNumberDiscardFaceUpWith7Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6, botRandom7));
         Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
         round.startRound();
-        assertSame(1, charactersDiscardDeck.size());
+        assertSame(0, charactersDiscardDeck.size());
     }
 
     @Test
