@@ -22,6 +22,8 @@ public class Round {
     private final Deck<DistrictCard> districtDiscardDeck;
     private final Deck<CharacterCard> characterDeck;
     private final Deck<CharacterCard> characterDiscardDeck;
+
+    private CharacterCard faceDownCharacter;
     private final int nbRound;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, Deck<CharacterCard> characterDeck, Deck<CharacterCard> characterDiscardDeck, int nbRound) {
@@ -46,11 +48,12 @@ public class Round {
 
         characterDeck.shuffle();
 
-        characterDiscardDeck.add(characterDeck.draw());
 
-        if (numberOfPlayers == 4) {
-            for (int i = 0; i < 2;i++){
+        //2 card has to be discarded face-up if there is 4 players and 1 if they are 5
+        if (numberOfPlayers < 6) {
+            for (int i = numberOfPlayers-4; i < 2;i++){
                 CharacterCard drawnCard = characterDeck.draw();
+                //King can't be discarded face-up
                 if (drawnCard == CharacterCard.KING) {
                     drawnCard = characterDeck.draw();
                     characterDeck.add(CharacterCard.KING);
@@ -59,20 +62,11 @@ public class Round {
                 characterDiscardDeck.add(drawnCard);
 
             }
-            view.printDiscardedCard(characterDiscardDeck.getCards().get(1).getCharacterName(), characterDiscardDeck.getCards().get(2).getCharacterName());
-
+            view.printDiscardedCard(characterDiscardDeck);
         }
 
-        if (numberOfPlayers == 5) {
-            CharacterCard drawnCard = characterDeck.draw();
-            if (drawnCard == CharacterCard.KING) {
-                drawnCard = characterDeck.draw();
-                characterDeck.add(CharacterCard.KING);
-            }
-            characterDiscardDeck.add(drawnCard);
-            view.printDiscardedCard(drawnCard.getCharacterName());
-        }
-
+        //1 card has to be discarded face-down
+        faceDownCharacter = characterDeck.draw();
 
         //Each player choose a character
         choiceOfCharactersForEachPlayer();
@@ -112,8 +106,8 @@ public class Round {
                     view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
                 }
                 if (i == 6){
-                    view.printCharacterCard(characterDiscardDeck.getCards().get(0).getCharacterNumber(), characterDiscardDeck.getCards().get(0).getCharacterName(), characterDiscardDeck.getCards().get(0).getCharacterEffect());
-                    characterDiscardDeck.add(characterDeck.getCards().get(0));
+                    view.printCharacterCard(faceDownCharacter.getCharacterNumber(), faceDownCharacter.getCharacterName(), faceDownCharacter.getCharacterEffect());
+                    characterDeck.add(faceDownCharacter);
                 }
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
                 CharacterCard drawn = characterDeck.draw(characterNumber);

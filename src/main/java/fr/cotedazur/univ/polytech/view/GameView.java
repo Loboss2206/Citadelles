@@ -3,6 +3,8 @@ package fr.cotedazur.univ.polytech.view;
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -128,11 +130,17 @@ public class GameView {
         displayMessage("Vous avez choisi la carte personnage : " + name + "\n");
     }
 
-    public void printDiscardedCard(String name) {
-        displayMessage("la carte defaussé est : " + name + "\n");
-    }
-
-    public void printDiscardedCard(String name1, String name2) {
-        displayMessage("les cartes defaussés sont : " + name1 + " et " + name2 + "\n");
+    /**
+     * print the name of the character card discarded face-up
+     *
+     * @param discard the deck of discarded cards
+     */
+    public void printDiscardedCard(Deck<CharacterCard> discard) {
+        if (discard.size()==1){
+            displayMessage("la carte defaussé est : " + discard.getCards().get(0).getCharacterName() + "\n");
+        }
+        else {
+            displayMessage("les cartes defaussés sont : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName() + "\n");
+        }
     }
 }
