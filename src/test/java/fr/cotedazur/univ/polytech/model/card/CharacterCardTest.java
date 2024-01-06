@@ -2,14 +2,13 @@ package fr.cotedazur.univ.polytech.model.card;
 
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
-import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
 
+import javax.swing.text.View;
 import java.util.ArrayList;
 import java.util.Optional;
 import java.util.Random;
@@ -58,7 +57,8 @@ class CharacterCardTest {
 
         when(random.nextInt(anyInt())).thenReturn(0);
 
-        botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck, null);
+        botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck);
+        botRandom1.getPlayerRole().useEffect(botRandom1, (GameView) null);
 
         assertEquals(0, botRandom1.getHands().size());
         assertEquals(45, botRandom1.getGolds());
@@ -72,7 +72,8 @@ class CharacterCardTest {
         botRandom1.setPlayerRole(CharacterCard.ARCHITECT);
         when(random.nextInt(anyInt())).thenReturn(1);
 
-        botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck, null);
+        botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck);
+        botRandom1.getPlayerRole().useEffect(botRandom1, (GameView) null);
 
         assertEquals(2, botRandom1.getHands().size());
         assertEquals(50, botRandom1.getGolds());

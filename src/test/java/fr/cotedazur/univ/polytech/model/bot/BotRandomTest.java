@@ -54,6 +54,7 @@ class BotRandomTest {
 
     @Test
     void testChoiceToPutADistrictIfNoCardsInHand() {
+        botRandom2.setPlayerRole(CharacterCard.ASSASSIN);
         assertNull(botRandom2.choiceToPutADistrict());
     }
 
@@ -122,12 +123,13 @@ class BotRandomTest {
     @Test
     void testChoiceToPutADistrict(){
         //Put a district for the first call of the fonction and choose the
-        when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
+        when(random.nextInt(anyInt())).thenReturn(1).thenReturn(0).thenReturn(1);
 
         botRandom1.setGolds(20); //add golds to be able to put a district
 
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
+        botRandom1.setPlayerRole(CharacterCard.ASSASSIN);
 
         //Take a card to test if the bot has chosen to put a district
         DistrictCard card = botRandom1.getHands().get(1);
@@ -151,7 +153,7 @@ class BotRandomTest {
         CharacterCard characterCard = spy(CharacterCard.KING);
         botRandom1.setPlayerRole(characterCard);
         botRandom1.useRoleEffect(Optional.of(districtDeck), Optional.empty());
-        verify(characterCard, times(1)).useEffect(botRandom1, districtDeck, null);
+        verify(characterCard, times(1)).useEffect(botRandom1, districtDeck);
     }
 
     @Test

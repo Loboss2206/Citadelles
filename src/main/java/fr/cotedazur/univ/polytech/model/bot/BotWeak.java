@@ -28,18 +28,24 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public String startChoice(DistrictDeck districtDeck) {
+        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         //TODO
         return collectTwoGolds();
     }
 
     @Override
     public DistrictCard choiceToPutADistrict() {
+        if(getPlayerRole() != CharacterCard.ARCHITECT)useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         return putADistrict();
     }
 
     @Override
     public void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view) {
-        //TODO
+        if (districtDeck.isEmpty() && view.isPresent())
+            getPlayerRole().useEffect(this, view.get());
+        else if (districtDeck.isPresent())
+            getPlayerRole().useEffect(this, districtDeck.get());
+        else getPlayerRole().useEffect(this);
     }
 
     @Override
