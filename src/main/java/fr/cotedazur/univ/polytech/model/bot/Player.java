@@ -114,7 +114,7 @@ public abstract class Player implements GameActions {
     public void discoverValidCard() {
         validCards.clear();
         for (DistrictCard card : getHands()) {
-            if (card.getDistrictValue() <= getGolds()) {
+            if (card.getDistrictValue() <= getGolds() && !hasCardOnTheBoard(card)) {
                 validCards.add(card);
             }
         }
@@ -164,7 +164,7 @@ public abstract class Player implements GameActions {
         return false;
     }
 
-    public void DrawAndPlaceADistrict(GameView view) {
+    public void drawAndPlaceADistrict(GameView view) {
         DistrictCard districtToPut;
         do {
             districtToPut = choiceToPutADistrict();

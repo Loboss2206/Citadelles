@@ -1,10 +1,15 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.controller.Game;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -12,6 +17,7 @@ class BotWeakTest {
 
     Player botWeak;
     DistrictDeck districtDeck;
+
 
     @BeforeEach
     void setUp(){
@@ -27,6 +33,7 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.GRAVEYARD);
         botWeak.getHands().add(DistrictCard.MARKET);
         botWeak.setGolds(20);
+        botWeak.setPlayerRole(CharacterCard.ASSASSIN);
 
         //Should be Temple because its value are the smallest of the botWeak hand
         botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
@@ -47,5 +54,52 @@ class BotWeakTest {
 
         //Should be Monastery because there are all equals and the order doesn't change
         assertEquals(DistrictCard.MONASTERY,botWeak.getBoard().get(2));
+    }
+
+    @Test
+    void testUseEffectForBotWeak(){
+        //Draw with architect
+        botWeak.setPlayerRole(CharacterCard.ARCHITECT);
+        botWeak.useRoleEffect(Optional.of(districtDeck), Optional.empty());
+        assertEquals(2, botWeak.getHands().size());
+        botWeak.getHands().clear();
+
+        //Put 3 district with architect
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.PRISON);
+        botWeak.getHands().add(DistrictCard.MANOR);
+        botWeak.setGolds(24);
+        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.getPlayerRole().useEffect(botWeak,(GameView) null);
+        assertEquals(3, botWeak.getBoard().size());
+        botWeak.getHands().clear();
+        botWeak.getBoard().clear();
+
+        //Trying to put 3 district with architect but gold are reduced
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.PRISON);
+        botWeak.getHands().add(DistrictCard.MANOR);
+        botWeak.setGolds(9);
+        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.getPlayerRole().useEffect(botWeak,(GameView) null);
+        assertEquals(2, botWeak.getBoard().size());
+        botWeak.getHands().clear();
+        botWeak.getBoard().clear();
+
+        //Use merchant effect
+        botWeak.setPlayerRole(CharacterCard.MERCHANT);
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.TOWN_HALL);
+        botWeak.getHands().add(DistrictCard.MARKET);
+        botWeak.setGolds(5);
+        botWeak.useRoleEffect(Optional.empty(),Optional.empty());
+        assertEquals(6,botWeak.getGolds());
+        botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
+        botWeak.addCardToBoard(DistrictCard.MARKET);
+        botWeak.setGolds(5);
+        botWeak.useRoleEffect(Optional.empty(),Optional.empty());
+        assertEquals(8,botWeak.getGolds());
+        botWeak.getHands().clear();
+        botWeak.getBoard().clear();
     }
 }
