@@ -29,7 +29,10 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public String startChoice(DistrictDeck districtDeck) {
         if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
-        //TODO
+        discoverValidCard();
+        if(getHands().isEmpty() || !validCards.isEmpty()){
+            return drawCard(districtDeck);
+        }
         return collectTwoGolds();
     }
 
@@ -53,7 +56,7 @@ public class BotWeak extends Player implements GameActions {
         discoverValidCard();
         // we sort to know if we can put 2 times or more by comparing the first two value
         validCards.sort(new DistrictCardComparator());
-        if(validCards.size() >= 2 && characters.contains(CharacterCard.ARCHITECT) && validCards.get(0).getDistrictValue() + validCards.get(1).getDistrictValue() <= getGolds()){
+        if((validCards.size() >= 2 && characters.contains(CharacterCard.ARCHITECT) && validCards.get(0).getDistrictValue() + validCards.get(1).getDistrictValue() <= getGolds()) || (getHands().isEmpty() && characters.contains(CharacterCard.ARCHITECT))){
             return characters.indexOf(CharacterCard.ARCHITECT);
         } else if (countNumberOfSpecifiedColorCard(Color.YELLOW) >= 1 || countNumberOfSpecifiedColorCard(Color.GREEN) >= 1 || countNumberOfSpecifiedColorCard(Color.BLUE) >= 1) {
             HashMap<Color,Integer> hashMap = new HashMap<>();
