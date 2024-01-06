@@ -1,6 +1,5 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
@@ -10,7 +9,6 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;

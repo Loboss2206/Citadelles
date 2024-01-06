@@ -133,4 +133,14 @@ public class Game {
     public List<Player> getPlayers() {
         return players;
     }
+
+    public List<String> startGameTest(){
+        startGame();
+        ArrayList<String> listWinners = new ArrayList<>();
+        int nbPointMax = players.get(0).getPoints();
+        for(Player player : players){
+            if(player.getPoints() == nbPointMax) listWinners.add(player.getClass().getName());
+        }
+        return listWinners;
+    }
 }
