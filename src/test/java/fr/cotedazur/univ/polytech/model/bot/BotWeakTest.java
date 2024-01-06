@@ -3,12 +3,14 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -101,5 +103,39 @@ class BotWeakTest {
         assertEquals(8,botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
+    }
+
+    @Test
+    void testChooseCharacter(){
+        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
+        botWeak.getHands().add(DistrictCard.SMITHY);
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.TOWN_HALL);
+        botWeak.getHands().add(DistrictCard.MARKET);
+
+        botWeak.addCardToBoard(DistrictCard.MARKET);
+        botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
+        botWeak.addCardToBoard(DistrictCard.PALACE);
+        assertEquals(CharacterCard.MERCHANT,characterDeck.getCards().get(botWeak.chooseCharacter(characterDeck.getCards())));
+
+        //Test when merchant is not in list of characters
+        characterDeck.getCards().remove(CharacterCard.MERCHANT);
+        assertEquals(CharacterCard.KING,characterDeck.getCards().get(botWeak.chooseCharacter(characterDeck.getCards())));
+
+        //Test with architect
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.TOWN_HALL);
+        botWeak.getHands().add(DistrictCard.MARKET);
+        //Can be architect because there are duplicates cards
+        assertNotEquals(CharacterCard.ARCHITECT,characterDeck.getCards().get(botWeak.chooseCharacter(characterDeck.getCards())));
+        botWeak.getHands().clear();
+        botWeak.getBoard().clear();
+        //Now we test if he chose the architect
+        botWeak.getHands().add(DistrictCard.SMITHY);
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.TOWN_HALL);
+        botWeak.getHands().add(DistrictCard.MARKET);
+        botWeak.setGolds(80);
+        assertEquals(CharacterCard.ARCHITECT,characterDeck.getCards().get(botWeak.chooseCharacter(characterDeck.getCards())));
     }
 }
