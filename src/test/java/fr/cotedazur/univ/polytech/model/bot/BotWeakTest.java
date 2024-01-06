@@ -138,4 +138,25 @@ class BotWeakTest {
         botWeak.setGolds(80);
         assertEquals(CharacterCard.ARCHITECT,characterDeck.getCards().get(botWeak.chooseCharacter(characterDeck.getCards())));
     }
+
+    @Test
+    void testStartChoice(){
+        //Test when we can put a district
+        botWeak.getHands().add(DistrictCard.SMITHY);
+        botWeak.getHands().add(DistrictCard.PALACE);
+        botWeak.getHands().add(DistrictCard.TOWN_HALL);
+        botWeak.getHands().add(DistrictCard.MARKET);
+        botWeak.setGolds(80);
+        botWeak.setPlayerRole(CharacterCard.ASSASSIN);
+        assertEquals("drawCard",botWeak.startChoice(districtDeck));
+
+        //when there is not enough golds
+        botWeak.setGolds(0);
+        assertEquals("2golds",botWeak.startChoice(districtDeck));
+
+        //when hand is empty
+        botWeak.setGolds(80);
+        botWeak.getHands().clear();
+        assertEquals("drawCard",botWeak.startChoice(districtDeck));
+    }
 }
