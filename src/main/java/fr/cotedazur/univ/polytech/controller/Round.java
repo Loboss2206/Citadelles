@@ -142,9 +142,16 @@ public class Round {
             //Special case of the architect because he can put 2 more districts
             if(player.getPlayerRole() == CharacterCard.ARCHITECT)  player.useRoleEffect(Optional.empty(), Optional.of(view));
 
-
+            if(player.getBoard().size() == 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
             view.printEndTurnOfPlayer(player);
         }
+    }
+
+    public boolean noPlayerAddCompleteFirst(){
+        for(Player player : players){
+            if(player.isFirstToAdd8district()) return false;
+        }
+        return true;
     }
 
     /**

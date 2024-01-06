@@ -2,12 +2,13 @@ package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,10 +40,39 @@ class GameTest {
     // Change when we change the method calculatePoints
     @Test
     void testCalculatePoints() {
-        game.startGame();
-        for (Player player : game.getPlayers()) {
-            assertEquals(player.getBoard().size(), player.getPoints());
-        }
+        players.clear();
+        Player player = new BotRandom();
+        Player player2 = new BotRandom();
+        Player player3 = new BotRandom();
+        Player player4 = new BotRandom();
+        players.add(player);
+        players.add(player2);
+        players.add(player3);
+        players.add(player4);
+        player.setFirstToAdd8district(true);
+        player.setPlayerRole(CharacterCard.ASSASSIN);
+        player.addCardToBoard(DistrictCard.MARKET);
+        player.addCardToBoard(DistrictCard.MANOR);
+        player.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        player.addCardToBoard(DistrictCard.PRISON);
+        player.addCardToBoard(DistrictCard.CHURCH);
+
+        player2.setPlayerRole(CharacterCard.WARLORD);
+        player2.addCardToBoard(DistrictCard.MARKET);
+        player2.addCardToBoard(DistrictCard.MANOR);
+        player2.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        player2.addCardToBoard(DistrictCard.PRISON);
+        player2.addCardToBoard(DistrictCard.CHURCH);
+
+        player3.setPlayerRole(CharacterCard.ARCHITECT);
+
+        player4.setPlayerRole(CharacterCard.BISHOP);
+        game.calculatePoints();
+
+        assertEquals(0,player3.getPoints());
+        assertEquals(0,player4.getPoints());
+        assertEquals(22,player.getPoints());
+        assertEquals(18,player2.getPoints());
     }
 
     @Test

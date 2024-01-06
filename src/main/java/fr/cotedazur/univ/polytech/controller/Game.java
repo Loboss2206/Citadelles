@@ -2,6 +2,8 @@ package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
+import fr.cotedazur.univ.polytech.model.card.Color;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
@@ -111,12 +113,41 @@ public class Game {
      * Calculate the points of each player
      */
     public void calculatePoints() {
-        int max = -1;
         for (Player player : players) {
-            if (player.getBoard().size() > max) {
-                max = player.getBoard().size();
+            int totalValueConstructed = 0;
+            for(DistrictCard card : player.getBoard()){
+                totalValueConstructed += card.getDistrictValue();
             }
-            player.setPoints(player.getBoard().size());
+            player.setPoints(player.getPoints() + totalValueConstructed);
+
+            //If the player has 5 different colors
+            int colorGreen = 0;
+            int colorYellow = 0;
+            int colorBlue = 0;
+            int colorRed = 0;
+            int colorPurple = 0;
+            for(DistrictCard card : player.getBoard()){
+                if(card.getDistrictColor() == Color.YELLOW) colorYellow++;
+                if(card.getDistrictColor() == Color.GREEN) colorGreen++;
+                if(card.getDistrictColor() == Color.BLUE) colorBlue++;
+                if(card.getDistrictColor() == Color.RED) colorRed++;
+                if(card.getDistrictColor() == Color.PURPLE) colorPurple++;
+            }
+            if(colorGreen > 0 && colorYellow > 0 && colorBlue > 0 && colorRed > 0 && colorPurple > 0){
+                player.setPoints(player.getPoints() + 3);
+            }
+
+            //If first to complete 8 quarters
+            if (player.isFirstToAdd8district()) {
+                player.setPoints(player.getPoints() + 4);
+            }
+
+            //If the player complete 8 quarters
+            if (player.getBoard().size() == 8) {
+                player.setPoints(player.getPoints() + 2);
+            }
+
+            //Bonus off purple cards (will be implemented later)
         }
     }
 
@@ -134,13 +165,8 @@ public class Game {
         return players;
     }
 
-    public List<String> startGameTest(){
+    public String startGameTest(){
         startGame();
-        ArrayList<String> listWinners = new ArrayList<>();
-        int nbPointMax = players.get(0).getPoints();
-        for(Player player : players){
-            if(player.getPoints() == nbPointMax) listWinners.add(player.getClass().getName());
-        }
-        return listWinners;
+        return players.get(0).getClass().getName();
     }
 }

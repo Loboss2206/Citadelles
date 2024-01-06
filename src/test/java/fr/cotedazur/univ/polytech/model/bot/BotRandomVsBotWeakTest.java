@@ -43,13 +43,11 @@ class BotRandomVsBotWeakTest {
         int numberOfWeakBot = 0;
         int numberOfRandomBot = 0;
         for(int i = 0; i < 1000; i++){
-            ArrayList<String> listClassOfWinners = (ArrayList<String>) game.startGameTest();
-            for(String nameClass : listClassOfWinners){
-                if(nameClass.equals(BotRandom.class.getName()))
-                    numberOfRandomBot++;
-                else if(nameClass.equals(BotWeak.class.getName()))
-                    numberOfWeakBot++;
-            }
+            String winnerOfTheGameClass = game.startGameTest();
+            if(winnerOfTheGameClass.equals(BotRandom.class.getName()))
+                numberOfRandomBot++;
+            else if(winnerOfTheGameClass.equals(BotWeak.class.getName()))
+                numberOfWeakBot++;
             player = new BotRandom();
 
             player2 = new BotWeak();

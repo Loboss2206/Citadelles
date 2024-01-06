@@ -78,8 +78,8 @@ public class GameView {
             if (!player.getBoard().isEmpty()) {
                 //For adding all the districts placed by the player
                 StringJoiner joiner = new StringJoiner(", ");
-                player.getBoard().forEach(element -> joiner.add(String.valueOf(element.getDistrictName())));
-                System.out.println(++i + " : " + player.getName() + " " + player.getPoints() + "pts, golds = " + player.getGolds() + ", quartiers placés = " + joiner);
+                player.getBoard().forEach(element -> joiner.add(String.valueOf(element.getDistrictName()) +" "+element.getDistrictValue()+" pts"));
+                System.out.println(++i + " : " + player.getName() + " " + player.getPoints() + "pts, golds = " + player.getGolds() + ", quartiers placés = " + joiner + ", dernier perso = " + player.getPlayerRole());
             }
             previousPlayer = player;
         }
