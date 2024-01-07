@@ -19,6 +19,8 @@ public abstract class Player implements GameActions {
     private boolean isCrowned = false;
     protected ArrayList<DistrictCard> validCards;
 
+    boolean isFirstToAdd8district = false;
+
     // Increment for each player created
     private static int count = 0;
 
@@ -114,7 +116,7 @@ public abstract class Player implements GameActions {
     public void discoverValidCard() {
         validCards.clear();
         for (DistrictCard card : getHands()) {
-            if (card.getDistrictValue() <= getGolds()) {
+            if (card.getDistrictValue() <= getGolds() && !hasCardOnTheBoard(card)) {
                 validCards.add(card);
             }
         }
@@ -164,7 +166,7 @@ public abstract class Player implements GameActions {
         return false;
     }
 
-    public void DrawAndPlaceADistrict(GameView view) {
+    public void drawAndPlaceADistrict(GameView view) {
         DistrictCard districtToPut;
         do {
             districtToPut = choiceToPutADistrict();
@@ -178,5 +180,13 @@ public abstract class Player implements GameActions {
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    public void setFirstToAdd8district(boolean firstToAdd8district) {
+        isFirstToAdd8district = firstToAdd8district;
+    }
+
+    public boolean isFirstToAdd8district() {
+        return isFirstToAdd8district;
     }
 }

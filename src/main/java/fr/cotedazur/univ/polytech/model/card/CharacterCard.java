@@ -91,13 +91,16 @@ public enum CharacterCard {
             }
             case KING -> {
                 earnGoldsFromDistricts(player, Color.YELLOW);
+                System.out.println(player.getName()+" utilise l'effet du roi");
             }
             case BISHOP -> {
                 earnGoldsFromDistricts(player, Color.BLUE);
+                System.out.println(player.getName()+" utilise l'effet de l'évêque");
             }
             case MERCHANT -> {
                 earnGoldsFromDistricts(player, Color.GREEN);
                 player.setGolds(player.getGolds() + 1);
+                System.out.println(player.getName()+" utilise l'effet du marchant");
             }
             case WARLORD -> {
                 //TODO TO TEST
@@ -110,15 +113,27 @@ public enum CharacterCard {
      *
      * @param player the player who use the effect
      */
-    public void useEffect(Player player, DistrictDeck districtDeck, GameView view) {
-        if (this == CharacterCard.ARCHITECT) {
+    public void useEffect(Player player, DistrictDeck districtDeck) {
+        if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
             for (int i = 0; i < 2; i++) {
                 player.drawCard(districtDeck);
             }
+        }
+        System.out.println("Pioche 2 cartes grâce à l'effet de l'architecte");
+    }
+
+    /**
+     * Use the effect of the character card.
+     *
+     * @param player the player who use the effect
+     */
+    public void useEffect(Player player, GameView view) {
+        if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
             for (int i = 0; i < 2; i++) {
-                player.DrawAndPlaceADistrict(view);
+                player.drawAndPlaceADistrict(view);
             }
         }
+        System.out.println("Pose une carte supplémentaire grâce à l'effet de l'architecte");
     }
 
 

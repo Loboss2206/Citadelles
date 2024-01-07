@@ -19,6 +19,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String startChoice(DistrictDeck districtDeck) {
+        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
@@ -35,6 +36,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public DistrictCard choiceToPutADistrict() {
+        useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             return putADistrict();
@@ -54,14 +56,14 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view) {
-        if (districtDeck.isPresent() && view.isPresent())
-            getPlayerRole().useEffect(this, districtDeck.get(), view.get());
-        else if (districtDeck.isPresent())
-            getPlayerRole().useEffect(this, districtDeck.get(), null);
-        else if (view.isPresent())
-            throw new IllegalArgumentException("The district deck is not present but the view is present in the bot's useRoleEffect method");
-        else
-            getPlayerRole().useEffect(this);
+        int randomIndex = random.nextInt(2);
+        if (randomIndex == 0) {
+            if (districtDeck.isEmpty() && view.isPresent())
+                getPlayerRole().useEffect(this, view.get());
+            else if (districtDeck.isPresent())
+                getPlayerRole().useEffect(this, districtDeck.get());
+            else getPlayerRole().useEffect(this);
+        }
     }
 
     @Override

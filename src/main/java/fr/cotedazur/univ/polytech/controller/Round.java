@@ -137,13 +137,21 @@ public class Round {
             if (choice != null) view.printPlayerAction(choice , player);
 
             // Draw and place a district
-            player.DrawAndPlaceADistrict(view);
+            player.drawAndPlaceADistrict(view);
 
-            // Use the effect of the character
-            player.useRoleEffect(Optional.of((DistrictDeck) districtDeck), Optional.of(view));
+            //Special case of the architect because he can put 2 more districts
+            if(player.getPlayerRole() == CharacterCard.ARCHITECT)  player.useRoleEffect(Optional.empty(), Optional.of(view));
 
+            if(player.getBoard().size() == 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
             view.printEndTurnOfPlayer(player);
         }
+    }
+
+    public boolean noPlayerAddCompleteFirst(){
+        for(Player player : players){
+            if(player.isFirstToAdd8district()) return false;
+        }
+        return true;
     }
 
     /**

@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,9 +27,11 @@ class PlayerComparatorTest {
         botRandom2.setPoints(5);
         assertEquals(1, playerComparator.compare(botRandom1, botRandom2));
 
-        //Bot 1 == Bot2
+        //Bot 1 == Bot2 but character different
+        botRandom1.setPlayerRole(CharacterCard.ASSASSIN);
+        botRandom2.setPlayerRole(CharacterCard.BISHOP);
         botRandom2.setPoints(10);
-        assertEquals(0, playerComparator.compare(botRandom1, botRandom2));
+        assertEquals(-1, playerComparator.compare(botRandom1, botRandom2));
 
         //Bot 1 < Bot 2
         botRandom2.setPoints(15);
