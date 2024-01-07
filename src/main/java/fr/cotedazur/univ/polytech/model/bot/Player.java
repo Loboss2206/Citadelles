@@ -169,7 +169,7 @@ public abstract class Player implements GameActions {
     public void drawAndPlaceADistrict(GameView view) {
         DistrictCard districtToPut;
         do {
-            districtToPut = choiceToPutADistrict();
+            districtToPut = choiceHowToPlayDuringTheRound();
         } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
         if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
             addCardToBoard(districtToPut);

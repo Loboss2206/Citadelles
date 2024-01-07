@@ -4,40 +4,54 @@ import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
 
 public class Game {
-    private final ArrayList<Player> players; //all the players that play in the game
+    // All the players that play in the game
+    private final List<Player> players;
 
+    // The view of the game
     private final GameView view;
+
+    // The comparator of the players
     private final PlayerComparator playerComparator;
 
-    //Decks
+    // All the decks
     private DistrictDeck districtDeck;
     private DistrictDeck districtDiscardDeck;
-    private CharacterDeck characterDeck;
-    private CharacterDeck characterDiscardDeck;
+
+    // The round number
     int roundNumber = 0;
+
+    // Random Object
+    private final Random random = new Random();
 
     public Game(List<Player> players) {
         this.view = new GameView(this);
-        //Add players
-        this.players = (ArrayList<Player>) players;
         this.playerComparator = new PlayerComparator();
 
-        int randomIndex = new Random().nextInt(players.size());
-        players.get(randomIndex).setCrowned(true);
+        // Add players
+        this.players = players;
 
-        //Build the decks and shuffle them
+        // Choose a random king among the players
+        chooseRandomKing();
+
+        // Build the decks and shuffle them
         buildDecks();
+    }
+
+    /**
+     * Choose a random king among the players on the start of the game
+     */
+    public void chooseRandomKing(){
+        int randomIndex = random.nextInt(players.size());
+        players.get(randomIndex).setCrowned(true);
     }
 
     /**
@@ -46,10 +60,7 @@ public class Game {
     protected void buildDecks() {
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDiscardDeck = DeckFactory.createEmptyDistrictDeck();
-        this.characterDeck = DeckFactory.createCharacterDeck();
-        this.characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
         this.districtDeck.shuffle();
-        this.characterDeck.shuffle();
     }
 
     /**
@@ -75,17 +86,13 @@ public class Game {
             }
         }
 
-        //Start the rounds until a player has won or the max number of rounds is reached
+        //Start the rounds until a player has won
         do {
-            //Build the decks and shuffle them
-            characterDeck = DeckFactory.createCharacterDeck();
-            characterDiscardDeck = DeckFactory.createEmptyCharacterDeck();
-
             //Set the crowned player as the first player of the list
             setCrownedPlayerToFirstPlace();
 
-            //Start the round
-            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, this.characterDeck, this.characterDiscardDeck, ++roundNumber);
+            //Create and start the round
+            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, ++roundNumber);
             round.startRound();
         } while (!isGameFinished());
 
@@ -114,40 +121,64 @@ public class Game {
      */
     public void calculatePoints() {
         for (Player player : players) {
-            int totalValueConstructed = 0;
             for(DistrictCard card : player.getBoard()){
-                totalValueConstructed += card.getDistrictValue();
+                player.setPoints(player.getPoints() + card.getDistrictValue());
             }
-            player.setPoints(player.getPoints() + totalValueConstructed);
 
             //If the player has 5 different colors
-            int colorGreen = 0;
-            int colorYellow = 0;
-            int colorBlue = 0;
-            int colorRed = 0;
-            int colorPurple = 0;
-            for(DistrictCard card : player.getBoard()){
-                if(card.getDistrictColor() == Color.YELLOW) colorYellow++;
-                if(card.getDistrictColor() == Color.GREEN) colorGreen++;
-                if(card.getDistrictColor() == Color.BLUE) colorBlue++;
-                if(card.getDistrictColor() == Color.RED) colorRed++;
-                if(card.getDistrictColor() == Color.PURPLE) colorPurple++;
-            }
-            if(colorGreen > 0 && colorYellow > 0 && colorBlue > 0 && colorRed > 0 && colorPurple > 0){
-                player.setPoints(player.getPoints() + 3);
-            }
+            addBonusPointsForPlayerWhoHas5DifferentColors(player);
 
             //If first to complete 8 quarters
-            if (player.isFirstToAdd8district()) {
-                player.setPoints(player.getPoints() + 4);
-            }
+            addBonusPointsForPlayerWhoIsFirstToAdd8Districts(player);
 
             //If the player complete 8 quarters
-            if (player.getBoard().size() == 8) {
-                player.setPoints(player.getPoints() + 2);
-            }
+            addBonusPointsForPlayerWhoAdd8Districts(player);
 
             //Bonus off purple cards (will be implemented later)
+        }
+    }
+
+    /**
+     * Add 3 points to the player if he has 5 different colors
+     * @param player the player to check
+     */
+    public void addBonusPointsForPlayerWhoHas5DifferentColors(Player player){
+        boolean colorGreen = false;
+        boolean colorYellow = false;
+        boolean colorBlue = false;
+        boolean colorRed = false;
+        boolean colorPurple = false;
+
+        for(DistrictCard card : player.getBoard()){
+            if(card.getDistrictColor() == Color.YELLOW) colorYellow = true;
+            if(card.getDistrictColor() == Color.GREEN) colorGreen = true;
+            if(card.getDistrictColor() == Color.BLUE) colorBlue = true;
+            if(card.getDistrictColor() == Color.RED) colorRed = true;
+            if(card.getDistrictColor() == Color.PURPLE) colorPurple = true;
+        }
+
+        if(colorGreen && colorYellow && colorBlue && colorRed && colorPurple){
+            player.setPoints(player.getPoints() + 3);
+        }
+    }
+
+    /**
+     * Add 4 points to the player if he is the first to complete 8 districts
+     * @param player the player to check
+     */
+    public void addBonusPointsForPlayerWhoIsFirstToAdd8Districts(Player player){
+        if (player.isFirstToAdd8district()) {
+            player.setPoints(player.getPoints() + 4);
+        }
+    }
+
+    /**
+     * Add 2 points to the player if he completes 8 districts
+     * @param player the player to check
+     */
+    public void addBonusPointsForPlayerWhoAdd8Districts(Player player){
+        if (player.getBoard().size() >= 8) {
+            player.setPoints(player.getPoints() + 2);
         }
     }
 
