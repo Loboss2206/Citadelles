@@ -10,12 +10,12 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 public class Round {
-    private final ArrayList<Player> players;
-
+    private final List<Player> players;
+    private final List<Player> playersSortedByCharacterNumber;
     private final GameView view;
-
 
     //Decks
     private final Deck<DistrictCard> districtDeck;
@@ -23,10 +23,12 @@ public class Round {
     private final Deck<CharacterCard> characterDeck;
     private final Deck<CharacterCard> characterDiscardDeck;
 
+    private CharacterCard faceDownCharacter;
     private final int nbRound;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, Deck<CharacterCard> characterDeck, Deck<CharacterCard> characterDiscardDeck, int nbRound) {
-        this.players = (ArrayList<Player>) players;
+        this.players = players;
+        this.playersSortedByCharacterNumber = new ArrayList<>(players);
         this.view = view;
         this.districtDeck = districtDeck;
         this.districtDiscardDeck = districtDiscardDeck;
@@ -35,15 +37,66 @@ public class Round {
         this.nbRound = nbRound;
     }
 
+    /**
+     * Play the round
+     */
     public void startRound() {
-
         //Announce the start of the round
         view.printStartRound(nbRound);
 
-        String result = "";
+        int numberOfPlayers = players.size();
+
+        characterDeck.shuffle();
+
+
+        //2 card has to be discarded face-up if there is 4 players and 1 if they are 5
+        if (numberOfPlayers < 6) {
+            for (int i = numberOfPlayers-4; i < 2;i++){
+                CharacterCard drawnCard = characterDeck.draw();
+                //King can't be discarded face-up
+                if (drawnCard == CharacterCard.KING) {
+                    drawnCard = characterDeck.draw();
+                    characterDeck.add(CharacterCard.KING);
+
+                }
+                characterDiscardDeck.add(drawnCard);
+
+            }
+            view.printDiscardedCard(characterDiscardDeck);
+        }
+
+        //1 card has to be discarded face-down
+        faceDownCharacter = characterDeck.draw();
 
         //Each player choose a character
-        for(Player player: players){
+        choiceOfCharactersForEachPlayer();
+
+        // Set the new crowned player if there is one
+        setNewCrownedPlayer();
+
+        //Sort the players by the number of the character card
+        sortPlayersByNumbersOfCharacterCard();
+
+        //Each player make a choice (draw a card or take 2 golds) and put a district
+        choiceActionsForTheRound();
+
+        //Announce the end of the round
+        view.printEndRound(nbRound);
+    }
+
+    /**
+     * Sort the players by the number of the character card
+     */
+    public void sortPlayersByNumbersOfCharacterCard() {
+        playersSortedByCharacterNumber.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
+    }
+
+    /**
+     * Function that allows each player to choose a character in the list of character available
+     */
+    public void choiceOfCharactersForEachPlayer() {
+        int i = 0;
+        for (Player player: players){
             //while the player has not chosen a character (or the character is not available)
             boolean again = true;
             while (again) {
@@ -52,7 +105,10 @@ public class Round {
                 for (CharacterCard character : characterDeck.getCards()) {
                     view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
                 }
-                //The player choose a character from the deck
+                if (i == 6){
+                    view.printCharacterCard(faceDownCharacter.getCharacterNumber(), faceDownCharacter.getCharacterName(), faceDownCharacter.getCharacterEffect());
+                    characterDeck.add(faceDownCharacter);
+                }
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
                 CharacterCard drawn = characterDeck.draw(characterNumber);
                 //If the card is not available, the player choose again, after an error message
@@ -66,25 +122,56 @@ public class Round {
                 }
 
             }
+            i++;
         }
+    }
 
-        players.sort(Comparator.comparingInt(player->player.getPlayerRole().getCharacterNumber()));
-
-
-        //Each player make a choice (draw a card or take 2 golds) and put a district
-        for (Player player : players) {
+    /**
+     * Function that allows each player to choose their actions for the current round (choose 2golds or draw a card and choose to put a district or not)
+     */
+    public void choiceActionsForTheRound() {
+        String choice;
+        for (Player player : playersSortedByCharacterNumber) {
             //Take the choice
-            result = player.startChoice((DistrictDeck) districtDeck);
-            if (result != null) view.printPlayerAction(result, player);
+            choice = player.startChoice((DistrictDeck) districtDeck);
+            if (choice != null) view.printPlayerAction(choice , player);
 
-            //Put a district
-            result = player.choiceToPutADistrict();
-            if (result != null) view.printPlayerAction(result, player);
+            // Draw and place a district
+            player.drawAndPlaceADistrict(view);
+
+            //Special case of the architect because he can put 2 more districts
+            if(player.getPlayerRole() == CharacterCard.ARCHITECT)  player.useRoleEffect(Optional.empty(), Optional.of(view));
+
+            if(player.getBoard().size() == 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
             view.printEndTurnOfPlayer(player);
         }
+    }
 
-        //Announce the end of the round
-        view.printEndRound(nbRound);
+    public boolean noPlayerAddCompleteFirst(){
+        for(Player player : players){
+            if(player.isFirstToAdd8district()) return false;
+        }
+        return true;
+    }
 
+    /**
+     * Set the crown to the new king
+     */
+    public void setNewCrownedPlayer() {
+        boolean kingFound = false;
+        for (Player player : players) {
+            if (player.getPlayerRole() == CharacterCard.KING) {
+                kingFound = true;
+                break;
+            }
+        }
+        if (kingFound) {
+            for (Player player : players) {
+                if (player.getPlayerRole() == CharacterCard.KING) {
+                    player.setCrowned(true);
+                }
+                else player.setCrowned(false);
+            }
+        }
     }
 }

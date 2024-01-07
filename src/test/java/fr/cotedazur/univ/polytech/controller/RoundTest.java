@@ -3,23 +3,30 @@ package fr.cotedazur.univ.polytech.controller;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import org.junit.jupiter.api.Assertions;
+import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
+import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
-
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
-public class RoundTest {
 
+class RoundTest {
+    Game game;
     ArrayList<Player> players;
     BotRandom botRandom1;
     BotRandom botRandom2;
-
     BotRandom botRandom3;
+    BotRandom botRandom4;
+    BotRandom botRandom5;
+    BotRandom botRandom6;
+    BotRandom botRandom7;
 
+    Deck<CharacterCard> charactersDiscardDeck;
 
     @BeforeEach
     void setUp() {
@@ -27,21 +34,101 @@ public class RoundTest {
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
         botRandom3 = new BotRandom();
-        players.add(botRandom1);
-        players.add(botRandom2);
-        players.add(botRandom3);
+        botRandom4 = new BotRandom();
+        botRandom5 = new BotRandom();
+        botRandom6 = new BotRandom();
+        botRandom7 = new BotRandom();
+        charactersDiscardDeck = DeckFactory.createEmptyCharacterDeck();
     }
 
     @Test
-    void testOrderForCaracterCard(){
+    void testOrderForCharacterCard() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3));
         players.get(0).setPlayerRole(CharacterCard.ARCHITECT);
         players.get(1).setPlayerRole(CharacterCard.KING);
         players.get(2).setPlayerRole(CharacterCard.THIEF);
-        players.sort(Comparator.comparingInt(player->player.getPlayerRole().getCharacterNumber()));
-        assertTrue(players.get(0)==botRandom3);
-        assertTrue(players.get(1)==botRandom2);
-        assertTrue(players.get(2)==botRandom1);
-        assertFalse(players.get(0)==botRandom1);
+        players.sort(Comparator.comparingInt(player -> player.getPlayerRole().getCharacterNumber()));
+        assertSame(players.get(0), botRandom3);
+        assertSame(players.get(1), botRandom2);
+        assertSame(players.get(2), botRandom1);
+        assertNotSame(players.get(0), botRandom1);
+    }
 
+    @Test
+    void testOrderChangeWhenNewCrownedPlayer() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
+        players.get(0).setPlayerRole(CharacterCard.ARCHITECT);
+        players.get(1).setPlayerRole(CharacterCard.KING);
+        players.get(2).setPlayerRole(CharacterCard.THIEF);
+        players.get(3).setPlayerRole(CharacterCard.BISHOP);
+    }
+
+    @Test
+    void testNoDoubleOnBoardForOnePlayer() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3));
+        game = new Game(players);
+        game.startGame();
+        for (Player p : players) {
+            for (int i = 0; i < p.getBoard().size() - 1; i++) {
+                assertNotEquals(p.getBoard().get(i), p.getBoard().get(i + 1));
+            }
+        }
+    }
+
+    @Test
+    void testPresenceOfDiscardedKingWith4Player(){
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
+        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck,1);
+        round.startRound();
+        assertSame(2, charactersDiscardDeck.size());
+        assertFalse(charactersDiscardDeck.getCards().get(0) == CharacterCard.KING  || charactersDiscardDeck.getCards().get(1) == CharacterCard.KING);
+    }
+
+    @Test
+    void testPresenceOfDiscardedKingWith5Player() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5));
+        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
+        round.startRound();
+        assertSame(1, charactersDiscardDeck.size());
+        assertNotSame(CharacterCard.KING, charactersDiscardDeck.getCards().get(0));
+    }
+
+    @Test
+    void testNumberDiscardFaceUpWith6Player() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6));
+        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
+        round.startRound();
+        assertSame(0, charactersDiscardDeck.size());
+    }
+
+    @Test
+    void testNumberDiscardFaceUpWith7Player() {
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6, botRandom7));
+        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
+        round.startRound();
+        assertSame(0, charactersDiscardDeck.size());
+    }
+
+    @Test
+    void testSetNewCrownedPlayer() {
+        botRandom1.setCrowned(true);
+        botRandom1.setPlayerRole(CharacterCard.ARCHITECT);
+        botRandom2.setPlayerRole(CharacterCard.KING);
+        botRandom3.setPlayerRole(CharacterCard.THIEF);
+        botRandom4.setPlayerRole(CharacterCard.BISHOP);
+        players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
+
+        assertTrue(botRandom1.isCrowned());
+        assertFalse(botRandom2.isCrowned());
+        assertFalse(botRandom3.isCrowned());
+        assertFalse(botRandom4.isCrowned());
+
+        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), DeckFactory.createCharacterDeck(), charactersDiscardDeck, 1);
+        round.setNewCrownedPlayer();
+
+        assertFalse(botRandom1.isCrowned());
+        assertTrue(botRandom2.isCrowned());
+        assertFalse(botRandom3.isCrowned());
+        assertFalse(botRandom4.isCrowned());
     }
 }

@@ -3,18 +3,23 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public abstract class Player {
-    private int id = 0;
+public abstract class Player implements GameActions {
+    private final int id;
     private final String name;
     private int golds;
     private final ArrayList<DistrictCard> hands;
     private CharacterCard playerRole;
     private final ArrayList<DistrictCard> board;//This is for when a player choose to put a district
     private int points;
+    private boolean isCrowned = false;
+    protected ArrayList<DistrictCard> validCards;
+
+    boolean isFirstToAdd8district = false;
 
     // Increment for each player created
     private static int count = 0;
@@ -26,11 +31,19 @@ public abstract class Player {
         this.hands = new ArrayList<>();
         this.playerRole = null;
         this.board = new ArrayList<>();
+        this.validCards = new ArrayList<>();
     }
-
 
     public int getGolds() {
         return golds;
+    }
+
+    public void removeGold(int golds) {
+        this.golds -= golds;
+    }
+
+    public void setGolds(int golds) {
+        this.golds = golds;
     }
 
     public List<DistrictCard> getHands() {
@@ -41,10 +54,6 @@ public abstract class Player {
         return playerRole;
     }
 
-    public void setGolds(int golds) {
-        this.golds = golds;
-    }
-
     public void setPlayerRole(CharacterCard playerRole) {
         this.playerRole = playerRole;
     }
@@ -52,6 +61,7 @@ public abstract class Player {
     public List<DistrictCard> getBoard() {
         return board;
     }
+
     public String getName() {
         return name;
     }
@@ -68,6 +78,11 @@ public abstract class Player {
         Player.count = count;
     }
 
+    /**
+     * function that draw a card from the district deck if its possible, else the player take 2 golds
+     * @param districtDeck the district deck
+     * @return the name of the card drawn
+     */
     public String drawCard(DistrictDeck districtDeck) {
         if(districtDeck.isEmpty()) {
             return collectTwoGolds();
@@ -85,21 +100,63 @@ public abstract class Player {
         return "2golds";
     }
 
-    //These functions are abstract because it depends on ont the bot type
-    public abstract boolean putADistrict();
-
-    public abstract String startChoice(DistrictDeck districtDeck);
-
-    public abstract String choiceToPutADistrict();
-
-    public abstract void useRoleEffect();
+    /**
+     * add a card to the board
+     * @param card the card to add
+     */
+    public void addCardToBoard(DistrictCard card) {
+        board.add(card);
+        hands.remove(card);
+        removeGold(card.getDistrictValue());
+    }
 
     /**
-     * The function take a list of character cards and return the number of the character card chosen by the player (the number is the index of the list)
-     * @param cards the list of character cards
-     * @return the number of the character card chosen by the player (the number is the index of the list)
-      */
-    public abstract int chooseCharacter(List<CharacterCard> cards);
+     * Function that check all the cards in the hand of the player and add the cards that are buy-able by the player to the list validCards
+     */
+    public void discoverValidCard() {
+        validCards.clear();
+        for (DistrictCard card : getHands()) {
+            if (card.getDistrictValue() <= getGolds() && !hasCardOnTheBoard(card)) {
+                validCards.add(card);
+            }
+        }
+    }
+
+    /**
+     * check if a card is on the board of a player
+     * @param card the card to check
+     * @return true if the card is on the board, else false
+     */
+    public boolean hasCardOnTheBoard(DistrictCard card) {
+        if (board.isEmpty() || card == null) return false;
+        for (DistrictCard c : board) {
+            if (c.name().equals(card.name())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * check if the player has a playable card
+     * @return true if the player has a playable card, else false
+     */
+    public boolean hasPlayableCard() {
+        for (DistrictCard card : hands) {
+            if (!hasCardOnTheBoard(card) && validCards.contains(card)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void setCrowned(boolean isCrowned) {
+        this.isCrowned = isCrowned;
+    }
+
+    public boolean isCrowned() {
+        return isCrowned;
+    }
 
     @Override
     public boolean equals(Object obj) {
@@ -109,8 +166,27 @@ public abstract class Player {
         return false;
     }
 
+    public void drawAndPlaceADistrict(GameView view) {
+        DistrictCard districtToPut;
+        do {
+            districtToPut = choiceToPutADistrict();
+        } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
+        if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
+            addCardToBoard(districtToPut);
+            if (view != null) view.printPlayerAction("putDistrict", this);
+        }
+    }
+
     @Override
     public int hashCode() {
         return 0;
+    }
+
+    public void setFirstToAdd8district(boolean firstToAdd8district) {
+        isFirstToAdd8district = firstToAdd8district;
+    }
+
+    public boolean isFirstToAdd8district() {
+        return isFirstToAdd8district;
     }
 }

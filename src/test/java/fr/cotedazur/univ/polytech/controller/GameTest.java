@@ -2,12 +2,13 @@ package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -39,10 +40,39 @@ class GameTest {
     // Change when we change the method calculatePoints
     @Test
     void testCalculatePoints() {
-        game.startGame();
-        for (Player player : game.getPlayers()) {
-            assertEquals(player.getBoard().size(), player.getPoints());
-        }
+        players.clear();
+        Player player = new BotRandom();
+        Player player2 = new BotRandom();
+        Player player3 = new BotRandom();
+        Player player4 = new BotRandom();
+        players.add(player);
+        players.add(player2);
+        players.add(player3);
+        players.add(player4);
+        player.setFirstToAdd8district(true);
+        player.setPlayerRole(CharacterCard.ASSASSIN);
+        player.addCardToBoard(DistrictCard.MARKET);
+        player.addCardToBoard(DistrictCard.MANOR);
+        player.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        player.addCardToBoard(DistrictCard.PRISON);
+        player.addCardToBoard(DistrictCard.CHURCH);
+
+        player2.setPlayerRole(CharacterCard.WARLORD);
+        player2.addCardToBoard(DistrictCard.MARKET);
+        player2.addCardToBoard(DistrictCard.MANOR);
+        player2.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        player2.addCardToBoard(DistrictCard.PRISON);
+        player2.addCardToBoard(DistrictCard.CHURCH);
+
+        player3.setPlayerRole(CharacterCard.ARCHITECT);
+
+        player4.setPlayerRole(CharacterCard.BISHOP);
+        game.calculatePoints();
+
+        assertEquals(0,player3.getPoints());
+        assertEquals(0,player4.getPoints());
+        assertEquals(22,player.getPoints());
+        assertEquals(18,player2.getPoints());
     }
 
     @Test
@@ -56,8 +86,8 @@ class GameTest {
         player3.setPoints(4);
         player4.setPoints(11);
 
-        List<Player> players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
-        Game game = new Game(players);
+        players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
+        game = new Game(players);
 
         assertEquals(player1, game.getPlayers().get(0));
         assertEquals(player2, game.getPlayers().get(1));
@@ -72,10 +102,41 @@ class GameTest {
         assertEquals(player4, game.getPlayers().get(0));
     }
 
-    //Difficult to test if we don't know the player action
-    /*@Test
-    void testRankingWithOnePlayerWithOnlyGoldsAndOnlyOneRound() {
-        game.startGame();
-        Assertions.assertEquals(2, game.getPlayers().get(0).getGolds());
-    }*/
+    @Test
+    void testSetCrownedPlayerToFirstPlace() {
+        Player player1 = new BotRandom();
+        Player player2 = new BotRandom();
+        Player player3 = new BotRandom();
+        Player player4 = new BotRandom();
+
+        players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
+        game = new Game(players);
+
+        for (Player player : game.getPlayers()) {
+            player.setCrowned(false);
+        }
+
+        assertEquals(player1, game.getPlayers().get(0));
+        assertEquals(player2, game.getPlayers().get(1));
+        assertEquals(player3, game.getPlayers().get(2));
+        assertEquals(player4, game.getPlayers().get(3));
+
+        player3.setCrowned(true);
+        game.setCrownedPlayerToFirstPlace();
+
+        assertEquals(player3, game.getPlayers().get(0));
+        assertEquals(player4, game.getPlayers().get(1));
+        assertEquals(player1, game.getPlayers().get(2));
+        assertEquals(player2, game.getPlayers().get(3));
+
+        player3.setCrowned(false);
+        player4.setCrowned(true);
+        game.setCrownedPlayerToFirstPlace();
+
+        assertEquals(player4, game.getPlayers().get(0));
+        assertEquals(player1, game.getPlayers().get(1));
+        assertEquals(player2, game.getPlayers().get(2));
+        assertEquals(player3, game.getPlayers().get(3));
+    }
+
 }

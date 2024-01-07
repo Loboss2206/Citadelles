@@ -1,14 +1,17 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Random;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 public class BotRandom extends Player implements GameActions {
 
-    private final Random random = new Random();
+    private Random random = new Random();
 
     public BotRandom() {
         super();
@@ -16,13 +19,14 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String startChoice(DistrictDeck districtDeck) {
+        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
                 return collectTwoGolds();
             }
             case 1 -> {
-               return drawCard(districtDeck);
+                return drawCard(districtDeck);
             }
             default -> {
                 return null;
@@ -31,32 +35,53 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String choiceToPutADistrict() {
+    public DistrictCard choiceToPutADistrict() {
+        useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
-            return putADistrict() ? "putDistrict" : null;
+            return putADistrict();
         }
         return null;
     }
 
     @Override
-    public boolean putADistrict() {
-        if (!getHands().isEmpty()) {
-            int randomIndex = random.nextInt(getHands().size());
-            getBoard().add(getHands().get(randomIndex));
-            getHands().remove(randomIndex);
-            return true;
+    public DistrictCard putADistrict() {
+        discoverValidCard();
+        if (!validCards.isEmpty()) {
+            int randomIndex = random.nextInt(validCards.size());
+            return validCards.get(randomIndex);
         }
-        return false;
+        return null;
     }
 
     @Override
-    public void useRoleEffect() {
-
+    public void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view) {
+        int randomIndex = random.nextInt(2);
+        if (randomIndex == 0) {
+            if (districtDeck.isEmpty() && view.isPresent())
+                getPlayerRole().useEffect(this, view.get());
+            else if (districtDeck.isPresent())
+                getPlayerRole().useEffect(this, districtDeck.get());
+            else getPlayerRole().useEffect(this);
+        }
     }
 
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    public void setRandom(Random random) {
+        this.random = random;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return super.equals(o);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

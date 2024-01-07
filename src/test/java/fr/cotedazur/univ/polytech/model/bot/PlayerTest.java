@@ -1,13 +1,11 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -48,7 +46,7 @@ class PlayerTest {
     }
 
     @Test
-    void testDrawCard(){
+    void testDrawCard() {
         DistrictDeck copyDeck = new DistrictDeck();
         copyDeck = DeckFactory.createDistrictDeck();
         botRandom2.drawCard(districtDeck);
@@ -56,5 +54,65 @@ class PlayerTest {
         //If the card is correctly removed
         assertEquals(66, copyDeck.size());
         assertEquals(65, districtDeck.size());
+    }
+
+    @Test
+    void testAddCardOnTheBoard() {
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
+        assertNotNull(botRandom2.getBoard().get(0));
+        assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
+
+        botRandom2.getBoard().clear();
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
+        assertEquals(botRandom2.getBoard().size(), 1);
+    }
+
+    @Test
+    void hasCardOnTheBoard() {
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
+        assertNotNull(botRandom2.getBoard().get(0));
+        assertEquals(DistrictCard.TRADING_POST, botRandom2.getBoard().get(0));
+        assertTrue(botRandom2.hasCardOnTheBoard(DistrictCard.TRADING_POST));
+
+        botRandom2.getBoard().clear();
+        assertFalse(botRandom2.hasCardOnTheBoard(DistrictCard.TRADING_POST));
+    }
+
+    @Test
+    void hasPlayableCard() {
+        botRandom2.getHands().clear();
+        assertFalse(botRandom2.hasPlayableCard());
+
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.setGolds(3);
+        botRandom2.discoverValidCard();
+
+        assertTrue(botRandom2.hasPlayableCard());
+
+        botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        assertFalse(botRandom2.hasPlayableCard());
+    }
+
+    @Test
+    void testDiscoverValidCard() {
+        botRandom2.getHands().add(DistrictCard.TRADING_POST);
+        botRandom2.getHands().add(DistrictCard.MANOR);
+        botRandom2.getHands().add(DistrictCard.CASTLE);
+
+        botRandom2.setGolds(5);
+        botRandom2.discoverValidCard();
+        assertEquals(3, botRandom2.validCards.size());
+
+        botRandom2.setGolds(4);
+        botRandom2.discoverValidCard();
+        assertEquals(3, botRandom2.validCards.size());
+
+        botRandom2.setGolds(3);
+        botRandom2.discoverValidCard();
+        assertEquals(2, botRandom2.validCards.size());
     }
 }

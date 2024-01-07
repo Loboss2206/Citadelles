@@ -3,6 +3,8 @@ package fr.cotedazur.univ.polytech.view;
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
 import java.util.StringJoiner;
@@ -50,17 +52,17 @@ public class GameView {
      * @param player the player concerned
      */
     public void printPlayerAction(String action, Player player) {
-        String playerString = "Le joueur " + player.getName() +" ("+player.getPlayerRole().getCharacterName()+")";
+        String playerString = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
         if (action.equals("2golds"))
             System.out.println(playerString + " a choisi de prendre 2 pièces d'or, il possède maintenant " + player.getGolds() + " pièces d'or.");
         else if (action.equals("drawCard"))
             System.out.println(playerString + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
-        if (action.equals("putDistrict"))
+        else if (action.equals("putDistrict"))
             System.out.println(playerString + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
     }
 
     public void printEndTurnOfPlayer(Player player) {
-        System.out.println("Le joueur " + player.getName() +" ("+player.getPlayerRole().getCharacterName()+") décide de terminer son tour");
+        System.out.println("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") décide de terminer son tour");
     }
 
     /**
@@ -76,8 +78,8 @@ public class GameView {
             if (!player.getBoard().isEmpty()) {
                 //For adding all the districts placed by the player
                 StringJoiner joiner = new StringJoiner(", ");
-                player.getBoard().forEach(element -> joiner.add(String.valueOf(element.getDistrictName())));
-                System.out.println(++i + " : " + player.getName() + " " + player.getPoints() + "pts, golds = " + player.getGolds() + ", quartiers placés = " + joiner);
+                player.getBoard().forEach(element -> joiner.add(String.valueOf(element.getDistrictName()) +" "+element.getDistrictValue()+" pts"));
+                System.out.println(++i + " : " + player.getName() + " " + player.getPoints() + "pts, golds = " + player.getGolds() + ", quartiers placés = " + joiner + ", dernier perso = " + player.getPlayerRole());
             }
             previousPlayer = player;
         }
@@ -126,5 +128,19 @@ public class GameView {
      */
     public void printCharacterCard(String name) {
         displayMessage("Vous avez choisi la carte personnage : " + name + "\n");
+    }
+
+    /**
+     * print the name of the character card discarded face-up
+     *
+     * @param discard the deck of discarded cards
+     */
+    public void printDiscardedCard(Deck<CharacterCard> discard) {
+        if (discard.size()==1){
+            displayMessage("la carte defaussé est : " + discard.getCards().get(0).getCharacterName() + "\n");
+        }
+        else {
+            displayMessage("les cartes defaussés sont : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName() + "\n");
+        }
     }
 }
