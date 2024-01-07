@@ -9,6 +9,8 @@ import fr.cotedazur.univ.polytech.model.deck.Deck;
 import java.util.List;
 import java.util.StringJoiner;
 
+import static fr.cotedazur.univ.polytech.model.card.CharacterCard.*;
+
 public class GameView {
 
     private final PlayerComparator playerComparator;
@@ -141,6 +143,31 @@ public class GameView {
         }
         else {
             displayMessage("les cartes defaussés sont : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName() + "\n");
+        }
+    }
+
+    /**
+     * print the announcement for the player effect (if he uses it)
+     * @param player the player concerned (passed to be able to print whatever needed info in the future)
+     */
+    public void printCharacterUsedEffect(Player player) {
+        if (player.hasUsedEffect().isEmpty()) return;
+        String split[] = player.hasUsedEffect().split("_");
+        String characterName = split[0];
+        String effectName = split[1];
+        // Special case for the architect
+        if (characterName.equals("ARCHITECT")) {
+            switch (effectName) {
+                case "drawDistrict":
+                    displayMessage("Le joueur " + player.getName() + " utilise l'effet de l' l'architecte et pioche 2 cartes.");
+                    break;
+                case "placeDistrict":
+                    displayMessage("Le joueur" + player.getName() + " utilise l'effet de l'architecte et peut placer 3 quartiers.");
+                    break;
+            }
+        }else {
+            //General case
+            displayMessage("Le joueur" + player.getName() + " utilise l'effet de/du " + characterName.toLowerCase()+".");
         }
     }
 }

@@ -2,9 +2,8 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,7 +23,7 @@ class BotRandomTest {
     BotRandom botRandom2;
     BotRandom botRandom1;
 
-    private DistrictDeck districtDeck;
+    private Deck<DistrictCard> districtDeck;
 
     @BeforeEach
     void setUp() {
@@ -160,7 +159,7 @@ class BotRandomTest {
     void testChooseCharacter(){
         //Test with king
         when(random.nextInt(anyInt())).thenReturn(3);
-        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         int characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
         botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
         assertEquals(CharacterCard.KING,botRandom1.getPlayerRole());

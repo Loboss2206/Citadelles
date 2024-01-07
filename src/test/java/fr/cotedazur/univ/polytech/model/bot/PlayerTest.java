@@ -2,8 +2,8 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class PlayerTest {
     BotRandom botRandom0;
 
     BotRandom botRandom2;
-    private DistrictDeck districtDeck;
+    private Deck<DistrictCard> districtDeck;
 
 
     @BeforeEach
@@ -47,7 +47,7 @@ class PlayerTest {
 
     @Test
     void testDrawCard() {
-        DistrictDeck copyDeck = new DistrictDeck();
+        Deck<DistrictCard> copyDeck;
         copyDeck = DeckFactory.createDistrictDeck();
         botRandom2.drawCard(districtDeck);
 

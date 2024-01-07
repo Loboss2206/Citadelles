@@ -2,7 +2,7 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
@@ -18,6 +18,8 @@ public abstract class Player implements GameActions {
     private int points;
     private boolean isCrowned = false;
     protected ArrayList<DistrictCard> validCards;
+
+    private String hasUsedEffect;
 
     boolean isFirstToAdd8district = false;
 
@@ -44,6 +46,14 @@ public abstract class Player implements GameActions {
 
     public void setGolds(int golds) {
         this.golds = golds;
+    }
+
+    public String hasUsedEffect() {
+        return hasUsedEffect;
+    }
+
+    public void setUsedEffect(String hasUsedEffect) {
+        this.hasUsedEffect = hasUsedEffect;
     }
 
     public List<DistrictCard> getHands() {
@@ -83,7 +93,7 @@ public abstract class Player implements GameActions {
      * @param districtDeck the district deck
      * @return the name of the card drawn
      */
-    public String drawCard(DistrictDeck districtDeck) {
+    public String drawCard(Deck<DistrictCard> districtDeck) {
         if(districtDeck.isEmpty()) {
             return collectTwoGolds();
         }else {

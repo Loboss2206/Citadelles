@@ -17,9 +17,9 @@ public class DeckFactory {
      *
      * @return The character deck.
      */
-    public static CharacterDeck createCharacterDeck() {
+    public static Deck<CharacterCard> createCharacterDeck() {
         List<CharacterCard> cards = new ArrayList<>(Arrays.asList(CharacterCard.values()));
-        return new CharacterDeck(cards);
+        return new Deck<>(cards);
     }
 
     /**
@@ -27,14 +27,14 @@ public class DeckFactory {
      *
      * @return The district deck.
      */
-    public static DistrictDeck createDistrictDeck() {
+    public static Deck<DistrictCard> createDistrictDeck() {
         List<DistrictCard> cards = new ArrayList<>();
         for (DistrictCard card : DistrictCard.values()) {
             for (int i = 0; i < card.getQuantityInDeck(); i++) {
                 cards.add(card);
             }
         }
-        return new DistrictDeck(cards);
+return new Deck<>(cards);
     }
 
     /**
@@ -42,8 +42,8 @@ public class DeckFactory {
      *
      * @return The empty district deck.
      */
-    public static DistrictDeck createEmptyDistrictDeck() {
-        return new DistrictDeck();
+    public static Deck<DistrictCard> createEmptyDistrictDeck() {
+        return new Deck<>();
     }
 
     /**
@@ -51,8 +51,8 @@ public class DeckFactory {
      *
      * @return The empty character deck.
      */
-    public static CharacterDeck createEmptyCharacterDeck() {
-        return new CharacterDeck();
+    public static Deck<CharacterCard> createEmptyCharacterDeck() {
+        return new Deck<>();
     }
 
 }

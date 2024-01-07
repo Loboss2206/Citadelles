@@ -6,7 +6,7 @@ import java.util.Random;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 public class BotRandom extends Player implements GameActions {
@@ -18,7 +18,7 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String startChoice(DistrictDeck districtDeck) {
+    public String startChoice(Deck<DistrictCard> districtDeck) {
         if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
@@ -55,7 +55,7 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view) {
+    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view) {
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             if (districtDeck.isEmpty() && view.isPresent())

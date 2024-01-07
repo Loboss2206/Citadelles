@@ -2,7 +2,7 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public interface GameActions {
      * @param districtDeck the district deck
      * @return his choice
      */
-    String startChoice(DistrictDeck districtDeck);
+    String startChoice(Deck<DistrictCard> districtDeck);
 
     /**
      * function where the player choose to put or not a district on his board
@@ -31,7 +31,7 @@ public interface GameActions {
     /**
      * function where the player choose to use or not the effect of his character
      */
-    void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view);
+    void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view);
 
     /**
      * function where the player choose his character
