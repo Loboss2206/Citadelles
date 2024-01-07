@@ -35,7 +35,7 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public DistrictCard choiceToPutADistrict() {
+    public DistrictCard choiceHowToPlayDuringTheRound() {
         useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {

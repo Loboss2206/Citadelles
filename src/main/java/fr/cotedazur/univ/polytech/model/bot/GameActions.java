@@ -26,7 +26,7 @@ public interface GameActions {
      * function where the player choose to put or not a district on his board
      * @return his choice or null if he doesn't want to put a district
      */
-    DistrictCard choiceToPutADistrict();
+    DistrictCard choiceHowToPlayDuringTheRound();
 
     /**
      * function where the player choose to use or not the effect of his character

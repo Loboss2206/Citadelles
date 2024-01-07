@@ -37,8 +37,8 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public DistrictCard choiceToPutADistrict() {
-        if(getPlayerRole() != CharacterCard.ARCHITECT)useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
+    public DistrictCard choiceHowToPlayDuringTheRound() {
+        if (getPlayerRole() != CharacterCard.ARCHITECT) useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         return putADistrict();
     }
 

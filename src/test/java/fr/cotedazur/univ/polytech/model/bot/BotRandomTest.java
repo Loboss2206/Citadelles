@@ -55,7 +55,7 @@ class BotRandomTest {
     @Test
     void testChoiceToPutADistrictIfNoCardsInHand() {
         botRandom2.setPlayerRole(CharacterCard.ASSASSIN);
-        assertNull(botRandom2.choiceToPutADistrict());
+        assertNull(botRandom2.choiceHowToPlayDuringTheRound());
     }
 
     @Test
@@ -133,19 +133,19 @@ class BotRandomTest {
 
         //Take a card to test if the bot has chosen to put a district
         DistrictCard card = botRandom1.getHands().get(1);
-        assertEquals(card,botRandom1.choiceToPutADistrict());
+        assertEquals(card,botRandom1.choiceHowToPlayDuringTheRound());
         botRandom1.addCardToBoard(card);
         botRandom1.addCardToBoard(botRandom1.getHands().get(0));
 
         //Test when there is no card in hand
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
-        assertNull(botRandom1.choiceToPutADistrict());
+        assertNull(botRandom1.choiceHowToPlayDuringTheRound());
 
         //Test when bot choose to not put a district
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
         when(random.nextInt(anyInt())).thenReturn(1);
-        assertNull(botRandom1.choiceToPutADistrict());
+        assertNull(botRandom1.choiceHowToPlayDuringTheRound());
     }
 
     @Test
