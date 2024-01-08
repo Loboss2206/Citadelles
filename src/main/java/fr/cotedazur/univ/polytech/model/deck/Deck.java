@@ -1,7 +1,5 @@
 package fr.cotedazur.univ.polytech.model.deck;
 
-import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-
 import java.util.ArrayList;
 import java.util.List;
 

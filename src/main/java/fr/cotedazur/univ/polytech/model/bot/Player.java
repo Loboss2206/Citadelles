@@ -19,7 +19,7 @@ public abstract class Player implements GameActions {
     private boolean isCrowned = false;
     protected ArrayList<DistrictCard> validCards;
 
-    private String hasUsedEffect;
+    private String usedEffect;
 
     boolean isFirstToAdd8district = false;
 
@@ -48,12 +48,12 @@ public abstract class Player implements GameActions {
         this.golds = golds;
     }
 
-    public String hasUsedEffect() {
-        return hasUsedEffect;
+    public String getUsedEffect() {
+        return usedEffect;
     }
 
     public void setUsedEffect(String hasUsedEffect) {
-        this.hasUsedEffect = hasUsedEffect;
+        this.usedEffect = hasUsedEffect;
     }
 
     public List<DistrictCard> getHands() {

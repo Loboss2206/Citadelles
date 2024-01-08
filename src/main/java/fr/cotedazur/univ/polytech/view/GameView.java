@@ -9,8 +9,6 @@ import fr.cotedazur.univ.polytech.model.deck.Deck;
 import java.util.List;
 import java.util.StringJoiner;
 
-import static fr.cotedazur.univ.polytech.model.card.CharacterCard.*;
-
 public class GameView {
 
     private final PlayerComparator playerComparator;
@@ -151,8 +149,8 @@ public class GameView {
      * @param player the player concerned (passed to be able to print whatever needed info in the future)
      */
     public void printCharacterUsedEffect(Player player) {
-        if (player.hasUsedEffect().isEmpty()) return;
-        String split[] = player.hasUsedEffect().split("_");
+        if (player.getUsedEffect().isEmpty()) return;
+        String split[] = player.getUsedEffect().split("_");
         String characterName = split[0];
         String effectName = split[1];
         // Special case for the architect

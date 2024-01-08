@@ -30,7 +30,7 @@ public enum CharacterCard {
      * @param color           the color of the character
      * @param characterEffect the description of the character's ability
      */
-    CharacterCard(String characterName, int characterNumber, Color color, String characterEffect) {
+    private CharacterCard(String characterName, int characterNumber, Color color, String characterEffect) {
         this.characterName = characterName;
         this.characterNumber = characterNumber;
         this.color = color;
@@ -79,7 +79,7 @@ public enum CharacterCard {
      * @param player the player who use the effect
      */
     public void useEffect(Player player) {
-        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase()+"_"+player.getPlayerRole().getCharacterEffect().toUpperCase());
+        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase()+"_"+player.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
         switch (this) {
             case ASSASSIN -> {
                 //TODO TO TEST
