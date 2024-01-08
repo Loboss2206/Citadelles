@@ -4,7 +4,7 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.*;
@@ -27,7 +27,7 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public String startChoice(DistrictDeck districtDeck) {
+    public String startChoice(Deck<DistrictCard> districtDeck) {
         if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         discoverValidCard();
         if(getHands().isEmpty() || !validCards.isEmpty()){
@@ -43,7 +43,7 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect(Optional<DistrictDeck> districtDeck, Optional<GameView> view) {
+    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view) {
         if (districtDeck.isEmpty() && view.isPresent())
             getPlayerRole().useEffect(this, view.get());
         else if (districtDeck.isPresent())

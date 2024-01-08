@@ -13,7 +13,7 @@ class DeckTest {
     // Test case for an empty deck
     @Test
     void testEmptyDeck() {
-        DistrictDeck emptyDeck = new DistrictDeck();
+        Deck<DistrictCard> emptyDeck = DeckFactory.createEmptyDistrictDeck();
         assertTrue(emptyDeck.isEmpty());
         assertEquals(0, emptyDeck.size());
     }
@@ -21,7 +21,7 @@ class DeckTest {
     // Test case for adding and removing a card
     @Test
     void testAddAndRemoveCard() {
-        DistrictDeck deck = new DistrictDeck();
+        Deck<DistrictCard> deck = DeckFactory.createEmptyDistrictDeck();
         DistrictCard card = DistrictCard.CASTLE;
 
         deck.add(card);
@@ -38,7 +38,7 @@ class DeckTest {
     // Test case for drawing a card at a specific index
     @Test
     void testDrawAtIndex() {
-        DistrictDeck deck = new DistrictDeck();
+        Deck<DistrictCard> deck = DeckFactory.createEmptyDistrictDeck();
         DistrictCard card1 = DistrictCard.DOCKS;
         DistrictCard card2 = DistrictCard.CHURCH;
 
@@ -54,7 +54,7 @@ class DeckTest {
     // Test case for shuffling the deck
     @Test
     void testShuffleDeck() {
-        DistrictDeck deck = new DistrictDeck();
+        Deck<DistrictCard> deck = DeckFactory.createEmptyDistrictDeck();
         DistrictCard card1 = DistrictCard.DRAGON_GATE;
         DistrictCard card2 = DistrictCard.CHURCH;
         DistrictCard card3 = DistrictCard.CATHEDRAL;
@@ -77,7 +77,7 @@ class DeckTest {
     // Test case for clearing the deck
     @Test
     void testClearDeck() {
-        DistrictDeck deck = new DistrictDeck();
+        Deck<DistrictCard> deck = DeckFactory.createEmptyDistrictDeck();
         DistrictCard card = DistrictCard.BATTLEFIELD;
 
         deck.add(card);
@@ -90,7 +90,7 @@ class DeckTest {
     // Test case for adding a card at a random position
     @Test
     void testAddRandomCard() {
-        DistrictDeck deck = new DistrictDeck();
+        Deck<DistrictCard> deck = DeckFactory.createEmptyDistrictDeck();
         DistrictCard card1 = DistrictCard.FORTRESS;
         DistrictCard card2 = DistrictCard.HARBOR;
 

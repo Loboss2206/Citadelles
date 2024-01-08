@@ -2,9 +2,8 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BotWeakTest {
 
     Player botWeak;
-    DistrictDeck districtDeck;
+    Deck<DistrictCard> districtDeck;
 
 
     @BeforeEach
@@ -105,7 +104,7 @@ class BotWeakTest {
 
     @Test
     void testChooseCharacter(){
-        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         botWeak.getHands().add(DistrictCard.SMITHY);
         botWeak.getHands().add(DistrictCard.PALACE);
         botWeak.getHands().add(DistrictCard.TOWN_HALL);

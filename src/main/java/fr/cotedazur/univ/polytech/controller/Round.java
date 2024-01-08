@@ -5,7 +5,6 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
@@ -41,6 +40,11 @@ public class Round {
         this.faceUpCharactersDiscarded = DeckFactory.createEmptyCharacterDeck();
 
         this.nbRound = nbRound;
+
+        //reset the players effect boolean
+        for(Player player : players){
+            player.setUsedEffect("");
+        }
     }
 
     /**
@@ -149,11 +153,14 @@ public class Round {
         String choice;
         for (Player player : playersSortedByCharacterNumber) {
             //Take the choice
-            choice = player.startChoice((DistrictDeck) districtDeck);
+            choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);
 
             // Draw and place a district
             player.drawAndPlaceADistrict(view);
+
+            // Display the effect of the character card
+            view.printCharacterUsedEffect(player);
 
             //Special case of the architect because he can put 2 more districts
             if(player.getPlayerRole() == CharacterCard.ARCHITECT) player.useRoleEffect(Optional.empty(), Optional.of(view));

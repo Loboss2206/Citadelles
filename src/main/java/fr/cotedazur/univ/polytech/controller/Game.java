@@ -4,8 +4,8 @@ import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.Collections;
@@ -23,8 +23,8 @@ public class Game {
     private final PlayerComparator playerComparator;
 
     // All the decks
-    private DistrictDeck districtDeck;
-    private DistrictDeck districtDiscardDeck;
+    private Deck<DistrictCard> districtDeck;
+    private Deck<DistrictCard> districtDiscardDeck;
 
     // The round number
     int roundNumber = 0;

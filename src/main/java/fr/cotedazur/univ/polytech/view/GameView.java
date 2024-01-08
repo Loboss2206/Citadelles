@@ -143,4 +143,29 @@ public class GameView {
             displayMessage("les cartes defaussés sont : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName() + "\n");
         }
     }
+
+    /**
+     * print the announcement for the player effect (if he uses it)
+     * @param player the player concerned (passed to be able to print whatever needed info in the future)
+     */
+    public void printCharacterUsedEffect(Player player) {
+        if (player.getUsedEffect().isEmpty()) return;
+        String split[] = player.getUsedEffect().split("_");
+        String characterName = split[0];
+        String effectName = split[1];
+        // Special case for the architect
+        if (characterName.equals("ARCHITECT")) {
+            switch (effectName) {
+                case "drawDistrict":
+                    displayMessage("Le joueur " + player.getName() + " utilise l'effet de l' l'architecte et pioche 2 cartes.");
+                    break;
+                case "placeDistrict":
+                    displayMessage("Le joueur" + player.getName() + " utilise l'effet de l'architecte et peut placer 3 quartiers.");
+                    break;
+            }
+        }else {
+            //General case
+            displayMessage("Le joueur" + player.getName() + " utilise l'effet de/du " + characterName.toLowerCase()+".");
+        }
+    }
 }

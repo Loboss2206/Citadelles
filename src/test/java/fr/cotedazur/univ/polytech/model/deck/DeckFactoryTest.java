@@ -11,7 +11,7 @@ class DeckFactoryTest {
 
     @Test
     void createCharacterDeck() {
-        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         assertNotNull(characterDeck, "The character deck is null (and it shouldn't be)");
         assertEquals(8, characterDeck.size(), "The character deck doesn't have the right size");
         assertFalse(characterDeck.isEmpty(), "The character deck is empty (and it shouldn't be)");
