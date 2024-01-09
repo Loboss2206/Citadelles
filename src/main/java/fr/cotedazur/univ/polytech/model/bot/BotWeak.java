@@ -54,31 +54,35 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public int chooseCharacter(List<CharacterCard> characters) {
         discoverValidCard();
-        // we sort to know if we can put 2 times or more by comparing the first two value
         validCards.sort(new DistrictCardComparator());
-        if((validCards.size() >= 2 && characters.contains(CharacterCard.ARCHITECT) && validCards.get(0).getDistrictValue() + validCards.get(1).getDistrictValue() <= getGolds()) || (getHands().isEmpty() && characters.contains(CharacterCard.ARCHITECT))){
+
+        if (isArchitectOptimal(characters)) {
             return characters.indexOf(CharacterCard.ARCHITECT);
-        } else if (countNumberOfSpecifiedColorCard(Color.YELLOW) >= 1 || countNumberOfSpecifiedColorCard(Color.GREEN) >= 1 || countNumberOfSpecifiedColorCard(Color.BLUE) >= 1) {
-            HashMap<Color,Integer> hashMap = new HashMap<>();
-            if(characters.contains(CharacterCard.KING)) hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
-            if(characters.contains(CharacterCard.BISHOP)) hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
-            if(characters.contains(CharacterCard.MERCHANT)) hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
-            List<Map.Entry<Color,Integer>> entryList = new ArrayList<>(hashMap.entrySet());
+        } else if (hasColoredCards()) {
+            HashMap<Color, Integer> colorMap = createColorMap(characters);
+            List<Map.Entry<Color,Integer>> entryList = new ArrayList<>(colorMap.entrySet());
             entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
 
             if(!entryList.isEmpty()) {
-                if (entryList.get(0).getKey() == Color.YELLOW)
-                    return characters.indexOf(CharacterCard.KING);
-                else if (entryList.get(0).getKey() == Color.GREEN)
-                    return characters.indexOf(CharacterCard.MERCHANT);
-                else if (entryList.get(0).getKey() == Color.BLUE)
-                    return characters.indexOf(CharacterCard.BISHOP);
+                return getCharacterIndexByColor(characters, entryList.get(0).getKey());
             }
+
         }
-        //the others are not implemented so we choose randomly
+
         Random random = new Random();
         return random.nextInt(characters.size());
     }
+    private boolean isArchitectOptimal(List<CharacterCard> characters) {
+        return (validCards.size() >= 2 && characters.contains(CharacterCard.ARCHITECT) &&
+                validCards.get(0).getDistrictValue() + validCards.get(1).getDistrictValue() <= getGolds()) ||
+                (getHands().isEmpty() && characters.contains(CharacterCard.ARCHITECT));
+    }
+    private boolean hasColoredCards() {
+        return countNumberOfSpecifiedColorCard(Color.YELLOW) >= 1 ||
+                countNumberOfSpecifiedColorCard(Color.GREEN) >= 1 ||
+                countNumberOfSpecifiedColorCard(Color.BLUE) >= 1;
+    }
+
 
     public int countNumberOfSpecifiedColorCard(Color color){
         int count = 0;
@@ -88,4 +92,19 @@ public class BotWeak extends Player implements GameActions {
         return count;
     }
 
+    private HashMap<Color, Integer> createColorMap(List<CharacterCard> characters) {
+        HashMap<Color, Integer> hashMap = new HashMap<>();
+        if (characters.contains(CharacterCard.KING)) hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
+        if (characters.contains(CharacterCard.BISHOP)) hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
+        if (characters.contains(CharacterCard.MERCHANT)) hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
+        return hashMap;
+    }
+    private int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
+        return switch (color) {
+            case YELLOW -> characters.indexOf(CharacterCard.KING);
+            case GREEN -> characters.indexOf(CharacterCard.MERCHANT);
+            case BLUE -> characters.indexOf(CharacterCard.BISHOP);
+            default -> throw new UnsupportedOperationException("la valeur de color est : " + color);
+        };
+    }
 }
