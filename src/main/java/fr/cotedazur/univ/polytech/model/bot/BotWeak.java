@@ -54,6 +54,7 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public int chooseCharacter(List<CharacterCard> characters) {
         discoverValidCard();
+        // we sort to know if we can put 2 times a district or more by comparing the first two value
         validCards.sort(new DistrictCardComparator());
 
         if (isArchitectOptimal(characters)) {
@@ -72,18 +73,30 @@ public class BotWeak extends Player implements GameActions {
         Random random = new Random();
         return random.nextInt(characters.size());
     }
+
+    /**
+     * function that checks whether it's worth taking the architect
+     * @param characters the characters available
+     * @return true if it's worth taking the architect, else false
+     */
     private boolean isArchitectOptimal(List<CharacterCard> characters) {
         return (validCards.size() >= 2 && characters.contains(CharacterCard.ARCHITECT) &&
                 validCards.get(0).getDistrictValue() + validCards.get(1).getDistrictValue() <= getGolds()) ||
                 (getHands().isEmpty() && characters.contains(CharacterCard.ARCHITECT));
     }
+
+    /**
+     * function that checks whether there is at least one color on the player's board that can be improved by a character
+     */
     private boolean hasColoredCards() {
         return countNumberOfSpecifiedColorCard(Color.YELLOW) >= 1 ||
                 countNumberOfSpecifiedColorCard(Color.GREEN) >= 1 ||
                 countNumberOfSpecifiedColorCard(Color.BLUE) >= 1;
     }
 
-
+    /**
+     * function that count the number of district card on the board for a specific color
+     */
     public int countNumberOfSpecifiedColorCard(Color color){
         int count = 0;
         for(DistrictCard card : getBoard()){
@@ -92,6 +105,12 @@ public class BotWeak extends Player implements GameActions {
         return count;
     }
 
+    /**
+     * Creates a HashMap that maps each specified character card to its corresponding color count.
+     * @param characters the characters available
+     * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
+     *         and the values are the counts of cards of that color in the given list.
+     */
     private HashMap<Color, Integer> createColorMap(List<CharacterCard> characters) {
         HashMap<Color, Integer> hashMap = new HashMap<>();
         if (characters.contains(CharacterCard.KING)) hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
@@ -99,6 +118,13 @@ public class BotWeak extends Player implements GameActions {
         if (characters.contains(CharacterCard.MERCHANT)) hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
         return hashMap;
     }
+
+    /**
+     * Retrieves the index of a specific character card in the given list based on its associated color.
+     * @param characters the characters available
+     * @param color      The color associated with the character card to find.
+     * @return The index of the character card associated with the specified color, or an exception if not found.
+     */
     private int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
         return switch (color) {
             case YELLOW -> characters.indexOf(CharacterCard.KING);
