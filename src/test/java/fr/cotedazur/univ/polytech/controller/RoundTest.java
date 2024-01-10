@@ -66,7 +66,7 @@ class RoundTest {
     @Test
     void testPresenceOfDiscardedKingWith4Player(){
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
-        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1);
         round.startRound();
         assertSame(2, round.getCharacterDiscardDeck().size());
         assertFalse(round.getCharacterDiscardDeck().contains(CharacterCard.KING));
@@ -75,7 +75,7 @@ class RoundTest {
     @Test
     void testPresenceOfDiscardedKingWith5Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5));
-        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
         round.startRound();
         assertSame(1, round.getCharacterDiscardDeck().size());
         assertNotSame(CharacterCard.KING, round.getCharacterDiscardDeck().getCards().get(0));
@@ -84,7 +84,7 @@ class RoundTest {
     @Test
     void testNumberDiscardFaceUpWith6Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6));
-        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
         round.startRound();
         assertSame(0, round.getCharacterDiscardDeck().size());
     }
@@ -92,7 +92,7 @@ class RoundTest {
     @Test
     void testNumberDiscardFaceUpWith7Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6, botRandom7));
-        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
         round.startRound();
         assertSame(0, round.getCharacterDiscardDeck().size());
     }
@@ -111,7 +111,7 @@ class RoundTest {
         assertFalse(botRandom3.isCrowned());
         assertFalse(botRandom4.isCrowned());
 
-        Round round = new Round(players, new GameView(new Game(players)), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
         round.setNewCrownedPlayer();
 
         assertFalse(botRandom1.isCrowned());
