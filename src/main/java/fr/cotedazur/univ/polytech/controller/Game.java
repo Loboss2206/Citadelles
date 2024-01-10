@@ -33,7 +33,7 @@ public class Game {
     private final Random random = new Random();
 
     public Game(List<Player> players) {
-        this.view = new GameView(this);
+        this.view = new GameView();
         this.playerComparator = new PlayerComparator();
 
         // Add players

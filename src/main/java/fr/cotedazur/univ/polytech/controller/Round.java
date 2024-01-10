@@ -120,9 +120,7 @@ public class Round {
             while (again) {
                 //Print the all character cards in the deck
                 view.printPlayerPickACard(player.getName());
-                for (CharacterCard character : characterDeck.getCards()) {
-                    view.printCharacterCard(character.getCharacterNumber(), character.getCharacterName(), character.getCharacterEffect());
-                }
+
 
                 // Case where there is 7 players, the last player recover the face-down card to choose his character
                 if (i == 6){
@@ -139,7 +137,7 @@ public class Round {
                     //Else, we set the role of the player and print the character card chosen
                     again = false;
                     player.setPlayerRole(drawn);
-                    view.printCharacterCard(drawn.getCharacterName());
+                    view.printEndOfPicking(player.getName());
                 }
             }
             i++;
