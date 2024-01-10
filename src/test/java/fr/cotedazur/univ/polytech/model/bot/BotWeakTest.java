@@ -2,9 +2,8 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -16,7 +15,7 @@ import static org.junit.jupiter.api.Assertions.*;
 class BotWeakTest {
 
     Player botWeak;
-    DistrictDeck districtDeck;
+    Deck<DistrictCard> districtDeck;
 
 
     @BeforeEach
@@ -36,11 +35,11 @@ class BotWeakTest {
         botWeak.setPlayerRole(CharacterCard.ASSASSIN);
 
         //Should be Temple because its value are the smallest of the botWeak hand
-        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
         assertEquals(DistrictCard.TEMPLE,botWeak.getBoard().get(0));
 
         //Should be Market because its value are now the smallest of the botWeak hand
-        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
         assertEquals(DistrictCard.MARKET,botWeak.getBoard().get(1));
         botWeak.getHands().clear();
 
@@ -50,7 +49,7 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.KEEP);
         botWeak.getHands().add(DistrictCard.DOCKS);
 
-        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
 
         //Should be Monastery because there are all equals and the order doesn't change
         assertEquals(DistrictCard.MONASTERY,botWeak.getBoard().get(2));
@@ -69,7 +68,7 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.PRISON);
         botWeak.getHands().add(DistrictCard.MANOR);
         botWeak.setGolds(24);
-        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
         botWeak.getPlayerRole().useEffect(botWeak,(GameView) null);
         assertEquals(3, botWeak.getBoard().size());
         botWeak.getHands().clear();
@@ -80,7 +79,7 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.PRISON);
         botWeak.getHands().add(DistrictCard.MANOR);
         botWeak.setGolds(9);
-        botWeak.addCardToBoard(botWeak.choiceToPutADistrict());
+        botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
         botWeak.getPlayerRole().useEffect(botWeak,(GameView) null);
         assertEquals(2, botWeak.getBoard().size());
         botWeak.getHands().clear();
@@ -105,7 +104,7 @@ class BotWeakTest {
 
     @Test
     void testChooseCharacter(){
-        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         botWeak.getHands().add(DistrictCard.SMITHY);
         botWeak.getHands().add(DistrictCard.PALACE);
         botWeak.getHands().add(DistrictCard.TOWN_HALL);

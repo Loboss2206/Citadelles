@@ -1,7 +1,7 @@
 package fr.cotedazur.univ.polytech.model.card;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 /**
@@ -79,6 +79,7 @@ public enum CharacterCard {
      * @param player the player who use the effect
      */
     public void useEffect(Player player) {
+        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase()+"_"+player.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
         switch (this) {
             case ASSASSIN -> {
                 //TODO TO TEST
@@ -91,16 +92,13 @@ public enum CharacterCard {
             }
             case KING -> {
                 earnGoldsFromDistricts(player, Color.YELLOW);
-                System.out.println(player.getName()+" utilise l'effet du roi");
             }
             case BISHOP -> {
                 earnGoldsFromDistricts(player, Color.BLUE);
-                System.out.println(player.getName()+" utilise l'effet de l'évêque");
             }
             case MERCHANT -> {
                 earnGoldsFromDistricts(player, Color.GREEN);
                 player.setGolds(player.getGolds() + 1);
-                System.out.println(player.getName()+" utilise l'effet du marchant");
             }
             case WARLORD -> {
                 //TODO TO TEST
@@ -113,13 +111,13 @@ public enum CharacterCard {
      *
      * @param player the player who use the effect
      */
-    public void useEffect(Player player, DistrictDeck districtDeck) {
+    public void useEffect(Player player, Deck<DistrictCard> districtDeck) {
         if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
             for (int i = 0; i < 2; i++) {
                 player.drawCard(districtDeck);
             }
         }
-        System.out.println("Pioche 2 cartes grâce à l'effet de l'architecte");
+        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase() + "_drawDistrict");
     }
 
     /**
@@ -132,8 +130,8 @@ public enum CharacterCard {
             for (int i = 0; i < 2; i++) {
                 player.drawAndPlaceADistrict(view);
             }
+        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase() + "_placeDistrict");
         }
-        System.out.println("Pose une carte supplémentaire grâce à l'effet de l'architecte");
     }
 
 

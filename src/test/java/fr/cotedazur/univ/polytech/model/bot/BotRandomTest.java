@@ -2,9 +2,8 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.CharacterDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -24,7 +23,7 @@ class BotRandomTest {
     BotRandom botRandom2;
     BotRandom botRandom1;
 
-    private DistrictDeck districtDeck;
+    private Deck<DistrictCard> districtDeck;
 
     @BeforeEach
     void setUp() {
@@ -55,7 +54,7 @@ class BotRandomTest {
     @Test
     void testChoiceToPutADistrictIfNoCardsInHand() {
         botRandom2.setPlayerRole(CharacterCard.ASSASSIN);
-        assertNull(botRandom2.choiceToPutADistrict());
+        assertNull(botRandom2.choiceHowToPlayDuringTheRound());
     }
 
     @Test
@@ -133,19 +132,19 @@ class BotRandomTest {
 
         //Take a card to test if the bot has chosen to put a district
         DistrictCard card = botRandom1.getHands().get(1);
-        assertEquals(card,botRandom1.choiceToPutADistrict());
+        assertEquals(card,botRandom1.choiceHowToPlayDuringTheRound());
         botRandom1.addCardToBoard(card);
         botRandom1.addCardToBoard(botRandom1.getHands().get(0));
 
         //Test when there is no card in hand
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
-        assertNull(botRandom1.choiceToPutADistrict());
+        assertNull(botRandom1.choiceHowToPlayDuringTheRound());
 
         //Test when bot choose to not put a district
         botRandom1.drawCard(districtDeck);
         botRandom1.drawCard(districtDeck);
         when(random.nextInt(anyInt())).thenReturn(1);
-        assertNull(botRandom1.choiceToPutADistrict());
+        assertNull(botRandom1.choiceHowToPlayDuringTheRound());
     }
 
     @Test
@@ -160,7 +159,7 @@ class BotRandomTest {
     void testChooseCharacter(){
         //Test with king
         when(random.nextInt(anyInt())).thenReturn(3);
-        CharacterDeck characterDeck = DeckFactory.createCharacterDeck();
+        Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         int characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
         botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
         assertEquals(CharacterCard.KING,botRandom1.getPlayerRole());

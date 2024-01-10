@@ -9,7 +9,7 @@ import java.util.List;
  *
  * @param <T> the type of cards in the deck
  */
-public abstract class Deck<T extends Enum<T>> {
+public class Deck<T extends Enum<T>> {
 
     private final List<T> cards;
 
@@ -62,9 +62,16 @@ public abstract class Deck<T extends Enum<T>> {
     }
 
     /**
-     * Shuffles the cards in the deck.
+     * Shuffles the cards in the deck using the Fisher-Yates algorithm.
      */
-    public abstract void shuffle();
+    public void shuffle(){
+        for (int i = getCards().size() - 1; i > 0; i--) {
+            int j = (int) (Math.random() * (i + 1));
+            T temp = getCards().get(i);
+            getCards().set(i, getCards().get(j));
+            getCards().set(j, temp);
+        }
+    }
 
     /**
      * Adds a card to the bottom of the deck.
@@ -73,16 +80,6 @@ public abstract class Deck<T extends Enum<T>> {
      */
     public void add(T card) {
         cards.add(card);
-    }
-
-    /**
-     * Adds a card at the specified index in the deck.
-     *
-     * @param card  the card to add to the deck
-     * @param index the index at which to add the card
-     */
-    public void addAt(T card, int index) {
-        cards.add(index, card);
     }
 
     /**

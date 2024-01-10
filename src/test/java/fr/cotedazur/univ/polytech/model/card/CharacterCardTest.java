@@ -2,15 +2,13 @@ package fr.cotedazur.univ.polytech.model.card;
 
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
+import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import javax.swing.text.View;
-import java.util.ArrayList;
-import java.util.Optional;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -20,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 class CharacterCardTest {
     Player player;
-    DistrictDeck districtDeck;
+    Deck<DistrictCard> districtDeck;
 
     @Mock
     Random random = mock(Random.class);
@@ -49,7 +47,7 @@ class CharacterCardTest {
 
     @Test
     void testEffectForArchitect() {
-        districtDeck = new DistrictDeck();
+        districtDeck = DeckFactory.createEmptyDistrictDeck();
         districtDeck.add(DistrictCard.MANOR);
         districtDeck.add(DistrictCard.HAUNTED_CITY);
         botRandom1.setPlayerRole(CharacterCard.ARCHITECT);
@@ -66,7 +64,7 @@ class CharacterCardTest {
         botRandom1.setGolds(50);
         botRandom1.getHands().clear();
         botRandom1.getBoard().clear();
-        districtDeck = new DistrictDeck();
+        districtDeck = DeckFactory.createEmptyDistrictDeck();
         districtDeck.add(DistrictCard.MANOR);
         districtDeck.add(DistrictCard.HAUNTED_CITY);
         botRandom1.setPlayerRole(CharacterCard.ARCHITECT);

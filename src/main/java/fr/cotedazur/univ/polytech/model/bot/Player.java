@@ -2,23 +2,42 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.deck.DistrictDeck;
+import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player implements GameActions {
+    //All players have a unique id
     private final int id;
+
+    //All players have a unique name
     private final String name;
+
+    //The amount of gold for a player
     private int golds;
+
+    //Districts in the player's hand
     private final ArrayList<DistrictCard> hands;
+
+    //the player's role
     private CharacterCard playerRole;
-    private final ArrayList<DistrictCard> board;//This is for when a player choose to put a district
+    //Districts on the player's board
+    private final ArrayList<DistrictCard> board;
+
+    //the player's number of points
     private int points;
+    //to find out if the player is the king
     private boolean isCrowned = false;
+
+    //cards in the hand of the player which he can buy during his turn
     protected ArrayList<DistrictCard> validCards;
 
+    //The character effect that the player has used during his turn
+    private String usedEffect;
+
+    //to find out if the player is the first to add 8 district on his board
     boolean isFirstToAdd8district = false;
 
     // Increment for each player created
@@ -44,6 +63,14 @@ public abstract class Player implements GameActions {
 
     public void setGolds(int golds) {
         this.golds = golds;
+    }
+
+    public String getUsedEffect() {
+        return usedEffect;
+    }
+
+    public void setUsedEffect(String hasUsedEffect) {
+        this.usedEffect = hasUsedEffect;
     }
 
     public List<DistrictCard> getHands() {
@@ -83,7 +110,7 @@ public abstract class Player implements GameActions {
      * @param districtDeck the district deck
      * @return the name of the card drawn
      */
-    public String drawCard(DistrictDeck districtDeck) {
+    public String drawCard(Deck<DistrictCard> districtDeck) {
         if(districtDeck.isEmpty()) {
             return collectTwoGolds();
         }else {
@@ -158,6 +185,10 @@ public abstract class Player implements GameActions {
         return isCrowned;
     }
 
+    /**
+     * function that check if 2 object are equals
+     * @return true if the obj is equals to this, else false
+     */
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Player player) {
@@ -166,10 +197,13 @@ public abstract class Player implements GameActions {
         return false;
     }
 
+    /**
+     * function that add to the board the district he chose to put and announced it
+     */
     public void drawAndPlaceADistrict(GameView view) {
         DistrictCard districtToPut;
         do {
-            districtToPut = choiceToPutADistrict();
+            districtToPut = choiceHowToPlayDuringTheRound();
         } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
         if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
             addCardToBoard(districtToPut);
@@ -190,3 +224,5 @@ public abstract class Player implements GameActions {
         return isFirstToAdd8district;
     }
 }
+
+
