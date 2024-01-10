@@ -54,14 +54,17 @@ public class Round {
         //Announce the start of the round
         view.printStartRound(nbRound);
 
-        // Discard cards
+        //Discard cards
         discardCards();
 
         //Each player choose a character
         choiceOfCharactersForEachPlayer();
 
-        // Set the new crowned player if there is one
+        //Set the new crowned player if there is one
         setNewCrownedPlayer();
+
+        //Print the recap of all players
+        view.printRecapOfAllPlayers(players);
 
         //Sort the players by the number of the character card
         sortPlayersByNumbersOfCharacterCard();
@@ -96,11 +99,13 @@ public class Round {
                 faceUpCharactersDiscarded.add(drawnCard);
             }
 
-            view.printDiscardedCard(faceUpCharactersDiscarded);
+            view.printDiscardedCardFaceUp(faceUpCharactersDiscarded);
         }
 
         //1 card has to be discarded face-down
         faceDownCharacterDiscarded = characterDeck.draw();
+
+        view.printDiscardedCardFaceDown(faceDownCharacterDiscarded);
     }
     /**
      * Sort the players by the number of the character card
@@ -119,8 +124,7 @@ public class Round {
             boolean again = true;
             while (again) {
                 //Print the all character cards in the deck
-                view.printPlayerPickACard(player.getName());
-
+                view.printPlayerPickACard(player.getName(), characterDeck.getCards());
 
                 // Case where there is 7 players, the last player recover the face-down card to choose his character
                 if (i == 6){
