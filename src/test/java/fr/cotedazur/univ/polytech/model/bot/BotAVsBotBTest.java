@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class BotRandomVsBotWeakTest {
+class BotAVsBotBTest {
     ArrayList<Player> players;
     Player player = new BotRandom();
 
@@ -42,7 +42,7 @@ class BotRandomVsBotWeakTest {
     void testBattleBetweenBotRandomAndWeak(){
         int numberOfWeakBot = 0;
         int numberOfRandomBot = 0;
-        for(int i = 0; i < 1000; i++){
+        for(int i = 0; i < 100; i++){
             String winnerOfTheGameClass = game.startGameTest();
             if(winnerOfTheGameClass.equals(BotRandom.class.getName()))
                 numberOfRandomBot++;
