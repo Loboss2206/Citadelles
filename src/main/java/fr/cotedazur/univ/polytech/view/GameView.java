@@ -50,8 +50,7 @@ public class GameView {
                     displayMessage(playerNameAndRole + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
             case "putDistrict" ->
                     displayMessage(playerNameAndRole + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
-            default ->
-                    throw new IllegalStateException("Unexpected action: " + action);
+            default -> throw new IllegalStateException("Unexpected action: " + action);
         }
     }
 
@@ -61,7 +60,7 @@ public class GameView {
      * @param player the player who was playing
      */
     public void printEndTurnOfPlayer(Player player) {
-        displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") termine son tour");
+        displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") termine son tour\n");
     }
 
     /**
@@ -76,10 +75,11 @@ public class GameView {
         for (Player player : listOfPlayers) {
             //For adding all the districts placed by the player
             StringJoiner joiner = new StringJoiner(", ");
-            if (!player.getBoard().isEmpty()) player.getBoard().forEach(element -> joiner.add(element.getDistrictName() + " " + element.getDistrictValue() + " pts"));
+            if (!player.getBoard().isEmpty())
+                player.getBoard().forEach(element -> joiner.add(element.getDistrictName() + " " + element.getDistrictValue() + " pts"));
 
             //Print the player's ranking and his state at the end of the game
-            displayMessage(++i + " : " + player.getName() + " " + player.getPoints() + "pts, golds = " + player.getGolds() + ", quartiers placés = " + joiner + ", dernier personnage = " + player.getPlayerRole());
+            displayMessage(++i + " : " + player.getName() + " " + player.getPoints() + "pts, Golds = " + player.getGolds() + ", Quartiers placés = { " + joiner + " }, Personnage avant fin de la partie = " + player.getPlayerRole());
         }
     }
 
@@ -115,8 +115,13 @@ public class GameView {
      *
      * @param name the name of the player
      */
-    public void printPlayerPickACard(String name) {
-        displayMessage("Le joueur " + name + " est entrain de choisir une carte personnage");
+    public void printPlayerPickACard(String name, List<CharacterCard> charactersCards) {
+        displayMessage("Le joueur " + name + " est entrain de choisir une carte personnage parmi : ");
+        StringJoiner joiner = new StringJoiner(" - ");
+        for (CharacterCard c : charactersCards) {
+            joiner.add(c.getCharacterName());
+        }
+        displayMessage(joiner.toString());
     }
 
     /**
@@ -131,14 +136,23 @@ public class GameView {
     /**
      * print the name of the character card or cards discarded face-up
      *
-     * @param discard the deck of discarded cards
+     * @param discard the deck of discarded cards face-up
      */
-    public void printDiscardedCard(Deck<CharacterCard> discard) {
+    public void printDiscardedCardFaceUp(Deck<CharacterCard> discard) {
         if (discard.size() == 1) {
-            displayMessage("la carte defaussé est : " + discard.getCards().get(0).getCharacterName() + "\n");
+            displayMessage("\nCarte defaussée face visible : " + discard.getCards().get(0).getCharacterName());
         } else {
-            displayMessage("les cartes defaussés sont : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName() + "\n");
+            displayMessage("\nCartes defaussées visibles : " + discard.getCards().get(0).getCharacterName() + " et " + discard.getCards().get(1).getCharacterName());
         }
+    }
+
+    /**
+     * print the name of the character card or cards discarded face-down
+     *
+     * @param discard the deck of discarded cards face-down
+     */
+    public void printDiscardedCardFaceDown(CharacterCard discard) {
+        displayMessage("Carte defaussée face cachée : " + discard.getCharacterName() + "\n");
     }
 
     /**
@@ -158,14 +172,21 @@ public class GameView {
                     case "drawDistrict" ->
                             displayMessage(playerName + " utilise l'effet de l' l'architecte et pioche 2 cartes.");
                     case "placeDistrict" ->
-                            displayMessage(playerName  + " utilise l'effet de l'architecte et peut placer 3 quartiers.");
-                    default ->
-                            throw new IllegalStateException("Unexpected value : " + effectName);
+                            displayMessage(playerName + " utilise l'effet de l'architecte et peut placer 3 quartiers.");
+                    default -> throw new IllegalStateException("Unexpected value : " + effectName);
                 }
             } else {
                 //General case
                 displayMessage(playerName + " utilise l'effet de/du " + characterName.toLowerCase() + ".");
             }
         }
+    }
+
+    public void printRecapOfAllPlayers(List<Player> players) {
+        System.out.println("---------------------Récapitulatif des joueurs : ---------------------");
+        for (Player player : players) {
+            displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") possède " + player.getGolds() + " pièces d'or et " + player.getHands().size() + " cartes dans sa main");
+        }
+        System.out.println("----------------------------------------------------------------------\n");
     }
 }
