@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.model.EffectControl;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
@@ -25,6 +26,8 @@ public class Round {
     private CharacterCard faceDownCharacterDiscarded;
     private final int nbRound;
 
+    private final EffectControl effectControl;
+
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound) {
         this.players = players;
         this.playersSortedByCharacterNumber = new ArrayList<>(players);
@@ -45,6 +48,7 @@ public class Round {
         for(Player player : players){
             player.setUsedEffect("");
         }
+        effectControl = new EffectControl();
     }
 
     /**
@@ -158,17 +162,73 @@ public class Round {
             choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);
 
+            if(player.wantToUseEffect(true)){
+                this.playerWantToUseEffect(player);
+            }
+
+            //Because architect automatically take +2 cards
+            if(player.getPlayerRole() == CharacterCard.ARCHITECT) player.useRoleEffect(Optional.of(districtDeck),Optional.empty());
+
             // Draw and place a district
-            player.drawAndPlaceADistrict(view);
+            int i = 0;
+            int maxDistrictThatCanBePut = 1;
+            if(player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
+            while(i++ < maxDistrictThatCanBePut)player.drawAndPlaceADistrict(view);
+
+            if(player.wantToUseEffect(false)){
+                this.playerWantToUseEffect(player);
+            }
 
             // Display the effect of the character card
             view.printCharacterUsedEffect(player);
 
-            //Special case of the architect because he can put 2 more districts
-            if(player.getPlayerRole() == CharacterCard.ARCHITECT) player.useRoleEffect(Optional.empty(), Optional.of(view));
 
             if(player.getBoard().size() >= 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
             view.printEndTurnOfPlayer(player);
+        }
+    }
+
+    public  void playerWantToUseEffect(Player player){
+        switch (player.getPlayerRole()) {
+            case ASSASSIN -> {
+                //TODO TO TEST
+            }
+            case THIEF -> {
+                if(effectControl.getNbTimesEffectIsUsed().get("Steal") == 0){
+                    player.useRoleEffect(Optional.empty(),Optional.empty());
+                    effectControl.getNbTimesEffectIsUsed().put("Steal",1);
+                }
+            }
+            case MAGICIAN -> {
+                //TODO TO TEST
+            }
+            case KING -> {
+                if(effectControl.getNbTimesEffectIsUsed().get("EarnDistrictKing") == 0){
+                    player.useRoleEffect(Optional.empty(),Optional.empty());
+                    effectControl.getNbTimesEffectIsUsed().put("EarnDistrictKing",1);
+                }
+            }
+            case BISHOP -> {
+                if(effectControl.getNbTimesEffectIsUsed().get("EarnDistrictBishop") == 0){
+                    player.useRoleEffect(Optional.empty(),Optional.empty());
+                    effectControl.getNbTimesEffectIsUsed().put("EarnDistrictBishop",1);
+                }
+            }
+            case MERCHANT -> {
+                if(effectControl.getNbTimesEffectIsUsed().get("EarnDistrictMerchant") == 0){
+                    player.useRoleEffect(Optional.empty(),Optional.empty());
+                    effectControl.getNbTimesEffectIsUsed().put("EarnDistrictMerchant",1);
+                }
+            }
+            case WARLORD -> {
+                //String warlordEffect = player.WhichWarlordEffect();
+
+                //Replace Destroy by the name of the effect
+                if(effectControl.getNbTimesEffectIsUsed().get("Destroy") == 0){
+                    //WARLORD EFFECT
+                    effectControl.getNbTimesEffectIsUsed().put("Destroy",1);
+                }
+            }
         }
     }
 

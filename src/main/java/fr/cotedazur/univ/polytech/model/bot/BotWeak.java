@@ -28,9 +28,8 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public String startChoice(Deck<DistrictCard> districtDeck) {
-        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         discoverValidCard();
-        if(getHands().isEmpty() || !validCards.isEmpty()){
+        if (getHands().isEmpty() || !validCards.isEmpty()) {
             return drawCard(districtDeck);
         }
         return collectTwoGolds();
@@ -38,17 +37,25 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
-        if (getPlayerRole() != CharacterCard.ARCHITECT) useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         return putADistrict();
     }
 
     @Override
-    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view) {
-        if (districtDeck.isEmpty() && view.isPresent())
-            getPlayerRole().useEffect(this, view.get());
-        else if (districtDeck.isPresent())
+    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
+        if (districtDeck.isEmpty() && players.isPresent()) {
+            if (getPlayerRole() == CharacterCard.THIEF) {
+                Player playerThatWillBeStolen = null;
+                for (Player player : players.get()) {
+                    if (playerThatWillBeStolen == null || playerThatWillBeStolen.getGolds() < player.getGolds())
+                        playerThatWillBeStolen = player;
+                }
+                getPlayerRole().useEffect(this, playerThatWillBeStolen);
+            }
+        } else if (districtDeck.isPresent()) {
             getPlayerRole().useEffect(this, districtDeck.get());
-        else getPlayerRole().useEffect(this);
+        } else {
+            getPlayerRole().useEffect(this);
+        }
     }
 
     @Override
@@ -61,10 +68,10 @@ public class BotWeak extends Player implements GameActions {
             return characters.indexOf(CharacterCard.ARCHITECT);
         } else if (hasColoredCards()) {
             HashMap<Color, Integer> colorMap = createColorMap(characters);
-            List<Map.Entry<Color,Integer>> entryList = new ArrayList<>(colorMap.entrySet());
+            List<Map.Entry<Color, Integer>> entryList = new ArrayList<>(colorMap.entrySet());
             entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
 
-            if(!entryList.isEmpty()) {
+            if (!entryList.isEmpty()) {
                 return getCharacterIndexByColor(characters, entryList.get(0).getKey());
             }
 
@@ -76,6 +83,7 @@ public class BotWeak extends Player implements GameActions {
 
     /**
      * function that checks whether it's worth taking the architect
+     *
      * @param characters the characters available
      * @return true if it's worth taking the architect, else false
      */
@@ -97,30 +105,35 @@ public class BotWeak extends Player implements GameActions {
     /**
      * function that count the number of district card on the board for a specific color
      */
-    public int countNumberOfSpecifiedColorCard(Color color){
+    public int countNumberOfSpecifiedColorCard(Color color) {
         int count = 0;
-        for(DistrictCard card : getBoard()){
-            if(card.getDistrictColor() == color) count++;
+        for (DistrictCard card : getBoard()) {
+            if (card.getDistrictColor() == color) count++;
         }
         return count;
     }
 
     /**
      * Creates a HashMap that maps each specified character card to its corresponding color count.
+     *
      * @param characters the characters available
      * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
-     *         and the values are the counts of cards of that color in the given list.
+     * and the values are the counts of cards of that color in the given list.
      */
     private HashMap<Color, Integer> createColorMap(List<CharacterCard> characters) {
         HashMap<Color, Integer> hashMap = new HashMap<>();
-        if (characters.contains(CharacterCard.KING)) hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
-        if (characters.contains(CharacterCard.BISHOP)) hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
-        if (characters.contains(CharacterCard.MERCHANT)) hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
+        if (characters.contains(CharacterCard.KING))
+            hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
+        if (characters.contains(CharacterCard.BISHOP))
+            hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
+        if (characters.contains(CharacterCard.MERCHANT))
+            hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
         return hashMap;
     }
 
     /**
      * Retrieves the index of a specific character card in the given list based on its associated color.
+     *
      * @param characters the characters available
      * @param color      The color associated with the character card to find.
      * @return The index of the character card associated with the specified color, or an exception if not found.
@@ -132,5 +145,14 @@ public class BotWeak extends Player implements GameActions {
             case BLUE -> characters.indexOf(CharacterCard.BISHOP);
             default -> throw new UnsupportedOperationException("la valeur de color est : " + color);
         };
+    }
+
+    public Player copyPlayer() {
+        return new BotWeak();
+    }
+
+    @Override
+    public String WhichWarlordEffect() {
+        return null;
     }
 }

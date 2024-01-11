@@ -4,6 +4,9 @@ import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
+import javax.swing.plaf.TableHeaderUI;
+import java.util.List;
+
 /**
  * Represents a role card in the game.
  */
@@ -84,9 +87,6 @@ public enum CharacterCard {
             case ASSASSIN -> {
                 //TODO TO TEST
             }
-            case THIEF -> {
-                //TODO TO TEST
-            }
             case MAGICIAN -> {
                 //TODO TO TEST
             }
@@ -106,6 +106,14 @@ public enum CharacterCard {
         }
     }
 
+    public void useEffect(Player playerThatUseEffect,Player stolenPlayer) {
+        if(playerThatUseEffect.getPlayerRole() == THIEF){
+            playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
+            stolenPlayer.setGolds(0);
+        }
+        playerThatUseEffect.setUsedEffect(playerThatUseEffect.getPlayerRole().getCharacterName().toUpperCase()+"_"+playerThatUseEffect.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
+    }
+
     /**
      * Use the effect of the character card.
      *
@@ -118,20 +126,6 @@ public enum CharacterCard {
             }
         }
         player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase() + "_drawDistrict");
-    }
-
-    /**
-     * Use the effect of the character card.
-     *
-     * @param player the player who use the effect
-     */
-    public void useEffect(Player player, GameView view) {
-        if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
-            for (int i = 0; i < 2; i++) {
-                player.drawAndPlaceADistrict(view);
-            }
-        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase() + "_placeDistrict");
-        }
     }
 
 

@@ -7,6 +7,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Player implements GameActions {
     //All players have a unique id
@@ -211,6 +212,11 @@ public abstract class Player implements GameActions {
         }
     }
 
+    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+        if(beforePuttingADistrict) return true;
+        return false;
+    }
+
     @Override
     public int hashCode() {
         return 0;
@@ -223,6 +229,11 @@ public abstract class Player implements GameActions {
     public boolean isFirstToAdd8district() {
         return isFirstToAdd8district;
     }
+
+    public abstract Player copyPlayer();
+
+    public abstract String WhichWarlordEffect();
+
 }
 
 

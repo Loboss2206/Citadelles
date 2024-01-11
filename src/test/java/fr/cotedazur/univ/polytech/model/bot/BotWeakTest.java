@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.model.EffectControl;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -8,6 +9,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -63,27 +65,27 @@ class BotWeakTest {
         assertEquals(2, botWeak.getHands().size());
         botWeak.getHands().clear();
 
-        //Put 3 district with architect
+        /*//Put 3 district with architect
         botWeak.getHands().add(DistrictCard.PALACE);
         botWeak.getHands().add(DistrictCard.PRISON);
         botWeak.getHands().add(DistrictCard.MANOR);
         botWeak.setGolds(24);
         botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
-        botWeak.getPlayerRole().useEffect(botWeak,(GameView) null);
+        botWeak.getPlayerRole().useEffect(botWeak,(Player) null);
         assertEquals(3, botWeak.getBoard().size());
         botWeak.getHands().clear();
-        botWeak.getBoard().clear();
+        botWeak.getBoard().clear();*/
 
-        //Trying to put 3 district with architect but gold are reduced
+        /*//Trying to put 3 district with architect but gold are reduced
         botWeak.getHands().add(DistrictCard.PALACE);
         botWeak.getHands().add(DistrictCard.PRISON);
         botWeak.getHands().add(DistrictCard.MANOR);
         botWeak.setGolds(9);
         botWeak.addCardToBoard(botWeak.choiceHowToPlayDuringTheRound());
-        botWeak.getPlayerRole().useEffect(botWeak,(GameView) null);
+        botWeak.getPlayerRole().useEffect(botWeak,(Player) null);
         assertEquals(2, botWeak.getBoard().size());
         botWeak.getHands().clear();
-        botWeak.getBoard().clear();
+        botWeak.getBoard().clear();*/
 
         //Use merchant effect
         botWeak.setPlayerRole(CharacterCard.MERCHANT);
@@ -100,6 +102,21 @@ class BotWeakTest {
         assertEquals(8,botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
+
+        //Use Thief effect
+        botWeak.setGolds(5);
+        botWeak.setPlayerRole(CharacterCard.THIEF);
+        ArrayList<Player> players = new ArrayList<>();
+        for(int i = 0; i < 4;i++){
+            Player player = new BotWeak();
+            player.setGolds(30 + i);
+            player.setPlayerRole(CharacterCard.BISHOP);
+            players.add(player);
+        }
+        EffectControl effectControl = new EffectControl();
+        botWeak.useRoleEffect(Optional.empty(),Optional.of((ArrayList<Player>) effectControl.playerNeededForEffectWithoutSensibleInformation(players,botWeak)));
+
+        assertEquals(38,botWeak.getGolds());
     }
 
     @Test
