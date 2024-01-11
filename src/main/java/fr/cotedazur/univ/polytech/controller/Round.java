@@ -163,7 +163,7 @@ public class Round {
             if (choice != null) view.printPlayerAction(choice, player);
 
             if(player.wantToUseEffect(true)){
-                this.playerWantToUseEffect(player);
+                this.playerWantToUseEffect(player,playersSortedByCharacterNumber);
             }
 
             //Because architect automatically take +2 cards
@@ -176,7 +176,7 @@ public class Round {
             while(i++ < maxDistrictThatCanBePut)player.drawAndPlaceADistrict(view);
 
             if(player.wantToUseEffect(false)){
-                this.playerWantToUseEffect(player);
+                this.playerWantToUseEffect(player,playersSortedByCharacterNumber);
             }
 
             // Display the effect of the character card
@@ -188,14 +188,14 @@ public class Round {
         }
     }
 
-    public  void playerWantToUseEffect(Player player){
+    public  void playerWantToUseEffect(Player player,List<Player> players){
         switch (player.getPlayerRole()) {
             case ASSASSIN -> {
                 //TODO TO TEST
             }
             case THIEF -> {
                 if(effectControl.getNbTimesEffectIsUsed().get("Steal") == 0){
-                    player.useRoleEffect(Optional.empty(),Optional.empty());
+                    player.useRoleEffect(Optional.empty(),Optional.of((ArrayList<Player>) effectControl.playerNeededForEffectWithoutSensibleInformation(players,player)));
                     effectControl.getNbTimesEffectIsUsed().put("Steal",1);
                 }
             }
