@@ -106,12 +106,12 @@ public enum CharacterCard {
         }
     }
 
-    public void useEffect(Player playerThatUseEffect,Player stolenPlayer) {
+    public Player useEffect(Player playerThatUseEffect,Player stolenPlayer) {
         if(playerThatUseEffect.getPlayerRole() == THIEF){
             playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
-            stolenPlayer.setGolds(0);
         }
         playerThatUseEffect.setUsedEffect(playerThatUseEffect.getPlayerRole().getCharacterName().toUpperCase()+"_"+playerThatUseEffect.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
+        return stolenPlayer;
     }
 
     /**

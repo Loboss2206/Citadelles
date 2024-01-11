@@ -56,19 +56,22 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
+    public String useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             if (districtDeck.isEmpty() && players.isPresent()) {
                 if (getPlayerRole() == CharacterCard.THIEF) {
-                    getPlayerRole().useEffect(this, players.get().get(random.nextInt(players.get().size())));
+                    return getPlayerRole().useEffect(this, players.get().get(random.nextInt(players.get().size()))).getName();
                 }
             } else if (districtDeck.isPresent()) {
                 getPlayerRole().useEffect(this, districtDeck.get());
+                return "noPlayerAffected";
             } else {
                 getPlayerRole().useEffect(this);
+                return "noPlayerAffected";
             }
         }
+        return "noPlayerAffected";
     }
 
     @Override

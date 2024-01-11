@@ -32,7 +32,7 @@ public interface GameActions {
     /**
      * function where the player choose to use or not the effect of his character
      */
-    void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players);
+    String useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players);
 
     /**
      * function where the player choose his character

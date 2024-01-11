@@ -35,6 +35,7 @@ public class EffectControl {
     private Player playerCopy(Player playerCopy,Player playerThatUseEffect){
         Player copyPlayer = playerCopy.copyPlayer();
         copyPlayer.setGolds(playerCopy.getGolds());
+        copyPlayer.setName(playerCopy.getName());
         if(playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() )copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
         return copyPlayer;
     }

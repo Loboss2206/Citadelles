@@ -41,7 +41,7 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
+    public String useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
         if (districtDeck.isEmpty() && players.isPresent()) {
             if (getPlayerRole() == CharacterCard.THIEF) {
                 Player playerThatWillBeStolen = null;
@@ -49,13 +49,16 @@ public class BotWeak extends Player implements GameActions {
                     if (playerThatWillBeStolen == null || playerThatWillBeStolen.getGolds() < player.getGolds())
                         playerThatWillBeStolen = player;
                 }
-                getPlayerRole().useEffect(this, playerThatWillBeStolen);
+                return getPlayerRole().useEffect(this, playerThatWillBeStolen).getName();
             }
         } else if (districtDeck.isPresent()) {
             getPlayerRole().useEffect(this, districtDeck.get());
+            return "noPlayerAffected";
         } else {
             getPlayerRole().useEffect(this);
+            return "noPlayerAffected";
         }
+        return "noPlayerAffected";
     }
 
     @Override

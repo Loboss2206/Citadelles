@@ -195,7 +195,12 @@ public class Round {
             }
             case THIEF -> {
                 if(effectControl.getNbTimesEffectIsUsed().get("Steal") == 0){
-                    player.useRoleEffect(Optional.empty(),Optional.of((ArrayList<Player>) effectControl.playerNeededForEffectWithoutSensibleInformation(players,player)));
+                    String playerStolen = player.useRoleEffect(Optional.empty(),Optional.of((ArrayList<Player>) effectControl.playerNeededForEffectWithoutSensibleInformation(players,player)));
+                    for(Player player1 : players){
+                        if(player1.getName().equals(playerStolen)){
+                            player1.setGolds(0);
+                        }
+                    }
                     effectControl.getNbTimesEffectIsUsed().put("Steal",1);
                 }
             }

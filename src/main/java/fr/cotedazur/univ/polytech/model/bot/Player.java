@@ -14,7 +14,7 @@ public abstract class Player implements GameActions {
     private final int id;
 
     //All players have a unique name
-    private final String name;
+    private  String name;
 
     //The amount of gold for a player
     private int golds;
@@ -234,6 +234,9 @@ public abstract class Player implements GameActions {
 
     public abstract String WhichWarlordEffect();
 
+    public void setName(String name) {
+        this.name = name;
+    }
 }
 
 
