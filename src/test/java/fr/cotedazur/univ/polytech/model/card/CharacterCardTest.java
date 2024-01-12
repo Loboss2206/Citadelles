@@ -1,6 +1,9 @@
 package fr.cotedazur.univ.polytech.model.card;
 
+import fr.cotedazur.univ.polytech.controller.Game;
+import fr.cotedazur.univ.polytech.controller.Round;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
+import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
@@ -126,13 +129,20 @@ class CharacterCardTest {
     }
     @Test
     void useEffectForThief() {
+        player = new BotWeak();
+        ArrayList<Player> listPlayer= new ArrayList<>();
         player.setGolds(20);
         player.setPlayerRole(CharacterCard.THIEF);
 
         Player player2 = new BotRandom();
         player2.setGolds(31);
+        player2.setPlayerRole(CharacterCard.WARLORD);
+        listPlayer.add(player2);
 
-        player.getPlayerRole().useEffect(player, player2);
+        //We use round because useEffectThief doesn't
+        Round round = new Round();
+
+        round.playerWantToUseEffect(player, listPlayer);
         assertEquals(51,player.getGolds());
         assertEquals(0,player2.getGolds());
     }

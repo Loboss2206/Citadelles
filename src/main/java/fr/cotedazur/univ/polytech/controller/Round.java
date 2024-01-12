@@ -14,19 +14,19 @@ import java.util.List;
 import java.util.Optional;
 
 public class Round {
-    private final List<Player> players;
-    private final List<Player> playersSortedByCharacterNumber;
-    private final GameView view;
+    private  List<Player> players;
+    private  List<Player> playersSortedByCharacterNumber;
+    private  GameView view;
 
     //Decks
-    private final Deck<DistrictCard> districtDeck;
-    private final Deck<DistrictCard> districtDiscardDeck; // This deck will be used when the warlord destroy a district or when the magician swap his hand with the deck
-    private final Deck<CharacterCard> characterDeck;
-    private final Deck<CharacterCard> faceUpCharactersDiscarded;
+    private  Deck<DistrictCard> districtDeck;
+    private  Deck<DistrictCard> districtDiscardDeck; // This deck will be used when the warlord destroy a district or when the magician swap his hand with the deck
+    private  Deck<CharacterCard> characterDeck;
+    private  Deck<CharacterCard> faceUpCharactersDiscarded;
     private CharacterCard faceDownCharacterDiscarded;
-    private final int nbRound;
+    private  int nbRound;
 
-    private final EffectControl effectControl;
+    private  EffectControl effectControl;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound) {
         this.players = players;
@@ -48,6 +48,10 @@ public class Round {
         for(Player player : players){
             player.setUsedEffect("");
         }
+        effectControl = new EffectControl();
+    }
+
+    public Round(){
         effectControl = new EffectControl();
     }
 
@@ -265,4 +269,6 @@ public class Round {
     public Deck<CharacterCard> getCharacterDiscardDeck() {
         return faceUpCharactersDiscarded;
     }
+
+
 }
