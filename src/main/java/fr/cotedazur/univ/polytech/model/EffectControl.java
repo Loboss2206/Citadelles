@@ -26,7 +26,8 @@ public class EffectControl {
         ArrayList<Player> newList = new ArrayList<>();
         for(Player player : players){
             if(player != playerThatUseEffect){
-                newList.add(this.playerCopy(player,playerThatUseEffect));
+                if((player.getPlayerRole() != CharacterCard.ASSASSIN && playerThatUseEffect.getPlayerRole() == CharacterCard.THIEF))
+                    newList.add(this.playerCopy(player,playerThatUseEffect));
             }
         }
         return newList;

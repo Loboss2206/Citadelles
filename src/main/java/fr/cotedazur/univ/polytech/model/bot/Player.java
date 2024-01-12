@@ -237,6 +237,10 @@ public abstract class Player implements GameActions {
     public void setName(String name) {
         this.name = name;
     }
+
+    public boolean isDead(){
+        return false;
+    }
 }
 
 
