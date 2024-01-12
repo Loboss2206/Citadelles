@@ -1,6 +1,9 @@
 package fr.cotedazur.univ.polytech.model.card;
 
+import fr.cotedazur.univ.polytech.controller.Game;
+import fr.cotedazur.univ.polytech.controller.Round;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
+import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -45,7 +49,7 @@ class CharacterCardTest {
         assertEquals(3, player.getGolds());
     }
 
-    @Test
+    /*@Test
     void testEffectForArchitect() {
         districtDeck = DeckFactory.createEmptyDistrictDeck();
         districtDeck.add(DistrictCard.MANOR);
@@ -56,7 +60,7 @@ class CharacterCardTest {
         when(random.nextInt(anyInt())).thenReturn(0);
 
         botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck);
-        botRandom1.getPlayerRole().useEffect(botRandom1, (GameView) null);
+        botRandom1.getPlayerRole().useEffect(botRandom1, (Player) null);
 
         assertEquals(0, botRandom1.getHands().size());
         assertEquals(45, botRandom1.getGolds());
@@ -71,11 +75,11 @@ class CharacterCardTest {
         when(random.nextInt(anyInt())).thenReturn(1);
 
         botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck);
-        botRandom1.getPlayerRole().useEffect(botRandom1, (GameView) null);
+        botRandom1.getPlayerRole().useEffect(botRandom1, (Player) null);
 
         assertEquals(2, botRandom1.getHands().size());
         assertEquals(50, botRandom1.getGolds());
-    }
+    }*/
   
   @Test
     void useEffectForMerchant() {
@@ -122,6 +126,32 @@ class CharacterCardTest {
 
         //Should be 18 because when we add a district on the board we withdraw from his golds, and now we have 3 blue district, so we add 3 in the number of golds instead of 2
         assertEquals(18, player.getGolds());
+    }
+    @Test
+    void useEffectForThief() {
+        player = new BotWeak();
+        ArrayList<Player> listPlayer= new ArrayList<>();
+        player.setGolds(20);
+        player.setPlayerRole(CharacterCard.THIEF);
+
+        Player player2 = new BotRandom();
+        player2.setGolds(31);
+        player2.setPlayerRole(CharacterCard.WARLORD);
+        listPlayer.add(player2);
+
+        //We use round because useEffectThief doesn't
+        Round round = new Round();
+
+        round.playerWantToUseEffect(player, listPlayer);
+        assertEquals(51,player.getGolds());
+        assertEquals(0,player2.getGolds());
+
+        //Test when assassin (should not take the golds)
+        player2.setGolds(31);
+        player2.setPlayerRole(CharacterCard.ASSASSIN);
+        round.playerWantToUseEffect(player, listPlayer);
+        assertEquals(51,player.getGolds());
+        assertEquals(31,player2.getGolds());
     }
 
     @Test

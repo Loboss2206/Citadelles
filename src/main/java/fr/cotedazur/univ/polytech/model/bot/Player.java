@@ -7,13 +7,14 @@ import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public abstract class Player implements GameActions {
     //All players have a unique id
     private final int id;
 
     //All players have a unique name
-    private final String name;
+    private  String name;
 
     //The amount of gold for a player
     private int golds;
@@ -211,6 +212,11 @@ public abstract class Player implements GameActions {
         }
     }
 
+    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+        if(beforePuttingADistrict) return true;
+        return false;
+    }
+
     @Override
     public int hashCode() {
         return 0;
@@ -222,6 +228,18 @@ public abstract class Player implements GameActions {
 
     public boolean isFirstToAdd8district() {
         return isFirstToAdd8district;
+    }
+
+    public abstract Player copyPlayer();
+
+    public abstract String WhichWarlordEffect();
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isDead(){
+        return false;
     }
 }
 

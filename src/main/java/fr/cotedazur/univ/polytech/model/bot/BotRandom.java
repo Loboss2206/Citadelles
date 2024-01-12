@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -19,7 +20,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String startChoice(Deck<DistrictCard> districtDeck) {
-        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
+        if (getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
@@ -36,7 +37,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
-        useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
+        useRoleEffect(Optional.empty(), Optional.empty()); //Simple effects
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             return putADistrict();
@@ -55,15 +56,22 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view) {
+    public String useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
-            if (districtDeck.isEmpty() && view.isPresent())
-                getPlayerRole().useEffect(this, view.get());
-            else if (districtDeck.isPresent())
+            if (districtDeck.isEmpty() && players.isPresent()) {
+                if (getPlayerRole() == CharacterCard.THIEF) {
+                    return getPlayerRole().useEffect(this, players.get().get(random.nextInt(players.get().size()))).getName();
+                }
+            } else if (districtDeck.isPresent()) {
                 getPlayerRole().useEffect(this, districtDeck.get());
-            else getPlayerRole().useEffect(this);
+                return "noPlayerAffected";
+            } else {
+                getPlayerRole().useEffect(this);
+                return "noPlayerAffected";
+            }
         }
+        return "noPlayerAffected";
     }
 
     @Override
@@ -83,5 +91,14 @@ public class BotRandom extends Player implements GameActions {
     @Override
     public int hashCode() {
         return super.hashCode();
+    }
+
+    public Player copyPlayer() {
+        return new BotRandom();
+    }
+
+    @Override
+    public String WhichWarlordEffect() {
+        return null;
     }
 }
