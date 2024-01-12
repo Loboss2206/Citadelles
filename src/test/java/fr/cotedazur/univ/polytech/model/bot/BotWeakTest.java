@@ -1,18 +1,21 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import fr.cotedazur.univ.polytech.model.EffectControl;
+import fr.cotedazur.univ.polytech.controller.EffectController;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyInt;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class BotWeakTest {
 
@@ -61,7 +64,7 @@ class BotWeakTest {
     void testUseEffectForBotWeak(){
         //Draw with architect
         botWeak.setPlayerRole(CharacterCard.ARCHITECT);
-        botWeak.useRoleEffect(Optional.of(districtDeck), Optional.empty());
+        botWeak.getPlayerRole().useEffectArchitect(botWeak,districtDeck);
         assertEquals(2, botWeak.getHands().size());
         botWeak.getHands().clear();
 
@@ -93,12 +96,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.MARKET);
         botWeak.setGolds(5);
-        botWeak.useRoleEffect(Optional.empty(),Optional.empty());
+        botWeak.getPlayerRole().useEffect(botWeak);
         assertEquals(6,botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.MARKET);
         botWeak.setGolds(5);
-        botWeak.useRoleEffect(Optional.empty(),Optional.empty());
+        botWeak.getPlayerRole().useEffect(botWeak);
         assertEquals(8,botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -107,14 +110,21 @@ class BotWeakTest {
         botWeak.setGolds(5);
         botWeak.setPlayerRole(CharacterCard.THIEF);
         ArrayList<Player> players = new ArrayList<>();
-        for(int i = 0; i < 4;i++){
-            Player player = new BotWeak();
-            player.setGolds(30 + i);
-            player.setPlayerRole(CharacterCard.BISHOP);
-            players.add(player);
-        }
-        EffectControl effectControl = new EffectControl();
-        botWeak.useRoleEffect(Optional.empty(),Optional.of((ArrayList<Player>) effectControl.playerNeededForEffectWithoutSensibleInformation(players,botWeak)));
+        Player player = new BotWeak();
+        player.setGolds(31);
+        player.setPlayerRole(CharacterCard.BISHOP);
+        players.add(player);
+        Player player2 = new BotWeak();
+        player.setGolds(32);
+        player.setPlayerRole(CharacterCard.ASSASSIN);
+        players.add(player);
+        Player player3 = new BotWeak();
+        player.setGolds(33);
+        player.setPlayerRole(CharacterCard.MERCHANT);
+        players.add(player);
+
+        EffectController effectController = new EffectController();
+        effectController.playerWantToUseEffect(botWeak,players);
 
         assertEquals(38,botWeak.getGolds());
     }

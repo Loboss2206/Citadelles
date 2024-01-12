@@ -106,12 +106,14 @@ public enum CharacterCard {
         }
     }
 
-    public Player useEffect(Player playerThatUseEffect,Player stolenPlayer) {
-        if(playerThatUseEffect.getPlayerRole() == THIEF){
-            playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
+    public void useEffectThief(Player playerThatUseEffect,Player stolenPlayer) {
+        if(stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
+            if (playerThatUseEffect.getPlayerRole() == THIEF) {
+                playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
+                stolenPlayer.setGolds(0);
+            }
+            playerThatUseEffect.setUsedEffect(playerThatUseEffect.getPlayerRole().getCharacterName().toUpperCase() + "_" + playerThatUseEffect.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
         }
-        playerThatUseEffect.setUsedEffect(playerThatUseEffect.getPlayerRole().getCharacterName().toUpperCase()+"_"+playerThatUseEffect.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
-        return stolenPlayer;
     }
 
     /**
@@ -119,7 +121,7 @@ public enum CharacterCard {
      *
      * @param player the player who use the effect
      */
-    public void useEffect(Player player, Deck<DistrictCard> districtDeck) {
+    public void useEffectArchitect(Player player, Deck<DistrictCard> districtDeck) {
         if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
             for (int i = 0; i < 2; i++) {
                 player.drawCard(districtDeck);
