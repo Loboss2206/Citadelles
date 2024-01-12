@@ -8,7 +8,6 @@ import java.util.Random;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.view.GameView;
 
 public class BotRandom extends Player implements GameActions {
 
@@ -20,7 +19,6 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String startChoice(Deck<DistrictCard> districtDeck) {
-        if (getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
@@ -37,7 +35,6 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
-        useRoleEffect(Optional.empty(), Optional.empty()); //Simple effects
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             return putADistrict();
@@ -56,22 +53,11 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players) {
-        int randomIndex = random.nextInt(2);
-        if (randomIndex == 0) {
-            if (districtDeck.isEmpty() && players.isPresent()) {
-                if (getPlayerRole() == CharacterCard.THIEF) {
-                    return getPlayerRole().useEffect(this, players.get().get(random.nextInt(players.get().size()))).getName();
-                }
-            } else if (districtDeck.isPresent()) {
-                getPlayerRole().useEffect(this, districtDeck.get());
-                return "noPlayerAffected";
-            } else {
-                getPlayerRole().useEffect(this);
-                return "noPlayerAffected";
-            }
+    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
+        if (getPlayerRole() == CharacterCard.THIEF) {
+            return characterCards.get(random.nextInt(characterCards.size()));
         }
-        return "noPlayerAffected";
+        return null;
     }
 
     @Override

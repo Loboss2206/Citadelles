@@ -136,20 +136,15 @@ class CharacterCardTest {
 
         Player player2 = new BotRandom();
         player2.setGolds(31);
-        player2.setPlayerRole(CharacterCard.WARLORD);
-        listPlayer.add(player2);
 
-        //We use round because useEffectThief doesn't
-        Round round = new Round();
-
-        round.playerWantToUseEffect(player, listPlayer);
+        player.getPlayerRole().useEffectThief(player,player2);
         assertEquals(51,player.getGolds());
         assertEquals(0,player2.getGolds());
 
         //Test when assassin (should not take the golds)
         player2.setGolds(31);
         player2.setPlayerRole(CharacterCard.ASSASSIN);
-        round.playerWantToUseEffect(player, listPlayer);
+        player.getPlayerRole().useEffectThief(player,player2);
         assertEquals(51,player.getGolds());
         assertEquals(31,player2.getGolds());
     }

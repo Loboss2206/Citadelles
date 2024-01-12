@@ -3,11 +3,9 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public interface GameActions {
     /**
@@ -32,7 +30,7 @@ public interface GameActions {
     /**
      * function where the player choose to use or not the effect of his character
      */
-    String useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<ArrayList<Player>> players);
+    CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players,List<CharacterCard> characterCards);
 
     /**
      * function where the player choose his character
