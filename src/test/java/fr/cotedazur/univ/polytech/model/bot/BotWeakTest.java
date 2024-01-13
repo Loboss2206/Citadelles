@@ -143,7 +143,7 @@ class BotWeakTest {
 
         botWeak.setPlayerRole(CharacterCard.ASSASSIN);
         EffectController effectController2 = new EffectController();
-        effectController2.playerWantToUseEffect(botWeak, players);
+        effectController2.playerWantToUseEffect(botWeak, players, new Deck<>());
         assertTrue(players.get(6).isDead());
         for (Player player1 : players) {
             if (player1.getPlayerRole() != CharacterCard.ASSASSIN && player1.getPlayerRole() != players.get(6).getPlayerRole()) {
