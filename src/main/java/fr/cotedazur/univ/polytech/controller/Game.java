@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
@@ -11,8 +12,13 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.Collections;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Level;
 
 public class Game {
+
+    // Logger
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+
     // All the players that play in the game
     private final List<Player> players;
 
@@ -78,6 +84,7 @@ public class Game {
     public void startGame() {
         //Print the greeting
         view.printStartGame();
+        LOGGER.log(Level.INFO, "Début du jeu");
 
         //Draw 4 cards of District for each player at the beginning of the game
         for (Player player : players) {
