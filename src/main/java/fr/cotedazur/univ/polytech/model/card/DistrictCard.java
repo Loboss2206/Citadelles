@@ -82,8 +82,7 @@ public enum DistrictCard {
      */
     public boolean isDestroyableDistrict(int golds) {
         if (golds >= getDistrictValue() - 1) {
-            return true;
-            //return !getDistrictName().equals("Donjon");
+            return !getDistrictName().equals("Donjon");
         }
         else return false;
     }
