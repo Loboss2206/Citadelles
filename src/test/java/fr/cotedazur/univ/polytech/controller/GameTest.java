@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -20,7 +21,7 @@ class GameTest {
     @BeforeEach
     void setUp() {
         players = new ArrayList<>(Arrays.asList(new BotRandom(), new BotRandom(), new BotRandom(), new BotRandom()));
-        game = new Game(players);
+        game = new Game(players, new GameView());
     }
 
     @Test
@@ -87,7 +88,7 @@ class GameTest {
         player4.setPoints(11);
 
         players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
-        game = new Game(players);
+        game = new Game(players,new GameView());
 
         assertEquals(player1, game.getPlayers().get(0));
         assertEquals(player2, game.getPlayers().get(1));
@@ -110,7 +111,7 @@ class GameTest {
         Player player4 = new BotRandom();
 
         players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
-        game = new Game(players);
+        game = new Game(players,new GameView());
 
         for (Player player : game.getPlayers()) {
             player.setCrowned(false);

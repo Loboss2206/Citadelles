@@ -2,6 +2,7 @@ package fr.cotedazur.univ.polytech.model.card;
 
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.controller.Round;
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
@@ -30,6 +31,7 @@ class CharacterCardTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         player = new BotRandom();
         botRandom1 = new BotRandom();
         botRandom1.setRandom(random);

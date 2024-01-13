@@ -51,10 +51,12 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (getPlayerRole() == CharacterCard.ASSASSIN) {
+            LOGGER.info("Le joueur " + getName() + " utilise l'effet de l'assassin");
             if (players.size() < 4) return characterCards.get(3);
             if (players.size() < 6) return characterCards.get(5);
             else return characterCards.get(6);
         }
+        LOGGER.info("Le joueur " + getName() + " ne peut pas utiliser l'effet de l'assassin");
         return null;
     }
 
@@ -65,6 +67,7 @@ public class BotWeak extends Player implements GameActions {
         validCards.sort(new DistrictCardComparator());
 
         if (isArchitectOptimal(characters)) {
+            LOGGER.info("Le joueur " + getName() + " prend l'architecte, car il est désigné comme optimal");
             return characters.indexOf(CharacterCard.ARCHITECT);
         } else if (hasColoredCards()) {
             HashMap<Color, Integer> colorMap = createColorMap(characters);
@@ -72,6 +75,7 @@ public class BotWeak extends Player implements GameActions {
             entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
 
             if (!entryList.isEmpty()) {
+                LOGGER.info("Le joueur " + getName() + " prend le personnage " + entryList.get(0).getKey() + " car il a le plus de quartiers de cette couleur");
                 return getCharacterIndexByColor(characters, entryList.get(0).getKey());
             }
 

@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
@@ -28,6 +29,7 @@ class RoundTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         players = new ArrayList<>();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
@@ -54,7 +56,7 @@ class RoundTest {
     @Test
     void testNoDoubleOnBoardForOnePlayer() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3));
-        game = new Game(players);
+        game = new Game(players, new GameView());
         game.startGame();
         for (Player p : players) {
             for (int i = 0; i < p.getBoard().size() - 1; i++) {

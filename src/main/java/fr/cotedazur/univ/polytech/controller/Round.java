@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
@@ -13,6 +14,8 @@ import java.util.List;
 import java.util.Optional;
 
 public class Round {
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+
     private  List<Player> players;
     private  List<Player> playersSortedByCharacterNumber;
     private  GameView view;
@@ -62,6 +65,7 @@ public class Round {
      */
     public void startRound() {
         //Announce the start of the round
+        LOGGER.info("Début du round " + nbRound);
         view.printStartRound(nbRound);
 
         //Discard cards
@@ -168,7 +172,10 @@ public class Round {
         String choice;
         for (Player player : playersSortedByCharacterNumber) {
 
-            if (player.isDead()) continue;
+            if (player.isDead()) {
+                LOGGER.info("Le joueur " + player.getName() + " est mort, il ne peut pas jouer");
+                continue;
+            }
 
             //Take the choice
             choice = player.startChoice(districtDeck);
