@@ -13,31 +13,39 @@ public class EffectController {
 
     private final HashMap<String, Integer> nbTimesEffectIsUsed = new HashMap<>();
 
-    private final GameView view;
+    private GameView view;
 
-    public EffectController(GameView view) {
+    public EffectController() {
         nbTimesEffectIsUsed.put("EarnDistrictBishop", 0);
         nbTimesEffectIsUsed.put("EarnDistrictWarlord", 0);
         nbTimesEffectIsUsed.put("EarnDistrictKing", 0);
         nbTimesEffectIsUsed.put("EarnDistrictMerchant", 0);
         nbTimesEffectIsUsed.put("Steal", 0);
         nbTimesEffectIsUsed.put("Destroy", 0);
+        nbTimesEffectIsUsed.put("Kill", 0);
+    }
+
+    public void setView(GameView view) {
         this.view = view;
     }
 
-    /**
-     * @return the list of the roles that can be stolen by the thief
-     */
-    public List<CharacterCard> roleNeededForThiefEffect() {
-        ArrayList<CharacterCard> newList = new ArrayList<>();
-        for (CharacterCard characterCard : CharacterCard.values()) {
-            if (characterCard != CharacterCard.ASSASSIN) newList.add(characterCard);
+    public EffectController(GameView view) {
+        this();
+        this.view = view;
+    }
+
+    public List<Player> playerNeededForEffectWithoutSensibleInformationForThief(List<Player> players, Player playerThatUseEffect) {
+        ArrayList<Player> newList = new ArrayList<>();
+        for (Player player : players) {
+            if (player != playerThatUseEffect && player.playerHasADestroyableDistrict(playerThatUseEffect)) {
+                newList.add(this.playerCopy(player, playerThatUseEffect));
+            }
         }
         return newList;
     }
 
     /**
-     * @param players the list of the players
+     * @param players             the list of the players
      * @param playerThatUseEffect the warlord
      * @return the list of the players that can be destroyed by the warlord
      */
@@ -51,9 +59,27 @@ public class EffectController {
         return newList;
     }
 
+    public List<CharacterCard> roleNeededForThiefEffect() {
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
+    }
+
+    public List<CharacterCard> roleNeededForAssassinEffect() {
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
+    }
+
+    public List<Player> playerNeededForEffectWithoutSensibleInformationForAssassin(List<Player> players, Player playerThatUseEffect) {
+        ArrayList<Player> newList = new ArrayList<>();
+        for (Player player : players) {
+            if (player != playerThatUseEffect) {
+                newList.add(this.playerCopy(player, playerThatUseEffect));
+            }
+        }
+        return newList;
+    }
+
     /**
      * @param playerThatUseEffect the warlord
-     * @param playerToDestroy the player that the warlord want to destroy
+     * @param playerToDestroy     the player that the warlord want to destroy
      * @return the list of the districts that can be destroyed by the warlord for the playerToDestroy
      */
     public List<DistrictCard> districtNeededForWarlordEffect(Player playerThatUseEffect, Player playerToDestroy) {
@@ -75,10 +101,29 @@ public class EffectController {
         return nbTimesEffectIsUsed;
     }
 
+    public List<CharacterCard> getRidOfASetOfCharacterCard(List<CharacterCard> characterCards, List<CharacterCard> characterCardsToGetRidOf) {
+        ArrayList<CharacterCard> newList = new ArrayList<>();
+        for (CharacterCard characterCard : characterCards) {
+            if (!characterCardsToGetRidOf.contains(characterCard)) newList.add(characterCard);
+        }
+        return newList;
+    }
+
     public void playerWantToUseEffect(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardDeck) {
         switch (playerThatWantToUseEffect.getPlayerRole()) {
             case ASSASSIN -> {
-                //TODO TO TEST
+                if (this.getNbTimesEffectIsUsed().get("Kill") == 0) {
+                    CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players, playerThatWantToUseEffect), this.roleNeededForAssassinEffect());
+                    if (roleKilled != CharacterCard.ASSASSIN && roleKilled != null) {
+                        for (Player playerAffected : players) {
+                            if (playerAffected.getPlayerRole() == roleKilled) {
+                                playerThatWantToUseEffect.getPlayerRole().useEffectAssassin(playerThatWantToUseEffect, playerAffected);
+                            }
+                        }
+                        this.getNbTimesEffectIsUsed().put("Kill", 1);
+                        if (view != null) view.killPlayer(roleKilled);
+                    }
+                }
             }
             case THIEF -> {
                 if (this.getNbTimesEffectIsUsed().get("Steal") == 0) {
@@ -159,7 +204,8 @@ public class EffectController {
                                 // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
                                 playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardDeck);
                                 this.getNbTimesEffectIsUsed().put("Destroy", 1);
-                                view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
+                                if (view != null && playerToDestroy.getPlayerRole() != null)
+                                    view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
                             }
                         }
                     }

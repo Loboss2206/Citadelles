@@ -152,4 +152,11 @@ public enum CharacterCard {
             }
         }
     }
+
+    public void useEffectAssassin(Player playerThatWantToUseEffect, Player targetPlayer) {
+        if (playerThatWantToUseEffect.getPlayerRole() == ASSASSIN && !targetPlayer.isDead()) {
+            targetPlayer.setDead(true);
+        }
+
+    }
 }

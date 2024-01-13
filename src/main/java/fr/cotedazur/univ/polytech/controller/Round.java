@@ -25,7 +25,7 @@ public class Round {
     private CharacterCard faceDownCharacterDiscarded;
     private  int nbRound;
 
-    private EffectController effectController;
+    private final EffectController effectController;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound) {
         this.players = players;
@@ -46,7 +46,14 @@ public class Round {
         //reset the players effect boolean
         for(Player player : players){
             player.setUsedEffect("");
+            player.setDead(false);
         }
+
+        effectController = new EffectController();
+        effectController.setView(view);
+    }
+
+    public Round(){
         effectController = new EffectController(view);
     }
 
@@ -160,6 +167,9 @@ public class Round {
     public void choiceActionsForTheRound() {
         String choice;
         for (Player player : playersSortedByCharacterNumber) {
+
+            if (player.isDead()) continue;
+
             //Take the choice
             choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);

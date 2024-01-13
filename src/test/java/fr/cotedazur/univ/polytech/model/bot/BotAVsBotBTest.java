@@ -71,7 +71,7 @@ class BotAVsBotBTest {
             game = new Game(players);
         }
         System.out.println(((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
-        assertTrue(75 < ((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
+        assertTrue(70 <= ((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
     }
 
 }

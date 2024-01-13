@@ -196,7 +196,11 @@ public class GameView {
         System.out.println("----------------------------------------------------------------------\n");
     }
 
-    /**
+    public void killPlayer(CharacterCard characterCard) {
+        displayMessage("Le joueur ayant le role: " + characterCard.getCharacterName() + " est mort.");
+    }
+
+        /**
      * print when a player destroy the district of another player
      *
      * @param player            the player who destroyed the district
