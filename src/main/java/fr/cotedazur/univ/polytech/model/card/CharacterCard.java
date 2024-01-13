@@ -112,17 +112,20 @@ public enum CharacterCard {
         }
     }
 
-    public void useEffectThief(Player playerThatUseEffect,Player stolenPlayer) {
-        if(stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
-            if (playerThatUseEffect.getPlayerRole() == THIEF) {
-                playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
-                stolenPlayer.setGolds(0);
-                if (stolenPlayer.getPlayerRole() != null && playerThatUseEffect.getPlayerRole() != null) {
-                    LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " (" + playerThatUseEffect.getPlayerRole().getCharacterName() + ") a volé " + stolenPlayer.getName() + " (" + stolenPlayer.getPlayerRole().getCharacterName() + ")");
-                    LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " a maintenant " + playerThatUseEffect.getGolds() + " pièces d'or");
+    public void useEffectThief(Player playerThatUseEffect,Player stolenPlayer, boolean hasBeenStolen) {
+        if(hasBeenStolen) {
+            if (stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
+                if (playerThatUseEffect.getPlayerRole() == THIEF) {
+                    playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
+                    stolenPlayer.setGolds(0);
+                    if (stolenPlayer.getPlayerRole() != null && playerThatUseEffect.getPlayerRole() != null) {
+                        LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " (" + playerThatUseEffect.getPlayerRole().getCharacterName() + ") a volé " + stolenPlayer.getName() + " (" + stolenPlayer.getPlayerRole().getCharacterName() + ")");
+                        LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " a maintenant " + playerThatUseEffect.getGolds() + " pièces d'or");
+                    }
                 }
             }
-            playerThatUseEffect.setUsedEffect(playerThatUseEffect.getPlayerRole().getCharacterName().toUpperCase() + "_" + playerThatUseEffect.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
+        }else{
+            stolenPlayer.setHasBeenStolen(true);
         }
     }
 

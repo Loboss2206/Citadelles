@@ -8,7 +8,6 @@ import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public abstract class Player implements GameActions {
     protected final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
@@ -35,6 +34,8 @@ public abstract class Player implements GameActions {
 
     //the player's current status
     private boolean isDead = false;
+
+    private boolean hasBeenStolen = false;
 
     //to find out if the player is the king
     private boolean isCrowned = false;
@@ -311,6 +312,14 @@ public abstract class Player implements GameActions {
     public void setDead(boolean isDead) {
         LOGGER.info("Le joueur " + name + (isDead ? " est" : " n'est plus") + " mort");
     	this.isDead = isDead;
+    }
+
+    public boolean isStolen() {
+        return hasBeenStolen;
+    }
+
+    public void setHasBeenStolen(boolean hasBeenStolen) {
+        this.hasBeenStolen = hasBeenStolen;
     }
 }
 
