@@ -63,7 +63,7 @@ public class EffectController {
         Player copyPlayer = playerCopy.copyPlayer();
         copyPlayer.setGolds(playerCopy.getGolds());
         copyPlayer.setName(playerCopy.getName());
-         copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
+        if(playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber()) copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
         return copyPlayer;
     }
 
@@ -76,14 +76,14 @@ public class EffectController {
             case ASSASSIN -> {
                 if (this.getNbTimesEffectIsUsed().get("Kill") == 0) {
                     CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players,playerThatWantToUseEffect));
-                    if (roleKilled != CharacterCard.ASSASSIN) {
-                        for (Player player1 : players) {
-                            if (player1.getPlayerRole() == roleKilled) {
-                                playerThatWantToUseEffect.getPlayerRole().useEffectAssassin(playerThatWantToUseEffect, player1);
-                                if (view != null) view.killPlayer(player1);
+                    if (roleKilled != CharacterCard.ASSASSIN && roleKilled != null) {
+                        for (Player playerAffected : players) {
+                            if (playerAffected.getPlayerRole() == roleKilled) {
+                                playerThatWantToUseEffect.getPlayerRole().useEffectAssassin(playerThatWantToUseEffect, playerAffected);
                             }
                         }
                         this.getNbTimesEffectIsUsed().put("Kill", 1);
+                        if (view != null) view.killPlayer(roleKilled);
                     }
                 }
             }

@@ -147,7 +147,6 @@ public enum CharacterCard {
 
     public void useEffectAssassin(Player playerThatWantToUseEffect, Player targetPlayer) {
         if (playerThatWantToUseEffect.getPlayerRole() == ASSASSIN && !targetPlayer.isDead()) {
-            targetPlayer.setUsedEffect(targetPlayer.getPlayerRole().getCharacterName().toUpperCase() + "_" + targetPlayer.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
             targetPlayer.setDead(true);
         }
 
