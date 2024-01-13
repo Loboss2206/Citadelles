@@ -65,6 +65,22 @@ public class BotRandom extends Player implements GameActions {
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 
+    @Override
+    public Player choosePlayerToDestroy(List<Player> players) {
+        int rand = random.nextInt(2);
+        if (rand == 0) {
+            return null;
+        }
+        else {
+            return players.get(random.nextInt(players.size()));
+        }
+    }
+
+    @Override
+    public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
+        return districtCards.get(random.nextInt(districtCards.size()));
+    }
+
     public void setRandom(Random random) {
         this.random = random;
     }
@@ -79,12 +95,19 @@ public class BotRandom extends Player implements GameActions {
         return super.hashCode();
     }
 
-    public Player copyPlayer() {
-        return new BotRandom();
-    }
-
     @Override
-    public String WhichWarlordEffect() {
-        return null;
+    public String whichWarlordEffect(List<Player> players) {
+        int randomIndex = random.nextInt(2);
+        switch (randomIndex) {
+            case 0 -> {
+                return "Destroy";
+            }
+            case 1 -> {
+                return "Steal";
+            }
+            default -> {
+                return null;
+            }
+        }
     }
 }

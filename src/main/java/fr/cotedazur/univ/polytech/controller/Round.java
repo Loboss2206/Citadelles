@@ -47,11 +47,7 @@ public class Round {
         for(Player player : players){
             player.setUsedEffect("");
         }
-        effectController = new EffectController();
-    }
-
-    public Round(){
-        effectController = new EffectController();
+        effectController = new EffectController(view);
     }
 
     /**
@@ -72,6 +68,9 @@ public class Round {
 
         //Print the recap of all players
         view.printRecapOfAllPlayers(players);
+
+        //Print the board of all players
+        view.printBoardOfAllPlayers(players);
 
         //Sort the players by the number of the character card
         sortPlayersByNumbersOfCharacterCard();
@@ -166,7 +165,7 @@ public class Round {
             if (choice != null) view.printPlayerAction(choice, player);
 
             if(player.wantToUseEffect(true)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber);
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
             }
 
             //Because architect automatically take +2 cards
@@ -179,7 +178,7 @@ public class Round {
             while(i++ < maxDistrictThatCanBePut)player.drawAndPlaceADistrict(view);
 
             if(player.wantToUseEffect(false)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber);
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
             }
 
             // Display the effect of the character card

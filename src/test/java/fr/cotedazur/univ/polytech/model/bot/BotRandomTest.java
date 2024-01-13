@@ -206,4 +206,19 @@ class BotRandomTest {
         botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
         assertEquals(CharacterCard.THIEF,botRandom1.getPlayerRole());
     }
+
+    @Test
+    void testChoosePlayerToDestroyInEmptyList() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertNull(botRandom1.choosePlayerToDestroy(Collections.emptyList()));
+    }
+
+    @Test
+    void testChooseDistrictToDestroy() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        botRandom2.addCardToBoard(DistrictCard.CASTLE);
+        botRandom2.addCardToBoard(DistrictCard.PALACE);
+        botRandom2.addCardToBoard(DistrictCard.MANOR);
+        assertEquals(DistrictCard.CASTLE, botRandom1.chooseDistrictToDestroy(botRandom2, botRandom2.getBoard()));
+    }
 }
