@@ -12,6 +12,7 @@ public class LamaFormatter extends Formatter {
     public static final String ANSI_GREEN = "\u001B[32m";
     public static final String ANSI_YELLOW = "\u001B[33m";
     public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_GREY = "\u001B[37m";
 
     @Override
     public String format(LogRecord record) {
@@ -25,6 +26,8 @@ public class LamaFormatter extends Formatter {
             builder.append(ANSI_RED + "[SEVERE] ");
         } else if (level == Level.FINE) {
             builder.append(ANSI_GREEN + "[FINE] ");
+        }else if (level == LamaLevel.HIDDEN) {
+            builder.append(ANSI_GREY + "[HIDDEN] ");
         }
         builder.append(record.getMessage());
         builder.append("\n");
