@@ -45,4 +45,31 @@ class DistrictCardTest {
         assertEquals(Color.PURPLE, DistrictCard.HAUNTED_CITY.getDistrictColor());
         assertEquals(Color.PURPLE, DistrictCard.LIBRARY.getDistrictColor());
     }
+
+    @Test
+    void testIsDestroyableDistrict() {
+        int nbGolds = 3;
+
+        // Test for a district with a value of 1
+        assertTrue(DistrictCard.WATCHTOWER.isDestroyableDistrict(nbGolds));
+
+        // Test for a district with a value of 2
+        assertTrue(DistrictCard.PRISON.isDestroyableDistrict(nbGolds));
+
+        // Test for a district with a value of 3
+        assertTrue(DistrictCard.BATTLEFIELD.isDestroyableDistrict(nbGolds));
+
+        // Test for a district with a value of 4
+        assertTrue(DistrictCard.CASTLE.isDestroyableDistrict(nbGolds));
+
+        // Test for a district with a value of 5
+        assertFalse(DistrictCard.CATHEDRAL.isDestroyableDistrict(nbGolds));
+    }
+
+    @Test
+    void testIsDestroyableDistrictForKeep() {
+        int nbGolds = 30;
+
+        assertFalse(DistrictCard.KEEP.isDestroyableDistrict(nbGolds));
+    }
 }
