@@ -61,10 +61,10 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players) {
+    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
         Random random = new Random();
         if (getPlayerRole() == CharacterCard.ASSASSIN) {
-            return CharacterCard.values()[random.nextInt(CharacterCard.values().length)];
+            return characterCards.get(random.nextInt(characterCards.size()));
         }
         return null;
     }

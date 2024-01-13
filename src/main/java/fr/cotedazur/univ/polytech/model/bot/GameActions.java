@@ -35,7 +35,7 @@ public interface GameActions {
     /**
      * function where the player choose to use or not the effect of his character
      */
-    CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players);
+    CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards);
 
     /**
      * function where the player choose his character

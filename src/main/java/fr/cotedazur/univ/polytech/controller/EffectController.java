@@ -38,11 +38,11 @@ public class EffectController {
     }
 
     public List<CharacterCard> roleNeededForThiefEffect(){
-        ArrayList<CharacterCard> newList = new ArrayList<>();
-        for(CharacterCard characterCard :  CharacterCard.values()){
-            if(characterCard != CharacterCard.ASSASSIN) newList.add(characterCard);
-        }
-        return newList;
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
+    }
+
+    public List<CharacterCard> roleNeededForAssassinEffect(){
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
     }
 
     public List<Player> playerNeededForEffectWithoutSensibleInformationForAssassin(List<Player> players, Player playerThatUseEffect){
@@ -71,11 +71,19 @@ public class EffectController {
         return nbTimesEffectIsUsed;
     }
 
+    public List<CharacterCard> getRidOfASetOfCharacterCard(List<CharacterCard> characterCards, List<CharacterCard> characterCardsToGetRidOf){
+        ArrayList<CharacterCard> newList = new ArrayList<>();
+        for(CharacterCard characterCard : characterCards){
+            if(!characterCardsToGetRidOf.contains(characterCard)) newList.add(characterCard);
+        }
+        return newList;
+    }
+
     public  void playerWantToUseEffect(Player playerThatWantToUseEffect,List<Player> players){
         switch (playerThatWantToUseEffect.getPlayerRole()) {
             case ASSASSIN -> {
                 if (this.getNbTimesEffectIsUsed().get("Kill") == 0) {
-                    CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players,playerThatWantToUseEffect));
+                    CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players,playerThatWantToUseEffect), this.roleNeededForAssassinEffect());
                     if (roleKilled != CharacterCard.ASSASSIN && roleKilled != null) {
                         for (Player playerAffected : players) {
                             if (playerAffected.getPlayerRole() == roleKilled) {
