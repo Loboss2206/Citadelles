@@ -147,12 +147,31 @@ public class BotWeak extends Player implements GameActions {
         };
     }
 
-    public Player copyPlayer() {
-        return new BotWeak();
+    @Override
+    public String whichWarlordEffect(List<Player> players) {
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return "Destroy";
+            }
+        }
+        return "EarnDistrictWarlord";
     }
 
     @Override
-    public String WhichWarlordEffect() {
+    public Player choosePlayerToDestroy(List<Player> players) {
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return player;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
+        for (DistrictCard districtCard : player.getBoard()) {
+            if (districtCard.getDistrictValue() <= 1) return districtCard;
+        }
         return null;
     }
 }

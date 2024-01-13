@@ -2,6 +2,7 @@ package fr.cotedazur.univ.polytech.view;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
@@ -182,8 +183,13 @@ public class GameView {
         }
     }
 
+    /**
+     * print the information of all the players
+     *
+     * @param players the list of players
+     */
     public void printRecapOfAllPlayers(List<Player> players) {
-        System.out.println("---------------------Récapitulatif des joueurs : ---------------------");
+        System.out.println("---------------------Récapitulatif des joueurs------------------------");
         for (Player player : players) {
             displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") possède " + player.getGolds() + " pièces d'or et " + player.getHands().size() + " cartes dans sa main");
         }
@@ -192,5 +198,29 @@ public class GameView {
 
     public void killPlayer(CharacterCard characterCard) {
         displayMessage("Le joueur ayant le role: " + characterCard.getCharacterName() + " est mort.");
+    }
+
+        /**
+     * print when a player destroy the district of another player
+     *
+     * @param player            the player who destroyed the district
+     * @param playerToDestroy   the player who lost the district
+     * @param districtToDestroy the district destroyed
+     */
+    public void printDistrictDestroyed(Player player, Player playerToDestroy, DistrictCard districtToDestroy) {
+        displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") a détruit le quartier " + districtToDestroy.getDistrictName() + " du joueur " + playerToDestroy.getName() + " (" + playerToDestroy.getPlayerRole().getCharacterName() + ")");
+    }
+
+    /**
+     * print the board of all the players
+     *
+     * @param players the list of players
+     */
+    public void printBoardOfAllPlayers(List<Player> players) {
+        System.out.println("--------------------------Board des joueurs---------------------------");
+        for (Player p : players) {
+            displayMessage(p.getName() + " | board : " + p.getBoard());
+        }
+        System.out.println("-----------------------------------------------------------------------\n");
     }
 }

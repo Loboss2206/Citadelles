@@ -5,10 +5,12 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Random;
 
@@ -123,8 +125,9 @@ class BotWeakTest {
         player3.setPlayerRole(CharacterCard.MERCHANT);
         players.add(player3);
 
-        EffectController effectController = new EffectController();
-        effectController.playerWantToUseEffect(botWeak,players);
+        EffectController effectController = new EffectController(new GameView());
+        effectController.playerWantToUseEffect(botWeak,players, new Deck<>());
+
         assertEquals(38,botWeak.getGolds());
 
         players.clear();
@@ -204,5 +207,19 @@ class BotWeakTest {
         botWeak.setGolds(80);
         botWeak.getHands().clear();
         assertEquals("drawCard",botWeak.startChoice(districtDeck));
+    }
+
+    @Test
+    void testChoosePlayerToDestroyInEmptyList() {
+        assertNull(botWeak.choosePlayerToDestroy(Collections.emptyList()));
+    }
+
+    @Test
+    void testChooseDistrictToDestroy() {
+        BotWeak botWeak2 = new BotWeak();
+        botWeak2.addCardToBoard(DistrictCard.CASTLE);
+        botWeak2.addCardToBoard(DistrictCard.PALACE);
+        botWeak2.addCardToBoard(DistrictCard.MANOR);
+        assertNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
     }
 }
