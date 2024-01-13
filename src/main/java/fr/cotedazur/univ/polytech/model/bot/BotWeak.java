@@ -41,9 +41,19 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players,  List<CharacterCard> characterCards) {
+    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (getPlayerRole() == CharacterCard.THIEF) {
             return characterCards.get(4);
+        }
+        return null;
+    }
+
+    @Override
+    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
+        if (getPlayerRole() == CharacterCard.ASSASSIN) {
+            if (players.size() < 4) return characterCards.get(3);
+            if (players.size() < 6) return characterCards.get(5);
+            else return characterCards.get(6);
         }
         return null;
     }
@@ -137,12 +147,31 @@ public class BotWeak extends Player implements GameActions {
         };
     }
 
-    public Player copyPlayer() {
-        return new BotWeak();
+    @Override
+    public String whichWarlordEffect(List<Player> players) {
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return "Destroy";
+            }
+        }
+        return "EarnDistrictWarlord";
     }
 
     @Override
-    public String WhichWarlordEffect() {
+    public Player choosePlayerToDestroy(List<Player> players) {
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return player;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
+        for (DistrictCard districtCard : player.getBoard()) {
+            if (districtCard.getDistrictValue() <= 1) return districtCard;
+        }
         return null;
     }
 }

@@ -5,10 +5,12 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 import java.util.Random;
 
@@ -115,18 +117,41 @@ class BotWeakTest {
         player.setPlayerRole(CharacterCard.BISHOP);
         players.add(player);
         Player player2 = new BotWeak();
-        player.setGolds(32);
-        player.setPlayerRole(CharacterCard.ASSASSIN);
-        players.add(player);
+        player2.setGolds(32);
+        player2.setPlayerRole(CharacterCard.ASSASSIN);
+        players.add(player2);
         Player player3 = new BotWeak();
-        player.setGolds(33);
-        player.setPlayerRole(CharacterCard.MERCHANT);
-        players.add(player);
+        player3.setGolds(33);
+        player3.setPlayerRole(CharacterCard.MERCHANT);
+        players.add(player3);
 
-        EffectController effectController = new EffectController();
-        effectController.playerWantToUseEffect(botWeak,players);
+        EffectController effectController = new EffectController(new GameView());
+        effectController.playerWantToUseEffect(botWeak,players, new Deck<>());
 
         assertEquals(38,botWeak.getGolds());
+
+        players.clear();
+
+        for (CharacterCard characterCard : CharacterCard.values()) {
+            if (characterCard != CharacterCard.ASSASSIN) {
+                Player currentPlayer = new BotWeak();
+                currentPlayer.setGolds(10);
+                currentPlayer.setPlayerRole(characterCard);
+                players.add(currentPlayer);
+            }
+        }
+
+        botWeak.setPlayerRole(CharacterCard.ASSASSIN);
+        EffectController effectController2 = new EffectController();
+        effectController2.playerWantToUseEffect(botWeak, players, new Deck<>());
+        assertTrue(players.get(6).isDead());
+        for (Player player1 : players) {
+            if (player1.getPlayerRole() != CharacterCard.ASSASSIN && player1.getPlayerRole() != players.get(6).getPlayerRole()) {
+                assertFalse(player1.isDead());
+            }
+        }
+
+
     }
 
     @Test
@@ -182,5 +207,19 @@ class BotWeakTest {
         botWeak.setGolds(80);
         botWeak.getHands().clear();
         assertEquals("drawCard",botWeak.startChoice(districtDeck));
+    }
+
+    @Test
+    void testChoosePlayerToDestroyInEmptyList() {
+        assertNull(botWeak.choosePlayerToDestroy(Collections.emptyList()));
+    }
+
+    @Test
+    void testChooseDistrictToDestroy() {
+        BotWeak botWeak2 = new BotWeak();
+        botWeak2.addCardToBoard(DistrictCard.CASTLE);
+        botWeak2.addCardToBoard(DistrictCard.PALACE);
+        botWeak2.addCardToBoard(DistrictCard.MANOR);
+        assertNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
     }
 }

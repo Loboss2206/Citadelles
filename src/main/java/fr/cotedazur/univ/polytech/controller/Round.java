@@ -25,7 +25,7 @@ public class Round {
     private CharacterCard faceDownCharacterDiscarded;
     private  int nbRound;
 
-    private EffectController effectController;
+    private final EffectController effectController;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound) {
         this.players = players;
@@ -46,12 +46,15 @@ public class Round {
         //reset the players effect boolean
         for(Player player : players){
             player.setUsedEffect("");
+            player.setDead(false);
         }
+
         effectController = new EffectController();
+        effectController.setView(view);
     }
 
     public Round(){
-        effectController = new EffectController();
+        effectController = new EffectController(view);
     }
 
     /**
@@ -72,6 +75,9 @@ public class Round {
 
         //Print the recap of all players
         view.printRecapOfAllPlayers(players);
+
+        //Print the board of all players
+        view.printBoardOfAllPlayers(players);
 
         //Sort the players by the number of the character card
         sortPlayersByNumbersOfCharacterCard();
@@ -161,12 +167,16 @@ public class Round {
     public void choiceActionsForTheRound() {
         String choice;
         for (Player player : playersSortedByCharacterNumber) {
+
+            if (player.isDead()) continue;
+
             //Take the choice
             choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);
 
             if(player.wantToUseEffect(true)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber);
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
             }
 
             //Because architect automatically take +2 cards
@@ -179,7 +189,8 @@ public class Round {
             while(i++ < maxDistrictThatCanBePut)player.drawAndPlaceADistrict(view);
 
             if(player.wantToUseEffect(false)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber);
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
             }
 
             // Display the effect of the character card

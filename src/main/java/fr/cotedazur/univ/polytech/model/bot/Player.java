@@ -14,21 +14,25 @@ public abstract class Player implements GameActions {
     private final int id;
 
     //All players have a unique name
-    private  String name;
+    private String name;
 
     //The amount of gold for a player
     private int golds;
 
     //Districts in the player's hand
-    private final ArrayList<DistrictCard> hands;
+    private final List<DistrictCard> hands;
 
     //the player's role
     private CharacterCard playerRole;
     //Districts on the player's board
-    private final ArrayList<DistrictCard> board;
+    private List<DistrictCard> board;
 
     //the player's number of points
     private int points;
+
+    //the player's current status
+    private boolean isDead = false;
+
     //to find out if the player is the king
     private boolean isCrowned = false;
 
@@ -40,6 +44,8 @@ public abstract class Player implements GameActions {
 
     //to find out if the player is the first to add 8 district on his board
     boolean isFirstToAdd8district = false;
+
+    private int nbCardsInHand = 0;
 
     // Increment for each player created
     private static int count = 0;
@@ -116,6 +122,7 @@ public abstract class Player implements GameActions {
             return collectTwoGolds();
         }else {
             hands.add(districtDeck.draw());
+            nbCardsInHand++;
             return "drawCard";
         }
     }
@@ -135,6 +142,7 @@ public abstract class Player implements GameActions {
     public void addCardToBoard(DistrictCard card) {
         board.add(card);
         hands.remove(card);
+        nbCardsInHand--;
         removeGold(card.getDistrictValue());
     }
 
@@ -193,7 +201,7 @@ public abstract class Player implements GameActions {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Player player) {
-            return player.id == this.id;
+            return player.name.equals(this.name);
         }
         return false;
     }
@@ -230,16 +238,58 @@ public abstract class Player implements GameActions {
         return isFirstToAdd8district;
     }
 
-    public abstract Player copyPlayer();
+    /**
+     * function that copy a player without his hand
+     * @return the copy of the player
+     */
+    public Player copy() {
+        Player copy = new BotRandom();
 
-    public abstract String WhichWarlordEffect();
+        copy.setName(this.getName());
+        copy.setBoard(this.getBoard());
+        copy.setGolds(this.getGolds());
+        copy.setNbCardsInHand(this.getNbCardsInHand());
+        copy.setCrowned(this.isCrowned());
+
+        return copy;
+    }
+
+    /**
+     * Check if a player has a district that can be destroyed
+     * @param warlord the warlord
+     * @return true if the player has a district that can be destroyed, else false
+     */
+    public boolean playerHasADestroyableDistrict(Player warlord) {
+        if (this.getBoard().isEmpty() || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead()))
+            return false;
+        for (DistrictCard district : this.getBoard()) {
+            if (district.isDestroyableDistrict(warlord.getGolds())) return true;
+        }
+        return false;
+    }
+
+    public int getNbCardsInHand() {
+        return nbCardsInHand;
+    }
+
+    public void setNbCardsInHand(int nbCardsInHand) {
+        this.nbCardsInHand = nbCardsInHand;
+    }
+
+    public void setBoard(List<DistrictCard> board) {
+        this.board = board;
+    }
 
     public void setName(String name) {
         this.name = name;
     }
 
     public boolean isDead(){
-        return false;
+        return isDead;
+    }
+
+    public void setDead(boolean isDead) {
+    	this.isDead = isDead;
     }
 }
 

@@ -101,7 +101,7 @@ public enum CharacterCard {
                 player.setGolds(player.getGolds() + 1);
             }
             case WARLORD -> {
-                //TODO TO TEST
+                earnGoldsFromDistricts(player, Color.RED);
             }
         }
     }
@@ -113,6 +113,14 @@ public enum CharacterCard {
                 stolenPlayer.setGolds(0);
             }
             playerThatUseEffect.setUsedEffect(playerThatUseEffect.getPlayerRole().getCharacterName().toUpperCase() + "_" + playerThatUseEffect.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
+        }
+    }
+
+    public void useEffectWarlord(Player playerThatUseEffect, Player playerToDestroy, DistrictCard districtToDestroy, Deck<DistrictCard> districtDiscardedDeck) {
+        if (playerThatUseEffect.getPlayerRole() == WARLORD) {
+            playerToDestroy.getBoard().remove(districtToDestroy);
+            playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() - (districtToDestroy.getDistrictValue() - 1));
+            districtDiscardedDeck.add(districtToDestroy);
         }
     }
 
@@ -143,5 +151,12 @@ public enum CharacterCard {
                 player.setGolds(player.getGolds() + 1);
             }
         }
+    }
+
+    public void useEffectAssassin(Player playerThatWantToUseEffect, Player targetPlayer) {
+        if (playerThatWantToUseEffect.getPlayerRole() == ASSASSIN && !targetPlayer.isDead()) {
+            targetPlayer.setDead(true);
+        }
+
     }
 }
