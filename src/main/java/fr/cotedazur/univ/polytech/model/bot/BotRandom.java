@@ -103,7 +103,7 @@ public class BotRandom extends Player implements GameActions {
                 return "Destroy";
             }
             case 1 -> {
-                return "Steal";
+                return "EarnDistrictWarlord";
             }
             default -> {
                 return null;

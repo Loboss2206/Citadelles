@@ -146,7 +146,7 @@ public class BotWeak extends Player implements GameActions {
                 return "Destroy";
             }
             case 1 -> {
-                return "Steal";
+                return "EarnDistrictWarlord";
             }
             default -> {
                 return null;

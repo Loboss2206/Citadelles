@@ -52,9 +52,9 @@ public class EffectController {
     }
 
     /**
-     * Return the list of the districts that can be destroyed by the warlord for the playerToDestroy
-     * @param playerThatUseEffect
-     * @return
+     * @param playerThatUseEffect the warlord
+     * @param playerToDestroy the player that the warlord want to destroy
+     * @return the list of the districts that can be destroyed by the warlord for the playerToDestroy
      */
     public List<DistrictCard> districtNeededForWarlordEffect(Player playerThatUseEffect, Player playerToDestroy) {
         ArrayList<DistrictCard> newList = new ArrayList<>();
@@ -115,41 +115,52 @@ public class EffectController {
                 }
             }
             case WARLORD -> {
-                String warlordEffect;
+                String warlordEffect = null;
 
-                //Replace Destroy by the name of the effect
                 if (this.getNbTimesEffectIsUsed().get("Destroy") == 0) {
+                    // Case where the warlord can destroy a district
                     if (this.getNbTimesEffectIsUsed().get("EarnDistrictWarlord") == 0)
+                        // Case where the warlord can earn a district
                         warlordEffect = playerThatWantToUseEffect.whichWarlordEffect(players);
-                    else warlordEffect = "Destroy";
+                    else
+                        // Case where the warlord can't earn a district
+                        warlordEffect = "Destroy";
                 } else {
+                    // Case where the warlord can't destroy a district
                     if (this.getNbTimesEffectIsUsed().get("EarnDistrictWarlord") == 0)
+                        // Case where the warlord can earn a district
                         warlordEffect = "EarnDistrictWarlord";
-                    else warlordEffect = playerThatWantToUseEffect.whichWarlordEffect(players);
                 }
 
-                if (warlordEffect.equals("EarnDistrictWarlord")) {
-                    playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
-                    this.getNbTimesEffectIsUsed().put("EarnDistrictWarlord", 1);
-                } else {
-                    List<Player> playersNeeded = playerNeededForWarlordEffect(players, playerThatWantToUseEffect);
-                    Player playerToDestroy = null;
-                    if (!playersNeeded.isEmpty()) {
-                        playerToDestroy = playerThatWantToUseEffect.choosePlayerToDestroy(playersNeeded);
-                    }
+                if (warlordEffect != null) {
+                    if (warlordEffect.equals("EarnDistrictWarlord")) {
+                        // Case where the warlord earn a district
+                        playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
+                        this.getNbTimesEffectIsUsed().put("EarnDistrictWarlord", 1);
+                    } else {
+                        // Case where the warlord destroy a district
 
-                    if (playerToDestroy != null) {
-
-                        List<DistrictCard> districtsNeeded = districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy);
-                        DistrictCard districtToDestroy = null;
-                        if (!districtsNeeded.isEmpty()) {
-                            districtToDestroy = playerThatWantToUseEffect.chooseDistrictToDestroy(playerToDestroy, districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy));
+                        // Create the list of the players that can be destroyed by the warlord
+                        List<Player> playersNeeded = playerNeededForWarlordEffect(players, playerThatWantToUseEffect);
+                        Player playerToDestroy = null;
+                        if (!playersNeeded.isEmpty()) {
+                            playerToDestroy = playerThatWantToUseEffect.choosePlayerToDestroy(playersNeeded);
                         }
 
-                        if (districtToDestroy != null) {
-                            playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardDeck);
-                            this.getNbTimesEffectIsUsed().put("Destroy", 1);
-                            view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
+                        if (playerToDestroy != null) {
+                            // If the bot choose a player to destroy, we create the list of the districts that can be destroyed by the warlord for the playerToDestroy
+                            List<DistrictCard> districtsNeeded = districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy);
+                            DistrictCard districtToDestroy = null;
+                            if (!districtsNeeded.isEmpty()) {
+                                districtToDestroy = playerThatWantToUseEffect.chooseDistrictToDestroy(playerToDestroy, districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy));
+                            }
+
+                            if (districtToDestroy != null) {
+                                // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
+                                playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardDeck);
+                                this.getNbTimesEffectIsUsed().put("Destroy", 1);
+                                view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
+                            }
                         }
                     }
                 }

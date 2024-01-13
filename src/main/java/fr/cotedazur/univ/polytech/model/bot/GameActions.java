@@ -4,7 +4,6 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface GameActions {
