@@ -41,9 +41,19 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players,  List<CharacterCard> characterCards) {
+    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (getPlayerRole() == CharacterCard.THIEF) {
             return characterCards.get(4);
+        }
+        return null;
+    }
+
+    @Override
+    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players) {
+        if (getPlayerRole() == CharacterCard.ASSASSIN) {
+            if (players.size() < 4) return players.get(2).getPlayerRole();
+            if (players.size() < 6) return players.get(4).getPlayerRole();
+            else return players.get(6).getPlayerRole();
         }
         return null;
     }

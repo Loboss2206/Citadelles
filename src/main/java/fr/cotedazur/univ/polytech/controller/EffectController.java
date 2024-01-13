@@ -2,6 +2,7 @@ package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.*;
 
@@ -10,6 +11,8 @@ public class EffectController {
 
     private final HashMap<String,Integer> nbTimesEffectIsUsed = new HashMap<>();
 
+    private GameView view;
+
     public EffectController(){
         nbTimesEffectIsUsed.put("EarnDistrictBishop",0);
         nbTimesEffectIsUsed.put("EarnDistrictWarlord",0);
@@ -17,7 +20,13 @@ public class EffectController {
         nbTimesEffectIsUsed.put("EarnDistrictMerchant",0);
         nbTimesEffectIsUsed.put("Steal",0);
         nbTimesEffectIsUsed.put("Destroy",0);
+        nbTimesEffectIsUsed.put("Kill",0);
     }
+
+    public void setView(GameView view){
+        this.view = view;
+    }
+
     public List<Player> playerNeededForEffectWithoutSensibleInformationForThief(List<Player> players, Player playerThatUseEffect){
         ArrayList<Player> newList = new ArrayList<>();
         for(Player player : players){
@@ -36,6 +45,16 @@ public class EffectController {
         return newList;
     }
 
+    public List<Player> playerNeededForEffectWithoutSensibleInformationForAssassin(List<Player> players, Player playerThatUseEffect){
+        ArrayList<Player> newList = new ArrayList<>();
+        for(Player player : players){
+            if(player != playerThatUseEffect){
+                newList.add(this.playerCopy(player,playerThatUseEffect));
+            }
+        }
+        return newList;
+    }
+
     public List<Player> playerNeededForEffectWithoutSensibleInformationForWarlord(List<Player> players, Player playerThatUseEffect){
         return null;
     }
@@ -44,7 +63,7 @@ public class EffectController {
         Player copyPlayer = playerCopy.copyPlayer();
         copyPlayer.setGolds(playerCopy.getGolds());
         copyPlayer.setName(playerCopy.getName());
-        if(playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber()) copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
+         copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
         return copyPlayer;
     }
 
@@ -55,7 +74,18 @@ public class EffectController {
     public  void playerWantToUseEffect(Player playerThatWantToUseEffect,List<Player> players){
         switch (playerThatWantToUseEffect.getPlayerRole()) {
             case ASSASSIN -> {
-                //TODO TO TEST
+                if (this.getNbTimesEffectIsUsed().get("Kill") == 0) {
+                    CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players,playerThatWantToUseEffect));
+                    if (roleKilled != CharacterCard.ASSASSIN) {
+                        for (Player player1 : players) {
+                            if (player1.getPlayerRole() == roleKilled) {
+                                playerThatWantToUseEffect.getPlayerRole().useEffectAssassin(playerThatWantToUseEffect, player1);
+                                if (view != null) view.killPlayer(player1);
+                            }
+                        }
+                        this.getNbTimesEffectIsUsed().put("Kill", 1);
+                    }
+                }
             }
             case THIEF -> {
                 if(this.getNbTimesEffectIsUsed().get("Steal") == 0) {

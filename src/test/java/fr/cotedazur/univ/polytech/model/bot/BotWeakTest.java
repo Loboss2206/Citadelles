@@ -115,18 +115,40 @@ class BotWeakTest {
         player.setPlayerRole(CharacterCard.BISHOP);
         players.add(player);
         Player player2 = new BotWeak();
-        player.setGolds(32);
-        player.setPlayerRole(CharacterCard.ASSASSIN);
-        players.add(player);
+        player2.setGolds(32);
+        player2.setPlayerRole(CharacterCard.ASSASSIN);
+        players.add(player2);
         Player player3 = new BotWeak();
-        player.setGolds(33);
-        player.setPlayerRole(CharacterCard.MERCHANT);
-        players.add(player);
+        player3.setGolds(33);
+        player3.setPlayerRole(CharacterCard.MERCHANT);
+        players.add(player3);
 
         EffectController effectController = new EffectController();
         effectController.playerWantToUseEffect(botWeak,players);
-
         assertEquals(38,botWeak.getGolds());
+
+        players.clear();
+
+        for (CharacterCard characterCard : CharacterCard.values()) {
+            if (characterCard != CharacterCard.ASSASSIN) {
+                Player currentPlayer = new BotWeak();
+                currentPlayer.setGolds(10);
+                currentPlayer.setPlayerRole(characterCard);
+                players.add(currentPlayer);
+            }
+        }
+
+        botWeak.setPlayerRole(CharacterCard.ASSASSIN);
+        EffectController effectController2 = new EffectController();
+        effectController2.playerWantToUseEffect(botWeak, players);
+        assertTrue(players.get(6).isDead());
+        for (Player player1 : players) {
+            if (player1.getPlayerRole() != CharacterCard.ASSASSIN && player1.getPlayerRole() != players.get(6).getPlayerRole()) {
+                assertFalse(player1.isDead());
+            }
+        }
+
+
     }
 
     @Test

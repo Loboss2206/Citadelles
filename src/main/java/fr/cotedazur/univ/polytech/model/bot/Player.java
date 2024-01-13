@@ -29,6 +29,10 @@ public abstract class Player implements GameActions {
 
     //the player's number of points
     private int points;
+
+    //the player's current status
+    private boolean isDead = false;
+
     //to find out if the player is the king
     private boolean isCrowned = false;
 
@@ -239,7 +243,11 @@ public abstract class Player implements GameActions {
     }
 
     public boolean isDead(){
-        return false;
+        return isDead;
+    }
+
+    public void setDead(boolean isDead) {
+    	this.isDead = isDead;
     }
 }
 

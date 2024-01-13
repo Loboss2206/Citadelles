@@ -189,4 +189,8 @@ public class GameView {
         }
         System.out.println("----------------------------------------------------------------------\n");
     }
+
+    public void killPlayer(Player player1) {
+        displayMessage("Le joueur ayant le role: " + player1.getPlayerRole().getCharacterName() + " est mort.");
+    }
 }

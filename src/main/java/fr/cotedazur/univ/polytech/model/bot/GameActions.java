@@ -33,6 +33,11 @@ public interface GameActions {
     CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players,List<CharacterCard> characterCards);
 
     /**
+     * function where the player choose to use or not the effect of his character
+     */
+    CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players);
+
+    /**
      * function where the player choose his character
      * @param characters the characters available
      * @return the index of the character chosen
