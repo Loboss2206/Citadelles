@@ -139,37 +139,29 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public String whichWarlordEffect(List<Player> players) {
-        Random random = new Random();
-        int randomIndex = random.nextInt(2);
-        switch (randomIndex) {
-            case 0 -> {
-                return "Destroy";
-            }
-            case 1 -> {
-                return "EarnDistrictWarlord";
-            }
-            default -> {
-                return null;
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return "Destroy";
             }
         }
+        return "EarnDistrictWarlord";
     }
 
     @Override
     public Player choosePlayerToDestroy(List<Player> players) {
-        Random random = new Random();
-        int rand = random.nextInt(2);
-        if (rand == 0) {
-            return null;
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return player;
+            }
         }
-        else {
-            if (players.isEmpty()) return null;
-            return players.get(random.nextInt(players.size()));
-        }
+        return null;
     }
 
     @Override
     public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
-        Random random = new Random();
-        return districtCards.get(random.nextInt(districtCards.size()));
+        for (DistrictCard districtCard : player.getBoard()) {
+            if (districtCard.getDistrictValue() <= 1) return districtCard;
+        }
+        return null;
     }
 }

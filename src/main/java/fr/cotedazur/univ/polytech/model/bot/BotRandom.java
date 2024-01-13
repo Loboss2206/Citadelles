@@ -110,4 +110,10 @@ public class BotRandom extends Player implements GameActions {
             }
         }
     }
+
+    @Override
+    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+        int randomIndex = random.nextInt(2);
+        return randomIndex == 0;
+    }
 }

@@ -197,6 +197,6 @@ class BotWeakTest {
         botWeak2.addCardToBoard(DistrictCard.CASTLE);
         botWeak2.addCardToBoard(DistrictCard.PALACE);
         botWeak2.addCardToBoard(DistrictCard.MANOR);
-        assertNotNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
+        assertNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
     }
 }
