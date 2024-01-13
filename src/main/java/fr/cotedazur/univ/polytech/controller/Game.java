@@ -38,8 +38,8 @@ public class Game {
     // Random Object
     private final Random random = new Random();
 
-    public Game(List<Player> players) {
-        this.view = new GameView();
+    public Game(List<Player> players, GameView view) {
+        this.view = view;
         this.playerComparator = new PlayerComparator();
 
         // Add players
@@ -64,6 +64,7 @@ public class Game {
      * Build all the decks and shuffle them
      */
     protected void buildDecks() {
+        LOGGER.info("Construction des decks");
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDiscardDeck = DeckFactory.createEmptyDistrictDeck();
         this.districtDeck.shuffle();
@@ -76,6 +77,7 @@ public class Game {
         while (!players.get(0).isCrowned()) {
             players.add(players.remove(0));
         }
+        LOGGER.info("Le joueur " + players.get(0).getName() + " est le roi, il est donc le premier à jouer");
     }
 
     /**
@@ -84,7 +86,7 @@ public class Game {
     public void startGame() {
         //Print the greeting
         view.printStartGame();
-        LOGGER.log(Level.INFO, "Début du jeu");
+        LOGGER.info("La partie débute avec " + players.size() + " joueurs: " + players);
 
         //Draw 4 cards of District for each player at the beginning of the game
         for (Player player : players) {
@@ -117,9 +119,11 @@ public class Game {
     public boolean isGameFinished() {
         for (Player player : players) {
             if (player.getBoard().size() >= 8) {
+                LOGGER.info("Le joueur " + player.getName() + " a gagné la partie");
                 return true;
             }
         }
+        LOGGER.info("Aucun joueur n'a plus de 8 quartiers, la partie continue");
         return false;
     }
 
@@ -130,6 +134,7 @@ public class Game {
         for (Player player : players) {
             for(DistrictCard card : player.getBoard()){
                 player.setPoints(player.getPoints() + card.getDistrictValue());
+                LOGGER.info("Le joueur " + player.getName() + " a gagné " + card.getDistrictValue() + " points grâce à son quartier " + card.getDistrictName());
             }
 
             //If the player has 5 different colors
@@ -166,6 +171,7 @@ public class Game {
 
         if(colorGreen && colorYellow && colorBlue && colorRed && colorPurple){
             player.setPoints(player.getPoints() + 3);
+            LOGGER.info("Le joueur " + player.getName() + " a gagné 3 points grâce à ses 5 couleurs différentes");
         }
     }
 
@@ -175,6 +181,7 @@ public class Game {
      */
     public void addBonusPointsForPlayerWhoIsFirstToAdd8Districts(Player player){
         if (player.isFirstToAdd8district()) {
+            LOGGER.info("Le joueur " + player.getName() + " a gagné 4 points car il est le premier à avoir 8 quartiers");
             player.setPoints(player.getPoints() + 4);
         }
     }
@@ -185,6 +192,7 @@ public class Game {
      */
     public void addBonusPointsForPlayerWhoAdd8Districts(Player player){
         if (player.getBoard().size() >= 8) {
+            LOGGER.info("Le joueur " + player.getName() + " a gagné 2 points car il a 8 quartiers ou +");
             player.setPoints(player.getPoints() + 2);
         }
     }
@@ -197,6 +205,7 @@ public class Game {
     public void sortByPoints(List<Player> playersList) {
         playersList.sort(playerComparator);
         Collections.reverse(playersList);
+        LOGGER.info("Les joueurs ont été triés par ordre de points");
     }
 
     public List<Player> getPlayers() {

@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -10,6 +11,8 @@ import java.util.List;
 import java.util.Optional;
 
 public abstract class Player implements GameActions {
+    protected final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+
     //All players have a unique id
     private final int id;
 
@@ -66,10 +69,12 @@ public abstract class Player implements GameActions {
 
     public void removeGold(int golds) {
         this.golds -= golds;
+        LOGGER.info("Le joueur " + name + " a perdu " + golds + " pièces d'or, il lui reste " + this.golds + " pièces d'or");
     }
 
     public void setGolds(int golds) {
         this.golds = golds;
+        LOGGER.info("Le joueur " + name + " a maintenant " + golds + " pièces d'or");
     }
 
     public String getUsedEffect() {
@@ -123,6 +128,7 @@ public abstract class Player implements GameActions {
         }else {
             hands.add(districtDeck.draw());
             nbCardsInHand++;
+            LOGGER.info("Le joueur " + name + " a pioché la carte " + hands.get(hands.size() - 1).getDistrictName()+" ("+hands.get(hands.size() - 1).getDistrictValue()+" pièces d'or, il a maintenant "+nbCardsInHand+" cartes en main)");
             return "drawCard";
         }
     }
@@ -132,6 +138,7 @@ public abstract class Player implements GameActions {
      */
     public String collectTwoGolds() {
         this.golds += 2;
+        LOGGER.info("Le joueur " + name + " a pioché 2 pièces d'or, il a maintenant " + golds + " pièces d'or");
         return "2golds";
     }
 
@@ -143,6 +150,8 @@ public abstract class Player implements GameActions {
         board.add(card);
         hands.remove(card);
         nbCardsInHand--;
+        LOGGER.info("Le joueur " + name + " a posé le quartier " + card.getDistrictName() + "(" + card.getDistrictValue() + " pièces d'or) (couleur " + card.getDistrictColor() + ")");
+        LOGGER.info(" sur son plateau, il a maintenant " + board.size() + " quartiers sur son plateau, il lui reste " + nbCardsInHand + " cartes en main");
         removeGold(card.getDistrictValue());
     }
 
@@ -156,6 +165,7 @@ public abstract class Player implements GameActions {
                 validCards.add(card);
             }
         }
+        LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards.toString());
     }
 
     /**
@@ -167,9 +177,11 @@ public abstract class Player implements GameActions {
         if (board.isEmpty() || card == null) return false;
         for (DistrictCard c : board) {
             if (c.name().equals(card.name())) {
+                LOGGER.info("Le joueur " + name + " a déjà le quartier " + card.getDistrictName() + " sur son plateau");
                 return true;
             }
         }
+        LOGGER.info("Le joueur " + name + " n'a pas le quartier " + card.getDistrictName() + " sur son plateau");
         return false;
     }
 
@@ -180,13 +192,16 @@ public abstract class Player implements GameActions {
     public boolean hasPlayableCard() {
         for (DistrictCard card : hands) {
             if (!hasCardOnTheBoard(card) && validCards.contains(card)) {
+                LOGGER.info("Le joueur " + name + " a une carte achetable");
                 return true;
             }
         }
+        LOGGER.info("Le joueur " + name + " n'a pas de carte achetable");
         return false;
     }
 
     public void setCrowned(boolean isCrowned) {
+        LOGGER.info("Le joueur " + name + (isCrowned ? " est" : " n'est plus") + " le roi");
         this.isCrowned = isCrowned;
     }
 
@@ -221,8 +236,7 @@ public abstract class Player implements GameActions {
     }
 
     public boolean wantToUseEffect(boolean beforePuttingADistrict){
-        if(beforePuttingADistrict) return true;
-        return false;
+        return beforePuttingADistrict;
     }
 
     @Override
@@ -231,6 +245,7 @@ public abstract class Player implements GameActions {
     }
 
     public void setFirstToAdd8district(boolean firstToAdd8district) {
+        LOGGER.info("Le joueur " + name + (firstToAdd8district ? " est" : " n'est plus") + " le premier à avoir 8 quartiers sur son plateau");
         isFirstToAdd8district = firstToAdd8district;
     }
 
@@ -250,7 +265,6 @@ public abstract class Player implements GameActions {
         copy.setGolds(this.getGolds());
         copy.setNbCardsInHand(this.getNbCardsInHand());
         copy.setCrowned(this.isCrowned());
-
         return copy;
     }
 
@@ -260,11 +274,17 @@ public abstract class Player implements GameActions {
      * @return true if the player has a district that can be destroyed, else false
      */
     public boolean playerHasADestroyableDistrict(Player warlord) {
-        if (this.getBoard().isEmpty() || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead()))
+        if (this.getBoard().isEmpty() || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead())) {
+            LOGGER.info("Le joueur " + name + " n'a pas de quartier détruisable");
             return false;
-        for (DistrictCard district : this.getBoard()) {
-            if (district.isDestroyableDistrict(warlord.getGolds())) return true;
         }
+        for (DistrictCard district : this.getBoard()) {
+            if (district.isDestroyableDistrict(warlord.getGolds())) {
+                LOGGER.info("Le joueur " + name + " a un quartier détruisable");
+                return true;
+            }
+        }
+        LOGGER.info("Le joueur " + name + " n'a pas de quartier détruisable");
         return false;
     }
 
@@ -289,6 +309,7 @@ public abstract class Player implements GameActions {
     }
 
     public void setDead(boolean isDead) {
+        LOGGER.info("Le joueur " + name + (isDead ? " est" : " n'est plus") + " mort");
     	this.isDead = isDead;
     }
 }

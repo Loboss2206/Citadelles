@@ -26,8 +26,6 @@ public class LamaFormatter extends Formatter {
             builder.append(ANSI_RED + "[SEVERE] ");
         } else if (level == Level.FINE) {
             builder.append(ANSI_GREEN + "[FINE] ");
-        }else if (level == LamaLevel.HIDDEN) {
-            builder.append(ANSI_GREY + "[HIDDEN] ");
         }
         builder.append(record.getMessage());
         builder.append("\n");

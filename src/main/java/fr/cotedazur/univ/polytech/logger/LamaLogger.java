@@ -49,4 +49,8 @@ public class LamaLogger {
             setHandler4Formatter();
         }
     }
+
+    public static void mute() {
+        LOGGER.setLevel(Level.OFF);
+    }
 }

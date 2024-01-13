@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -27,6 +28,7 @@ class BotRandomTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
         botRandom1.setRandom(random);

@@ -1,6 +1,8 @@
 package fr.cotedazur.univ.polytech.model.deck;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,6 +11,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 class DeckTest {
+    @BeforeEach
+    void setUp() {
+        LamaLogger.mute();
+    }
 
     // Test case for an empty deck
     @Test
