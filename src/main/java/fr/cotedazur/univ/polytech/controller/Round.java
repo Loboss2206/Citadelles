@@ -11,7 +11,6 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class Round {
     private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
