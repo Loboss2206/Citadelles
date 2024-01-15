@@ -88,7 +88,11 @@ public enum CharacterCard {
      */
     public void useEffect(Player player) {
         LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") utilise son pouvoir");
-        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase()+"_"+player.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
+        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase() + "_" + player.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
+        Color color = null;
+        if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
+            color = player.chooseColorForDistrictCard();
+        }
         switch (this) {
             case ASSASSIN -> {
                 //TODO TO TEST
@@ -109,10 +113,12 @@ public enum CharacterCard {
                 earnGoldsFromDistricts(player, Color.RED);
             }
         }
+        if (color == player.getPlayerRole().getCharacterColor())
+            player.setGolds(player.getGolds() + 1);
     }
 
-    public void useEffectThief(Player playerThatUseEffect,Player stolenPlayer) {
-        if(stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
+    public void useEffectThief(Player playerThatUseEffect, Player stolenPlayer) {
+        if (stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
             if (playerThatUseEffect.getPlayerRole() == THIEF) {
                 playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
                 stolenPlayer.setGolds(0);

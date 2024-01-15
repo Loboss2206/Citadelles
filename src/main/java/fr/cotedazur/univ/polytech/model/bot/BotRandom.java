@@ -1,11 +1,10 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
@@ -103,6 +102,15 @@ public class BotRandom extends Player implements GameActions {
     public int hashCode() {
         return super.hashCode();
     }
+
+    @Override
+    public Color chooseColorForDistrictCard() {
+            if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+                return Color.values()[new Random().nextInt(Color.values().length)];
+            }
+        return null;
+    }
+
 
     @Override
     public String whichWarlordEffect(List<Player> players) {

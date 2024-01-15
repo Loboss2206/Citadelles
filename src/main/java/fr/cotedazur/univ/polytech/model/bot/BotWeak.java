@@ -106,6 +106,14 @@ public class BotWeak extends Player implements GameActions {
                 countNumberOfSpecifiedColorCard(Color.BLUE) >= 1;
     }
 
+    @Override
+    public Color chooseColorForDistrictCard() {
+            if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+                return getPlayerRole().getCharacterColor();
+            }
+        return null;
+    }
+
     /**
      * function that count the number of district card on the board for a specific color
      */
