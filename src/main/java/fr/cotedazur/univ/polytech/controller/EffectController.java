@@ -16,6 +16,8 @@ public class EffectController {
 
     private final HashMap<String, Integer> nbTimesEffectIsUsed = new HashMap<>();
 
+    private Player playerWhoStole;
+
     private GameView view;
 
     public EffectController() {
@@ -65,7 +67,7 @@ public class EffectController {
     }
 
     public List<CharacterCard> roleNeededForThiefEffect() {
-        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN,CharacterCard.THIEF));
     }
 
     public List<CharacterCard> roleNeededForAssassinEffect() {
@@ -147,10 +149,12 @@ public class EffectController {
                     if (roleStolen != CharacterCard.ASSASSIN) {
                         for (Player player1 : players) {
                             if (player1.getPlayerRole() == roleStolen) {
-                                playerThatWantToUseEffect.getPlayerRole().useEffectThief(playerThatWantToUseEffect, player1);
+                                playerThatWantToUseEffect.getPlayerRole().useEffectThief(playerThatWantToUseEffect, player1,false);
+                                playerWhoStole = playerThatWantToUseEffect;
                             }
                         }
                         this.getNbTimesEffectIsUsed().put("Steal", 1);
+                        if (view != null) view.stolenPlayer(roleStolen);
                     }
                 }else {
                     LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet du voleur");
@@ -240,5 +244,9 @@ public class EffectController {
                 }
             }
         }
+    }
+
+    public Player getPlayerWhoStole() {
+        return playerWhoStole;
     }
 }

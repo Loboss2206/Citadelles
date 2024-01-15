@@ -130,7 +130,7 @@ class BotWeakTest {
         EffectController effectController = new EffectController(new GameView());
         effectController.playerWantToUseEffect(botWeak,players, new Deck<>());
 
-        assertEquals(38,botWeak.getGolds());
+        assertTrue(player3.isStolen());
 
         players.clear();
 

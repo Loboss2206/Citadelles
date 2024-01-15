@@ -133,7 +133,8 @@ public class Game {
     public void calculatePoints() {
         for (Player player : players) {
             for(DistrictCard card : player.getBoard()){
-                player.setPoints(player.getPoints() + card.getDistrictValue());
+                int i = card == DistrictCard.DRAGON_GATE ? 2 : 0;
+                player.setPoints(player.getPoints() + card.getDistrictValue() + i);
                 LOGGER.info("Le joueur " + player.getName() + " a gagné " + card.getDistrictValue() + " points grâce à son quartier " + card.getDistrictName());
             }
 

@@ -75,6 +75,16 @@ class GameTest {
         assertEquals(0,player4.getPoints());
         assertEquals(22,player.getPoints());
         assertEquals(18,player2.getPoints());
+
+        //Test with the Dragon gate district card
+        player.getBoard().add(DistrictCard.DRAGON_GATE);
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(0,player3.getPoints());
+        assertEquals(0,player4.getPoints());
+        assertEquals(30,player.getPoints());
+        assertEquals(18,player2.getPoints());
     }
 
     @Test

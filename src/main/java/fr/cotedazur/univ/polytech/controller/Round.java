@@ -49,6 +49,7 @@ public class Round {
         for (Player player : players) {
             player.setUsedEffect("");
             player.setDead(false);
+            player.setHasBeenStolen(false);
         }
 
         effectController = new EffectController();
@@ -121,7 +122,8 @@ public class Round {
         //1 card has to be discarded face-down
         faceDownCharacterDiscarded = characterDeck.draw();
 
-        view.printDiscardedCardFaceDown(faceDownCharacterDiscarded);
+        //view.printDiscardedCardFaceDown(faceDownCharacterDiscarded);
+        LOGGER.info("Carte defaussée face cachée : " + faceDownCharacterDiscarded.getCharacterName());
     }
 
     /**
@@ -177,6 +179,10 @@ public class Round {
                 continue;
             }
 
+            if (player.isStolen()) {
+                effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
+            }
+
             //Take the choice
             choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);
@@ -192,7 +198,6 @@ public class Round {
                 if (player.getPlayerRole() == CharacterCard.WARLORD)
                     effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
             }
-
 
             // Draw and place a district
             int i = 0;

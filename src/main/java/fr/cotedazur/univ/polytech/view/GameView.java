@@ -208,6 +208,10 @@ public class GameView {
         displayMessage("Le joueur ayant le role: " + characterCard.getCharacterName() + " est mort.");
     }
 
+    public void stolenPlayer(CharacterCard characterCard) {
+        displayMessage("Le joueur ayant le rôle: " + characterCard.getCharacterName() + " s'est fait voler");
+    }
+
     /**
      * print when a player destroy the district of another player
      *
