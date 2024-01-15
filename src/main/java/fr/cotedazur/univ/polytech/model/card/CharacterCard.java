@@ -104,7 +104,6 @@ public enum CharacterCard {
             }
             case MERCHANT -> {
                 earnGoldsFromDistricts(player, Color.GREEN);
-                player.setGolds(player.getGolds() + 1);
             }
             case WARLORD -> {
                 earnGoldsFromDistricts(player, Color.RED);
