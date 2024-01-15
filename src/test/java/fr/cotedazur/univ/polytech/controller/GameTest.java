@@ -32,6 +32,7 @@ class GameTest {
         for (Player player : game.getPlayers()) {
             if (player.getBoard().size() >= 8) {
                 onePlayerHas8OrMoreDistricts = true;
+                break;
             }
         }
 

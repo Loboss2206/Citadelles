@@ -1,6 +1,7 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -321,6 +322,8 @@ public abstract class Player implements GameActions {
     public void setHasBeenStolen(boolean hasBeenStolen) {
         this.hasBeenStolen = hasBeenStolen;
     }
+
+    public abstract Color chooseColorForDistrictCard();
 }
 
 

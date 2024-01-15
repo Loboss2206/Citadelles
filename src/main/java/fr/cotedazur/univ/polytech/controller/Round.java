@@ -187,15 +187,17 @@ public class Round {
             choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);
 
+            //Because architect automatically take +2 cards
+            if (player.getPlayerRole() == CharacterCard.ARCHITECT)
+                player.getPlayerRole().useEffectArchitect(player, districtDeck);
+            //Because Merchant automatically take +1 gold
+            if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + 1);
+
             if (player.wantToUseEffect(true)) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
                 if (player.getPlayerRole() == CharacterCard.WARLORD)
                     effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
             }
-
-            //Because architect automatically take +2 cards
-            if (player.getPlayerRole() == CharacterCard.ARCHITECT)
-                player.getPlayerRole().useEffectArchitect(player, districtDeck);
 
             // Draw and place a district
             int i = 0;
