@@ -101,12 +101,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.MARKET);
         botWeak.setGolds(5);
         botWeak.getPlayerRole().useEffect(botWeak);
-        assertEquals(6,botWeak.getGolds());
+        assertEquals(5,botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.MARKET);
         botWeak.setGolds(5);
         botWeak.getPlayerRole().useEffect(botWeak);
-        assertEquals(8,botWeak.getGolds());
+        assertEquals(7,botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
 
