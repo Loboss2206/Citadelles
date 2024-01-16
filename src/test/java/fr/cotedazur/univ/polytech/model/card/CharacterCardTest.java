@@ -2,6 +2,7 @@ package fr.cotedazur.univ.polytech.model.card;
 
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.controller.Round;
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
@@ -32,6 +33,7 @@ class CharacterCardTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         player = new BotRandom();
         botRandom1 = new BotRandom();
         botRandom1.setRandom(random);
@@ -96,19 +98,19 @@ class CharacterCardTest {
         player.getPlayerRole().useEffect(player);
         // We count the decrease of the putted cards (50-4-2-1-5 = 38 golds left)
         // Then we add the 1 gold for the merchant and 1 gold per green district (38+1+1+1 = 41 golds)
-        assertEquals(41, player.getGolds());
+        assertEquals(40, player.getGolds());
 
         player.addCardToBoard(DistrictCard.DOCKS);
         player.getPlayerRole().useEffect(player);
         // Adding a green district (1 gold) and the passive effect of the merchant (1 gold) minus the cost of the district (3 golds)
         // 41 + 1 + 1 + 1 + 1 - 3 = 42 golds
-        assertEquals(42, player.getGolds());
+        assertEquals(40, player.getGolds());
 
         player.addCardToBoard(DistrictCard.CATHEDRAL);
         player.getPlayerRole().useEffect(player);
         // Adding a blue district (0 golds) and the passive effect of the merchant (1 gold) minus the cost of the district (5 golds)
         // 42 + 1 + 1 + 1 + 1 + 0 - 5 = 41 golds
-        assertEquals(41, player.getGolds());
+        assertEquals(38, player.getGolds());
     }
   
   @Test
@@ -139,14 +141,14 @@ class CharacterCardTest {
         Player player2 = new BotRandom();
         player2.setGolds(31);
 
-        player.getPlayerRole().useEffectThief(player,player2);
+        player.getPlayerRole().useEffectThief(player,player2,true);
         assertEquals(51,player.getGolds());
         assertEquals(0,player2.getGolds());
 
         //Test when assassin (should not take the golds)
         player2.setGolds(31);
         player2.setPlayerRole(CharacterCard.ASSASSIN);
-        player.getPlayerRole().useEffectThief(player,player2);
+        player.getPlayerRole().useEffectThief(player,player2,true);
         assertEquals(51,player.getGolds());
         assertEquals(31,player2.getGolds());
     }

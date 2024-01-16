@@ -1,6 +1,8 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.controller.Game;
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
+import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -28,6 +30,7 @@ class BotAVsBotBTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         players = new ArrayList<>();
         players.add(player);
         players.add(player2);
@@ -35,7 +38,7 @@ class BotAVsBotBTest {
         players.add(player4);
         players.add(player5);
         players.add(player6);
-        game = new Game(players);
+        game = new Game(players, new GameView());
     }
 
     @Test
@@ -68,7 +71,7 @@ class BotAVsBotBTest {
             players.add(player5);
             players.add(player6);
 
-            game = new Game(players);
+            game = new Game(players, new GameView());
         }
         System.out.println(((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
         assertTrue(70 <= ((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);

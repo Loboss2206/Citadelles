@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
@@ -7,11 +8,15 @@ import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.*;
+import java.util.logging.Level;
 
 
 public class EffectController {
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
     private final HashMap<String, Integer> nbTimesEffectIsUsed = new HashMap<>();
+
+    private Player playerWhoStole;
 
     private GameView view;
 
@@ -42,6 +47,7 @@ public class EffectController {
                 newList.add(this.playerCopy(player, playerThatUseEffect));
             }
         }
+        LOGGER.log(Level.INFO, "La liste des joueurs qui peuvent être affectés par l'effet du voleur est: " + newList);
         return newList;
     }
 
@@ -57,11 +63,12 @@ public class EffectController {
                 newList.add(this.playerCopy(player, playerThatUseEffect));
             }
         }
+        LOGGER.info("La liste des joueurs qui peuvent être affectés par l'effet du voleur est: " + newList);
         return newList;
     }
 
     public List<CharacterCard> roleNeededForThiefEffect() {
-        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN,CharacterCard.THIEF));
     }
 
     public List<CharacterCard> roleNeededForAssassinEffect() {
@@ -75,6 +82,7 @@ public class EffectController {
                 newList.add(this.playerCopy(player, playerThatUseEffect));
             }
         }
+        LOGGER.info("La liste des joueurs qui peuvent être affectés par l'effet de l'assassin est: " + newList);
         return newList;
     }
 
@@ -88,13 +96,17 @@ public class EffectController {
         for (DistrictCard districtCard : playerToDestroy.getBoard()) {
             if (districtCard.isDestroyableDistrict(playerThatUseEffect.getGolds())) newList.add(districtCard);
         }
+        LOGGER.info("La liste des quartiers qui peuvent être détruits par le joueur " + playerThatUseEffect.getName() + " est: " + newList);
         return newList;
     }
 
     private Player playerCopy(Player playerCopy, Player playerThatUseEffect) {
         Player copyPlayer = playerCopy.copy();
-        if (playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead())
+        if (playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead()) {
             copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
+            LOGGER.info("Le role du joueur " + playerCopy.getName() + " (" + playerCopy.getPlayerRole().getCharacterName() + ") a été copié");
+        }
+        LOGGER.info("Le joueur " + playerCopy.getName() + " (" + playerCopy.getPlayerRole().getCharacterName() + ") a été copié");
         return copyPlayer;
     }
 
@@ -107,14 +119,18 @@ public class EffectController {
         for (CharacterCard characterCard : characterCards) {
             if (!characterCardsToGetRidOf.contains(characterCard)) newList.add(characterCard);
         }
+        LOGGER.info("La liste des personnages sans les personnages à éliminer est: " + newList);
         return newList;
     }
 
+
     public void playerWantToUseEffect(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardDeck, Deck<DistrictCard> districtDeck) {
+        LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") veut utiliser son effet");
         switch (playerThatWantToUseEffect.getPlayerRole()) {
             case ASSASSIN -> {
                 if (this.getNbTimesEffectIsUsed().get("Kill") == 0) {
                     CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players, playerThatWantToUseEffect), this.roleNeededForAssassinEffect());
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le personnage " + roleKilled.getCharacterName() + " pour être éliminé");
                     if (roleKilled != CharacterCard.ASSASSIN && roleKilled != null) {
                         for (Player playerAffected : players) {
                             if (playerAffected.getPlayerRole() == roleKilled) {
@@ -125,18 +141,25 @@ public class EffectController {
                         if (view != null) view.killPlayer(roleKilled);
                     }
                 }
-            }
+                else{
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet de l'assassin");
+                }            }
             case THIEF -> {
                 if (this.getNbTimesEffectIsUsed().get("Steal") == 0) {
                     CharacterCard roleStolen = playerThatWantToUseEffect.selectWhoWillBeAffectedByThiefEffect(players, this.roleNeededForThiefEffect());
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le personnage " + roleStolen.getCharacterName() + " pour être volé");
                     if (roleStolen != CharacterCard.ASSASSIN) {
                         for (Player player1 : players) {
                             if (player1.getPlayerRole() == roleStolen) {
-                                playerThatWantToUseEffect.getPlayerRole().useEffectThief(playerThatWantToUseEffect, player1);
+                                playerThatWantToUseEffect.getPlayerRole().useEffectThief(playerThatWantToUseEffect, player1,false);
+                                playerWhoStole = playerThatWantToUseEffect;
                             }
                         }
                         this.getNbTimesEffectIsUsed().put("Steal", 1);
+                        if (view != null) view.stolenPlayer(roleStolen);
                     }
+                }else {
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet du voleur");
                 }
             }
             case MAGICIAN -> {
@@ -164,18 +187,24 @@ public class EffectController {
                 if (this.getNbTimesEffectIsUsed().get("EarnDistrictKing") == 0) {
                     playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
                     this.getNbTimesEffectIsUsed().put("EarnDistrictKing", 1);
+                }else{
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet du roi");
                 }
             }
             case BISHOP -> {
                 if (this.getNbTimesEffectIsUsed().get("EarnDistrictBishop") == 0) {
                     playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
                     this.getNbTimesEffectIsUsed().put("EarnDistrictBishop", 1);
+                }else{
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet de l'évêque");
                 }
             }
             case MERCHANT -> {
                 if (this.getNbTimesEffectIsUsed().get("EarnDistrictMerchant") == 0) {
                     playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
                     this.getNbTimesEffectIsUsed().put("EarnDistrictMerchant", 1);
+                }else{
+                    LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet du marchand");
                 }
             }
             case WARLORD -> {
@@ -196,6 +225,8 @@ public class EffectController {
                         warlordEffect = "EarnDistrictWarlord";
                 }
 
+                LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi l'effet " + warlordEffect + " pour le warlord");
+
                 if (warlordEffect != null) {
                     if (warlordEffect.equals("EarnDistrictWarlord")) {
                         // Case where the warlord earn a district
@@ -209,6 +240,7 @@ public class EffectController {
                         Player playerToDestroy = null;
                         if (!playersNeeded.isEmpty()) {
                             playerToDestroy = playerThatWantToUseEffect.choosePlayerToDestroy(playersNeeded);
+                            LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le joueur " + (playerToDestroy != null ? playerToDestroy.getName() : "null") + " pour être détruit");
                         }
 
                         if (playerToDestroy != null) {
@@ -217,6 +249,7 @@ public class EffectController {
                             DistrictCard districtToDestroy = null;
                             if (!districtsNeeded.isEmpty()) {
                                 districtToDestroy = playerThatWantToUseEffect.chooseDistrictToDestroy(playerToDestroy, districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy));
+                                LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le quartier " + districtToDestroy.getDistrictName() + " du joueur " + playerToDestroy.getName() + " pour être détruit");
                             }
 
                             if (districtToDestroy != null) {
@@ -231,5 +264,9 @@ public class EffectController {
                 }
             }
         }
+    }
+
+    public Player getPlayerWhoStole() {
+        return playerWhoStole;
     }
 }

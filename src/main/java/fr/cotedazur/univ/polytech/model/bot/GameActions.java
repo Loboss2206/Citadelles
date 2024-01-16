@@ -1,6 +1,7 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
@@ -75,5 +76,9 @@ public interface GameActions {
 
     Player selectMagicianTarget(List<Player> players);
 
-
+     /**
+     * function where the player choose the color of the district he wants to replace the purple district ("School of Magic")
+     * @return the color chosen
+     */
+    Color chooseColorForDistrictCard();
 }

@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
@@ -10,20 +11,21 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 
 public class Round {
-    private  List<Player> players;
-    private  List<Player> playersSortedByCharacterNumber;
-    private  GameView view;
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+
+    private List<Player> players;
+    private List<Player> playersSortedByCharacterNumber;
+    private GameView view;
 
     //Decks
-    private  Deck<DistrictCard> districtDeck;
-    private  Deck<DistrictCard> districtDiscardDeck; // This deck will be used when the warlord destroy a district or when the magician swap his hand with the deck
-    private  Deck<CharacterCard> characterDeck;
-    private  Deck<CharacterCard> faceUpCharactersDiscarded;
+    private Deck<DistrictCard> districtDeck;
+    private Deck<DistrictCard> districtDiscardDeck; // This deck will be used when the warlord destroy a district or when the magician swap his hand with the deck
+    private Deck<CharacterCard> characterDeck;
+    private Deck<CharacterCard> faceUpCharactersDiscarded;
     private CharacterCard faceDownCharacterDiscarded;
-    private  int nbRound;
+    private int nbRound;
 
     private final EffectController effectController;
 
@@ -44,16 +46,17 @@ public class Round {
         this.nbRound = nbRound;
 
         //reset the players effect boolean
-        for(Player player : players){
+        for (Player player : players) {
             player.setUsedEffect("");
             player.setDead(false);
+            player.setHasBeenStolen(false);
         }
 
         effectController = new EffectController();
         effectController.setView(view);
     }
 
-    public Round(){
+    public Round() {
         effectController = new EffectController(view);
     }
 
@@ -62,6 +65,7 @@ public class Round {
      */
     public void startRound() {
         //Announce the start of the round
+        LOGGER.info("Début du round " + nbRound);
         view.printStartRound(nbRound);
 
         //Discard cards
@@ -100,7 +104,7 @@ public class Round {
         int numberOfPlayers = players.size();
 
         if (numberOfPlayers < 6) {
-            for (int i = numberOfPlayers-4; i < 2;i++){
+            for (int i = numberOfPlayers - 4; i < 2; i++) {
                 CharacterCard drawnCard = characterDeck.draw();
 
                 //King can't be discarded face-up
@@ -118,8 +122,10 @@ public class Round {
         //1 card has to be discarded face-down
         faceDownCharacterDiscarded = characterDeck.draw();
 
-        view.printDiscardedCardFaceDown(faceDownCharacterDiscarded);
+        //view.printDiscardedCardFaceDown(faceDownCharacterDiscarded);
+        LOGGER.info("Carte defaussée face cachée : " + faceDownCharacterDiscarded.getCharacterName());
     }
+
     /**
      * Sort the players by the number of the character card
      */
@@ -132,7 +138,7 @@ public class Round {
      */
     public void choiceOfCharactersForEachPlayer() {
         int i = 0;
-        for (Player player: players){
+        for (Player player : players) {
             //while the player has not chosen a character (or the character is not available)
             boolean again = true;
             while (again) {
@@ -140,7 +146,7 @@ public class Round {
                 view.printPlayerPickACard(player.getName(), characterDeck.getCards());
 
                 // Case where there is 7 players, the last player recover the face-down card to choose his character
-                if (i == 6){
+                if (i == 6) {
                     view.printCharacterCard(faceDownCharacterDiscarded.getCharacterNumber(), faceDownCharacterDiscarded.getCharacterName(), faceDownCharacterDiscarded.getCharacterEffect());
                     characterDeck.add(faceDownCharacterDiscarded);
                 }
@@ -168,45 +174,57 @@ public class Round {
         String choice;
         for (Player player : playersSortedByCharacterNumber) {
 
-            if (player.isDead()) continue;
+            if (player.isDead()) {
+                LOGGER.info("Le joueur " + player.getName() + " est mort, il ne peut pas jouer");
+                continue;
+            }
+
+            if (player.isStolen()) {
+                effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
+            }
 
             //Take the choice
             choice = player.startChoice(districtDeck);
             if (choice != null) view.printPlayerAction(choice, player);
 
-            if(player.wantToUseEffect(true)){
+            //Because architect automatically take +2 cards
+            if (player.getPlayerRole() == CharacterCard.ARCHITECT)
+                player.getPlayerRole().useEffectArchitect(player, districtDeck);
+            //Because Merchant automatically take +1 gold
+            if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + 1);
+
+             if(player.wantToUseEffect(true)){
                 effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
                 if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
             }
 
-            //Because architect automatically take +2 cards
-            if(player.getPlayerRole() == CharacterCard.ARCHITECT) player.getPlayerRole().useEffectArchitect(player,districtDeck);
-
             // Draw and place a district
             int i = 0;
             int maxDistrictThatCanBePut = 1;
-            if(player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
-            while(i++ < maxDistrictThatCanBePut)player.drawAndPlaceADistrict(view);
+            if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
+            while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
 
-            if(player.wantToUseEffect(false)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+
+            if (player.wantToUseEffect(false)) {
+                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD)
+                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
+
             }
 
             // Display the effect of the character card
             view.printCharacterUsedEffect(player);
 
 
-            if(player.getBoard().size() >= 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
+            if (player.getBoard().size() >= 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
             view.printEndTurnOfPlayer(player);
         }
     }
 
 
-
-    public boolean noPlayerAddCompleteFirst(){
-        for(Player player : players){
-            if(player.isFirstToAdd8district()) return false;
+    public boolean noPlayerAddCompleteFirst() {
+        for (Player player : players) {
+            if (player.isFirstToAdd8district()) return false;
         }
         return true;
     }

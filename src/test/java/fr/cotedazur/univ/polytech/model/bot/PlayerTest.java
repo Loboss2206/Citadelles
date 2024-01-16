@@ -1,6 +1,7 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -21,6 +22,7 @@ class PlayerTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         Player.setCount(0); // because the static variable changes during all the tests (of this class or another) which is fail this class tests
         botRandom0 = new BotRandom();
         botRandom1 = new BotRandom();
