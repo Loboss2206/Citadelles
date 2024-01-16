@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 

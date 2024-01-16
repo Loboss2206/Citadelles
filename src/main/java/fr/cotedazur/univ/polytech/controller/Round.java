@@ -208,7 +208,7 @@ public class Round {
             if (player.wantToUseEffect(false)) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
                 if (player.getPlayerRole() == CharacterCard.WARLORD)
-                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
+                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
 
             }
 
