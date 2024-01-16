@@ -116,10 +116,7 @@ public enum CharacterCard {
         while(!cardsToRemove.isEmpty()){
             DistrictCard card = cardsToRemove.get(0);
             districtDeck.add(card);
-            System.out.println(playerThatUseEffect.getHands());
             playerThatUseEffect.getHands().remove(card);
-            System.out.println(playerThatUseEffect.getHands());
-            System.out.println("a");
             cardsToRemove.remove(0);
         }
         for (int i = 0; i < nbCards;i++){
