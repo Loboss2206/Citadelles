@@ -221,4 +221,5 @@ class BotRandomTest {
         botRandom2.addCardToBoard(DistrictCard.MANOR);
         assertEquals(DistrictCard.CASTLE, botRandom1.chooseDistrictToDestroy(botRandom2, botRandom2.getBoard()));
     }
+
 }

@@ -10,9 +10,11 @@ import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestClassOrder;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -147,6 +149,53 @@ class CharacterCardTest {
         player.getPlayerRole().useEffectThief(player,player2);
         assertEquals(51,player.getGolds());
         assertEquals(31,player2.getGolds());
+    }
+    @Test
+    void useEffectForMagicianWithPlayer(){
+        player = new BotWeak();
+        ArrayList<Player> listPlayer= new ArrayList<>();
+        List<DistrictCard> districts = new ArrayList<>();
+        districts.add(DistrictCard.SMITHY);
+        districts.add(DistrictCard.DRAGON_GATE);
+        player.setHands(districts);
+        player.setPlayerRole(CharacterCard.MAGICIAN);
+
+        List<DistrictCard> districtsp2 = new ArrayList<>();
+        districtsp2.add(DistrictCard.FORTRESS);
+        districtsp2.add(DistrictCard.CATHEDRAL);
+        Player player2 = new BotRandom();
+        player2.setHands(districtsp2);
+
+        player.getPlayerRole().useEffectMagicianWithPlayer(player,player2);
+        assertEquals(districts,player2.getHands());
+        assertEquals(districtsp2,player.getHands());
+    }
+
+    @Test
+    void useEffectForMagicianWithDeck(){
+        Deck<DistrictCard> Deck = new Deck<>();
+        Deck.add(DistrictCard.TAVERN);
+        Deck.add(DistrictCard.LIBRARY);
+        Deck.add(DistrictCard.KEEP);
+        player = new BotWeak();
+        List<DistrictCard> districts = new ArrayList<>();
+        List<DistrictCard> districtsDiscard = new ArrayList<>();
+        districts.add(DistrictCard.SMITHY);
+        districts.add(DistrictCard.MARKET);
+        districts.add(DistrictCard.UNIVERSITY);
+        districtsDiscard.add(DistrictCard.SMITHY);
+        districtsDiscard.add(DistrictCard.UNIVERSITY);
+        player.setHands(districts);
+
+        player.setPlayerRole(CharacterCard.MAGICIAN);
+        System.out.println(player.getHands());
+
+
+        player.getPlayerRole().useEffectMagicianWithDeck(player,districtsDiscard,Deck);
+        assertEquals(DistrictCard.MARKET, player.getHands().get(0));
+        assertEquals(DistrictCard.TAVERN, player.getHands().get(1));
+        assertEquals(DistrictCard.LIBRARY, player.getHands().get(2));
+
     }
 
     @Test
