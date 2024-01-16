@@ -20,7 +20,7 @@ public abstract class Player implements GameActions {
     private int golds;
 
     //Districts in the player's hand
-    private final List<DistrictCard> hands;
+    private List<DistrictCard> hands;
 
     //the player's role
     private CharacterCard playerRole;
@@ -111,6 +111,8 @@ public abstract class Player implements GameActions {
     public static void setCount(int count) {
         Player.count = count;
     }
+
+    public void setHands(List<DistrictCard> hands){this.hands = hands;}
 
     /**
      * function that draw a card from the district deck if its possible, else the player take 2 golds

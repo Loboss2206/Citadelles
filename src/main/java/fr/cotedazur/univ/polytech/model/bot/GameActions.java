@@ -63,4 +63,17 @@ public interface GameActions {
      * @return the effect chosen
      */
     String whichWarlordEffect(List<Player> players);
+
+    /**
+     * function where the player choose the effect he wants use as magician
+     * @param players the players of the game
+     * @return the effect chosen
+     */
+    String whichMagicianEffect(List<Player> players);
+
+    List<DistrictCard> chooseCardsToChange();
+
+    Player selectMagicianTarget(List<Player> players);
+
+
 }

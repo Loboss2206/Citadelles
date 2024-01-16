@@ -23,6 +23,7 @@ public class EffectController {
         nbTimesEffectIsUsed.put("Steal", 0);
         nbTimesEffectIsUsed.put("Destroy", 0);
         nbTimesEffectIsUsed.put("Kill", 0);
+        nbTimesEffectIsUsed.put("Exchange", 0);
     }
 
     public void setView(GameView view) {
@@ -109,7 +110,7 @@ public class EffectController {
         return newList;
     }
 
-    public void playerWantToUseEffect(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardDeck) {
+    public void playerWantToUseEffect(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardDeck, Deck<DistrictCard> districtDeck) {
         switch (playerThatWantToUseEffect.getPlayerRole()) {
             case ASSASSIN -> {
                 if (this.getNbTimesEffectIsUsed().get("Kill") == 0) {
@@ -139,7 +140,22 @@ public class EffectController {
                 }
             }
             case MAGICIAN -> {
-                //TODO TO TEST
+                if (this.getNbTimesEffectIsUsed().get("Exchange") == 0) {
+                    String action = playerThatWantToUseEffect.whichMagicianEffect(players);
+                    if (action.equals("ExchangeDeck")){
+                        List<DistrictCard> cardToRemove = playerThatWantToUseEffect.chooseCardsToChange();
+                        playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithDeck(playerThatWantToUseEffect, cardToRemove, districtDeck);
+                    }
+                    else if (action.equals("ExchangePlayer")){
+                        Player playerTargeted = playerThatWantToUseEffect.selectMagicianTarget(players);
+                        playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithPlayer(playerThatWantToUseEffect, playerTargeted);
+                    }
+                    else {
+                        throw new UnsupportedOperationException("L'action demandé est " + action);
+                    }
+
+
+                }
             }
             case KING -> {
                 if (this.getNbTimesEffectIsUsed().get("EarnDistrictKing") == 0) {

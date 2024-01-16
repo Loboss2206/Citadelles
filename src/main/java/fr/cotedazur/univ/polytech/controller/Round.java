@@ -175,8 +175,8 @@ public class Round {
             if (choice != null) view.printPlayerAction(choice, player);
 
             if(player.wantToUseEffect(true)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
-                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
             }
 
             //Because architect automatically take +2 cards
@@ -189,8 +189,8 @@ public class Round {
             while(i++ < maxDistrictThatCanBePut)player.drawAndPlaceADistrict(view);
 
             if(player.wantToUseEffect(false)){
-                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
-                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck);
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
             }
 
             // Display the effect of the character card
