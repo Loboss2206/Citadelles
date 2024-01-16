@@ -28,9 +28,8 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public String startChoice(Deck<DistrictCard> districtDeck) {
-        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         discoverValidCard();
-        if(getHands().isEmpty() || !validCards.isEmpty()){
+        if (getHands().isEmpty() || !validCards.isEmpty()) {
             return drawCard(districtDeck);
         }
         return collectTwoGolds();
@@ -38,17 +37,27 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
-        if (getPlayerRole() != CharacterCard.ARCHITECT) useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         return putADistrict();
     }
 
     @Override
-    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view) {
-        if (districtDeck.isEmpty() && view.isPresent())
-            getPlayerRole().useEffect(this, view.get());
-        else if (districtDeck.isPresent())
-            getPlayerRole().useEffect(this, districtDeck.get());
-        else getPlayerRole().useEffect(this);
+    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
+        if (getPlayerRole() == CharacterCard.THIEF) {
+            return characterCards.get(3);
+        }
+        return null;
+    }
+
+    @Override
+    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
+        if (getPlayerRole() == CharacterCard.ASSASSIN) {
+            LOGGER.info("Le joueur " + getName() + " utilise l'effet de l'assassin");
+            if (players.size() < 4) return characterCards.get(3);
+            if (players.size() < 6) return characterCards.get(5);
+            else return characterCards.get(6);
+        }
+        LOGGER.info("Le joueur " + getName() + " ne peut pas utiliser l'effet de l'assassin");
+        return null;
     }
 
     @Override
@@ -58,13 +67,15 @@ public class BotWeak extends Player implements GameActions {
         validCards.sort(new DistrictCardComparator());
 
         if (isArchitectOptimal(characters)) {
+            LOGGER.info("Le joueur " + getName() + " prend l'architecte, car il est désigné comme optimal");
             return characters.indexOf(CharacterCard.ARCHITECT);
         } else if (hasColoredCards()) {
             HashMap<Color, Integer> colorMap = createColorMap(characters);
-            List<Map.Entry<Color,Integer>> entryList = new ArrayList<>(colorMap.entrySet());
+            List<Map.Entry<Color, Integer>> entryList = new ArrayList<>(colorMap.entrySet());
             entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
 
-            if(!entryList.isEmpty()) {
+            if (!entryList.isEmpty()) {
+                LOGGER.info("Le joueur " + getName() + " prend le personnage " + entryList.get(0).getKey() + " car il a le plus de quartiers de cette couleur");
                 return getCharacterIndexByColor(characters, entryList.get(0).getKey());
             }
 
@@ -76,6 +87,7 @@ public class BotWeak extends Player implements GameActions {
 
     /**
      * function that checks whether it's worth taking the architect
+     *
      * @param characters the characters available
      * @return true if it's worth taking the architect, else false
      */
@@ -94,33 +106,46 @@ public class BotWeak extends Player implements GameActions {
                 countNumberOfSpecifiedColorCard(Color.BLUE) >= 1;
     }
 
+    @Override
+    public Color chooseColorForDistrictCard() {
+            if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+                return getPlayerRole().getCharacterColor();
+            }
+        return null;
+    }
+
     /**
      * function that count the number of district card on the board for a specific color
      */
-    public int countNumberOfSpecifiedColorCard(Color color){
+    public int countNumberOfSpecifiedColorCard(Color color) {
         int count = 0;
-        for(DistrictCard card : getBoard()){
-            if(card.getDistrictColor() == color) count++;
+        for (DistrictCard card : getBoard()) {
+            if (card.getDistrictColor() == color) count++;
         }
         return count;
     }
 
     /**
      * Creates a HashMap that maps each specified character card to its corresponding color count.
+     *
      * @param characters the characters available
      * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
-     *         and the values are the counts of cards of that color in the given list.
+     * and the values are the counts of cards of that color in the given list.
      */
     private HashMap<Color, Integer> createColorMap(List<CharacterCard> characters) {
         HashMap<Color, Integer> hashMap = new HashMap<>();
-        if (characters.contains(CharacterCard.KING)) hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
-        if (characters.contains(CharacterCard.BISHOP)) hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
-        if (characters.contains(CharacterCard.MERCHANT)) hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
+        if (characters.contains(CharacterCard.KING))
+            hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
+        if (characters.contains(CharacterCard.BISHOP))
+            hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
+        if (characters.contains(CharacterCard.MERCHANT))
+            hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
         return hashMap;
     }
 
     /**
      * Retrieves the index of a specific character card in the given list based on its associated color.
+     *
      * @param characters the characters available
      * @param color      The color associated with the character card to find.
      * @return The index of the character card associated with the specified color, or an exception if not found.
@@ -132,5 +157,65 @@ public class BotWeak extends Player implements GameActions {
             case BLUE -> characters.indexOf(CharacterCard.BISHOP);
             default -> throw new UnsupportedOperationException("la valeur de color est : " + color);
         };
+    }
+
+    @Override
+    public String whichWarlordEffect(List<Player> players) {
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return "Destroy";
+            }
+        }
+        return "EarnDistrictWarlord";
+    }
+
+    @Override
+    public String whichMagicianEffect(List<Player> players) {
+        int nbCardPlayer = this.getHands().size();
+        for (Player p : players) {
+            int nbCardOther = p.getHands().size();
+            if (nbCardOther > nbCardPlayer){
+                return "ExchangePlayer";
+            }
+        }
+        return "ExchangeDeck";
+    }
+    @Override
+    public Player choosePlayerToDestroy(List<Player> players) {
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return player;
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
+        for (DistrictCard districtCard : player.getBoard()) {
+            if (districtCard.getDistrictValue() <= 1) return districtCard;
+        }
+        return null;
+    }
+    @Override
+    public List<DistrictCard> chooseCardsToChange(){
+        List<DistrictCard> districtCards = new ArrayList<>();
+        for (DistrictCard d :this.getHands()){
+            if (d.getDistrictValue() >= 3){
+                districtCards.add(d);
+            }
+        }
+        return districtCards;
+    }
+
+    @Override
+    public Player selectMagicianTarget(List<Player> players){
+        Player highNbCards = players.get(0);
+        for (Player p : players){
+            if (p.getHands().size() >= highNbCards.getHands().size()){
+                highNbCards = p;
+            }
+        }
+        return highNbCards;
     }
 }

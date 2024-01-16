@@ -1,13 +1,13 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.Random;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.view.GameView;
 
 public class BotRandom extends Player implements GameActions {
 
@@ -19,7 +19,6 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String startChoice(Deck<DistrictCard> districtDeck) {
-        if(getPlayerRole() == CharacterCard.ARCHITECT) useRoleEffect(Optional.of(districtDeck), Optional.empty());
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
@@ -36,7 +35,6 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
-        useRoleEffect(Optional.empty(),Optional.empty()); //Simple effects
         int randomIndex = random.nextInt(2);
         if (randomIndex == 0) {
             return putADistrict();
@@ -55,20 +53,41 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public void useRoleEffect(Optional<Deck<DistrictCard>> districtDeck, Optional<GameView> view) {
-        int randomIndex = random.nextInt(2);
-        if (randomIndex == 0) {
-            if (districtDeck.isEmpty() && view.isPresent())
-                getPlayerRole().useEffect(this, view.get());
-            else if (districtDeck.isPresent())
-                getPlayerRole().useEffect(this, districtDeck.get());
-            else getPlayerRole().useEffect(this);
+    public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
+        if (getPlayerRole() == CharacterCard.THIEF) {
+            return characterCards.get(random.nextInt(characterCards.size()));
         }
+        return null;
+    }
+
+    @Override
+    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
+        Random random = new Random();
+        if (getPlayerRole() == CharacterCard.ASSASSIN) {
+            return characterCards.get(random.nextInt(characterCards.size()));
+        }
+        return null;
     }
 
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    @Override
+    public Player choosePlayerToDestroy(List<Player> players) {
+        int rand = random.nextInt(2);
+        if (rand == 0) {
+            return null;
+        }
+        else {
+            return players.get(random.nextInt(players.size()));
+        }
+    }
+
+    @Override
+    public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
+        return districtCards.get(random.nextInt(districtCards.size()));
     }
 
     public void setRandom(Random random) {
@@ -84,4 +103,69 @@ public class BotRandom extends Player implements GameActions {
     public int hashCode() {
         return super.hashCode();
     }
+
+    @Override
+    public Color chooseColorForDistrictCard() {
+            if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+                return Color.values()[new Random().nextInt(Color.values().length)];
+            }
+        return null;
+    }
+
+
+    @Override
+    public String whichWarlordEffect(List<Player> players) {
+        int randomIndex = random.nextInt(2);
+        switch (randomIndex) {
+            case 0 -> {
+                return "Destroy";
+            }
+            case 1 -> {
+                return "EarnDistrictWarlord";
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public String whichMagicianEffect(List<Player> players) {
+        int randomIndex = random.nextInt(2);
+        switch (randomIndex) {
+            case 0 -> {
+                return "ExchangePlayer";
+            }
+            case 1 -> {
+                return "ExchangeDeck";
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Override
+    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+        int randomIndex = random.nextInt(2);
+        return randomIndex == 0;
+    }
+
+    @Override
+    public List<DistrictCard> chooseCardsToChange(){
+        List<DistrictCard> cardsToExchange = new ArrayList<>();
+        if (getHands().isEmpty())
+            return cardsToExchange;
+        int nbCards = random.nextInt(this.getHands().size())+1;
+        for(int i = 0; i<nbCards; i++){
+            cardsToExchange.add(this.getHands().get(i));
+        }
+        return cardsToExchange;
+    }
+
+    @Override
+    public Player selectMagicianTarget(List<Player> players){
+        return players.get(random.nextInt(players.size()));
+    }
+
 }

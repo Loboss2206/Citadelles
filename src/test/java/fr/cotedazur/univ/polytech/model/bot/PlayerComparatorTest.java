@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -15,6 +16,7 @@ class PlayerComparatorTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
         playerComparator = new PlayerComparator();

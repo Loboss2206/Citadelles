@@ -1,13 +1,20 @@
 package fr.cotedazur.univ.polytech.view;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
 import java.util.StringJoiner;
+import java.util.logging.Logger;
 
 public class GameView {
+    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+
+    private boolean display = true;
+
 
     /**
      * print the announcement of the start of the game
@@ -22,7 +29,7 @@ public class GameView {
      * @param i the current round number
      */
     public void printStartRound(int i) {
-        displayMessage("----------------------------------------------------------------------\n");
+        System.out.println("----------------------------------------------------------------------\n");
         displayMessage("Début du round n°" + i);
     }
 
@@ -69,7 +76,7 @@ public class GameView {
      * @param listOfPlayers the list of players already sorted by the game controller
      */
     public void printPlayersRanking(List<Player> listOfPlayers) {
-        displayMessage("----------------------------------------------------------------------\n");
+        System.out.println("----------------------------------------------------------------------\n");
         displayMessage("Fin du jeu, voici le classement :");
         int i = 0;//Used for ranking the player
         for (Player player : listOfPlayers) {
@@ -96,7 +103,9 @@ public class GameView {
      * @param message the message to display
      */
     private void displayMessage(String message) {
-        System.out.println(message);
+        LOGGER.info(message);
+        if (display)
+            System.out.println(message);
     }
 
     /**
@@ -182,11 +191,52 @@ public class GameView {
         }
     }
 
+    /**
+     * print the information of all the players
+     *
+     * @param players the list of players
+     */
     public void printRecapOfAllPlayers(List<Player> players) {
-        System.out.println("---------------------Récapitulatif des joueurs : ---------------------");
+        System.out.println("---------------------Récapitulatif des joueurs------------------------");
         for (Player player : players) {
             displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") possède " + player.getGolds() + " pièces d'or et " + player.getHands().size() + " cartes dans sa main");
         }
         System.out.println("----------------------------------------------------------------------\n");
+    }
+
+    public void killPlayer(CharacterCard characterCard) {
+        displayMessage("Le joueur ayant le role: " + characterCard.getCharacterName() + " est mort.");
+    }
+
+    public void stolenPlayer(CharacterCard characterCard) {
+        displayMessage("Le joueur ayant le rôle: " + characterCard.getCharacterName() + " s'est fait voler");
+    }
+
+    /**
+     * print when a player destroy the district of another player
+     *
+     * @param player            the player who destroyed the district
+     * @param playerToDestroy   the player who lost the district
+     * @param districtToDestroy the district destroyed
+     */
+    public void printDistrictDestroyed(Player player, Player playerToDestroy, DistrictCard districtToDestroy) {
+        displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") a détruit le quartier " + districtToDestroy.getDistrictName() + " du joueur " + playerToDestroy.getName() + " (" + playerToDestroy.getPlayerRole().getCharacterName() + ")");
+    }
+
+    /**
+     * print the board of all the players
+     *
+     * @param players the list of players
+     */
+    public void printBoardOfAllPlayers(List<Player> players) {
+        System.out.println("--------------------------Board des joueurs---------------------------");
+        for (Player p : players) {
+            displayMessage(p.getName() + " | board : " + p.getBoard());
+        }
+        System.out.println("-----------------------------------------------------------------------\n");
+    }
+
+    public void noDisplay(boolean b) {
+        display = !b;
     }
 }

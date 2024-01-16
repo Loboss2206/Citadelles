@@ -1,5 +1,7 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -9,25 +11,33 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player implements GameActions {
+    protected final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+
     //All players have a unique id
     private final int id;
 
     //All players have a unique name
-    private final String name;
+    private String name;
 
     //The amount of gold for a player
     private int golds;
 
     //Districts in the player's hand
-    private final ArrayList<DistrictCard> hands;
+    private List<DistrictCard> hands;
 
     //the player's role
     private CharacterCard playerRole;
     //Districts on the player's board
-    private final ArrayList<DistrictCard> board;
+    private List<DistrictCard> board;
 
     //the player's number of points
     private int points;
+
+    //the player's current status
+    private boolean isDead = false;
+
+    private boolean hasBeenStolen = false;
+
     //to find out if the player is the king
     private boolean isCrowned = false;
 
@@ -39,6 +49,8 @@ public abstract class Player implements GameActions {
 
     //to find out if the player is the first to add 8 district on his board
     boolean isFirstToAdd8district = false;
+
+    private int nbCardsInHand = 0;
 
     // Increment for each player created
     private static int count = 0;
@@ -59,10 +71,12 @@ public abstract class Player implements GameActions {
 
     public void removeGold(int golds) {
         this.golds -= golds;
+        LOGGER.info("Le joueur " + name + " a perdu " + golds + " pièces d'or, il lui reste " + this.golds + " pièces d'or");
     }
 
     public void setGolds(int golds) {
         this.golds = golds;
+        LOGGER.info("Le joueur " + name + " a maintenant " + golds + " pièces d'or");
     }
 
     public String getUsedEffect() {
@@ -105,6 +119,8 @@ public abstract class Player implements GameActions {
         Player.count = count;
     }
 
+    public void setHands(List<DistrictCard> hands){this.hands = hands;}
+
     /**
      * function that draw a card from the district deck if its possible, else the player take 2 golds
      * @param districtDeck the district deck
@@ -115,6 +131,8 @@ public abstract class Player implements GameActions {
             return collectTwoGolds();
         }else {
             hands.add(districtDeck.draw());
+            nbCardsInHand++;
+            LOGGER.info("Le joueur " + name + " a pioché la carte " + hands.get(hands.size() - 1).getDistrictName()+" ("+hands.get(hands.size() - 1).getDistrictValue()+" pièces d'or, il a maintenant "+nbCardsInHand+" cartes en main)");
             return "drawCard";
         }
     }
@@ -124,6 +142,7 @@ public abstract class Player implements GameActions {
      */
     public String collectTwoGolds() {
         this.golds += 2;
+        LOGGER.info("Le joueur " + name + " a pioché 2 pièces d'or, il a maintenant " + golds + " pièces d'or");
         return "2golds";
     }
 
@@ -134,6 +153,9 @@ public abstract class Player implements GameActions {
     public void addCardToBoard(DistrictCard card) {
         board.add(card);
         hands.remove(card);
+        nbCardsInHand--;
+        LOGGER.info("Le joueur " + name + " a posé le quartier " + card.getDistrictName() + "(" + card.getDistrictValue() + " pièces d'or) (couleur " + card.getDistrictColor() + ")");
+        LOGGER.info(" sur son plateau, il a maintenant " + board.size() + " quartiers sur son plateau, il lui reste " + nbCardsInHand + " cartes en main");
         removeGold(card.getDistrictValue());
     }
 
@@ -147,6 +169,7 @@ public abstract class Player implements GameActions {
                 validCards.add(card);
             }
         }
+        LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards.toString());
     }
 
     /**
@@ -158,9 +181,11 @@ public abstract class Player implements GameActions {
         if (board.isEmpty() || card == null) return false;
         for (DistrictCard c : board) {
             if (c.name().equals(card.name())) {
+                LOGGER.info("Le joueur " + name + " a déjà le quartier " + card.getDistrictName() + " sur son plateau");
                 return true;
             }
         }
+        LOGGER.info("Le joueur " + name + " n'a pas le quartier " + card.getDistrictName() + " sur son plateau");
         return false;
     }
 
@@ -171,13 +196,16 @@ public abstract class Player implements GameActions {
     public boolean hasPlayableCard() {
         for (DistrictCard card : hands) {
             if (!hasCardOnTheBoard(card) && validCards.contains(card)) {
+                LOGGER.info("Le joueur " + name + " a une carte achetable");
                 return true;
             }
         }
+        LOGGER.info("Le joueur " + name + " n'a pas de carte achetable");
         return false;
     }
 
     public void setCrowned(boolean isCrowned) {
+        LOGGER.info("Le joueur " + name + (isCrowned ? " est" : " n'est plus") + " le roi");
         this.isCrowned = isCrowned;
     }
 
@@ -192,7 +220,7 @@ public abstract class Player implements GameActions {
     @Override
     public boolean equals(Object obj) {
         if (obj instanceof Player player) {
-            return player.id == this.id;
+            return player.name.equals(this.name);
         }
         return false;
     }
@@ -211,18 +239,93 @@ public abstract class Player implements GameActions {
         }
     }
 
+    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+        return beforePuttingADistrict;
+    }
+
     @Override
     public int hashCode() {
         return 0;
     }
 
     public void setFirstToAdd8district(boolean firstToAdd8district) {
+        LOGGER.info("Le joueur " + name + (firstToAdd8district ? " est" : " n'est plus") + " le premier à avoir 8 quartiers sur son plateau");
         isFirstToAdd8district = firstToAdd8district;
     }
 
     public boolean isFirstToAdd8district() {
         return isFirstToAdd8district;
     }
+
+    /**
+     * function that copy a player without his hand
+     * @return the copy of the player
+     */
+    public Player copy() {
+        Player copy = new BotRandom();
+
+        copy.setName(this.getName());
+        copy.setBoard(this.getBoard());
+        copy.setGolds(this.getGolds());
+        copy.setNbCardsInHand(this.getNbCardsInHand());
+        copy.setCrowned(this.isCrowned());
+        return copy;
+    }
+
+    /**
+     * Check if a player has a district that can be destroyed
+     * @param warlord the warlord
+     * @return true if the player has a district that can be destroyed, else false
+     */
+    public boolean playerHasADestroyableDistrict(Player warlord) {
+        if (this.getBoard().isEmpty() || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead())) {
+            LOGGER.info("Le joueur " + name + " n'a pas de quartier détruisable");
+            return false;
+        }
+        for (DistrictCard district : this.getBoard()) {
+            if (district.isDestroyableDistrict(warlord.getGolds())) {
+                LOGGER.info("Le joueur " + name + " a un quartier détruisable");
+                return true;
+            }
+        }
+        LOGGER.info("Le joueur " + name + " n'a pas de quartier détruisable");
+        return false;
+    }
+
+    public int getNbCardsInHand() {
+        return nbCardsInHand;
+    }
+
+    public void setNbCardsInHand(int nbCardsInHand) {
+        this.nbCardsInHand = nbCardsInHand;
+    }
+
+    public void setBoard(List<DistrictCard> board) {
+        this.board = board;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public boolean isDead(){
+        return isDead;
+    }
+
+    public void setDead(boolean isDead) {
+        LOGGER.info("Le joueur " + name + (isDead ? " est" : " n'est plus") + " mort");
+    	this.isDead = isDead;
+    }
+
+    public boolean isStolen() {
+        return hasBeenStolen;
+    }
+
+    public void setHasBeenStolen(boolean hasBeenStolen) {
+        this.hasBeenStolen = hasBeenStolen;
+    }
+
+    public abstract Color chooseColorForDistrictCard();
 }
 
 

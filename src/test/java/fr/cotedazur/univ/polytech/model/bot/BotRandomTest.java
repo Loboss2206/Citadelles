@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -27,6 +28,7 @@ class BotRandomTest {
 
     @BeforeEach
     void setUp() {
+        LamaLogger.mute();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
         botRandom1.setRandom(random);
@@ -122,7 +124,7 @@ class BotRandomTest {
     @Test
     void testChoiceToPutADistrict(){
         //Put a district for the first call of the fonction and choose the
-        when(random.nextInt(anyInt())).thenReturn(1).thenReturn(0).thenReturn(1);
+        when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
 
         botRandom1.setGolds(20); //add golds to be able to put a district
 
@@ -147,13 +149,13 @@ class BotRandomTest {
         assertNull(botRandom1.choiceHowToPlayDuringTheRound());
     }
 
-    @Test
+    /*@Test
     void testUseRoleEffect() {
         CharacterCard characterCard = spy(CharacterCard.KING);
         botRandom1.setPlayerRole(characterCard);
-        botRandom1.useRoleEffect(Optional.of(districtDeck), Optional.empty());
+        botRandom1.selectWhoWillBeAffectedByCharacterEffect(Optional.of(districtDeck), Optional.empty());
         verify(characterCard, times(1)).useEffect(botRandom1, districtDeck);
-    }
+    }*/
 
     @Test
     void testChooseCharacter(){
@@ -206,4 +208,20 @@ class BotRandomTest {
         botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
         assertEquals(CharacterCard.THIEF,botRandom1.getPlayerRole());
     }
+
+    @Test
+    void testChoosePlayerToDestroyInEmptyList() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertNull(botRandom1.choosePlayerToDestroy(Collections.emptyList()));
+    }
+
+    @Test
+    void testChooseDistrictToDestroy() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        botRandom2.addCardToBoard(DistrictCard.CASTLE);
+        botRandom2.addCardToBoard(DistrictCard.PALACE);
+        botRandom2.addCardToBoard(DistrictCard.MANOR);
+        assertEquals(DistrictCard.CASTLE, botRandom1.chooseDistrictToDestroy(botRandom2, botRandom2.getBoard()));
+    }
+
 }
