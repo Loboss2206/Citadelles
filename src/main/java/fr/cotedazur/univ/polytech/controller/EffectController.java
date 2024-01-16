@@ -144,7 +144,10 @@ public class EffectController {
                     String action = playerThatWantToUseEffect.whichMagicianEffect(players);
                     if (action.equals("ExchangeDeck")){
                         List<DistrictCard> cardToRemove = playerThatWantToUseEffect.chooseCardsToChange();
-                        playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithDeck(playerThatWantToUseEffect, cardToRemove, districtDeck);
+                        if (!cardToRemove.isEmpty()) {
+                            playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithDeck(playerThatWantToUseEffect, cardToRemove, districtDeck);
+                        }
+
                     }
                     else if (action.equals("ExchangePlayer")){
                         Player playerTargeted = playerThatWantToUseEffect.selectMagicianTarget(players);
