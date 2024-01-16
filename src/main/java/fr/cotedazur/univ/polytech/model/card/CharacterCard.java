@@ -94,12 +94,7 @@ public enum CharacterCard {
             color = player.chooseColorForDistrictCard();
         }
         switch (this) {
-            case ASSASSIN -> {
-                //TODO TO TEST
-            }
-            case MAGICIAN -> {
-                //TODO TO TEST
-            }
+
             case KING -> {
                 earnGoldsFromDistricts(player, Color.YELLOW);
             }
@@ -132,6 +127,27 @@ public enum CharacterCard {
         }else{
             stolenPlayer.setHasBeenStolen(true);
         }
+    }
+
+    public void useEffectMagicianWithDeck(Player playerThatUseEffect, List<DistrictCard> cardsToRemove, Deck<DistrictCard> districtDeck){
+        int nbCards = cardsToRemove.size();
+        while(!cardsToRemove.isEmpty()){
+            DistrictCard card = cardsToRemove.get(0);
+            districtDeck.add(card);
+            playerThatUseEffect.getHands().remove(card);
+            cardsToRemove.remove(0);
+        }
+        for (int i = 0; i < nbCards;i++){
+            DistrictCard drawn = districtDeck.draw();
+            playerThatUseEffect.getHands().add(drawn);
+        }
+
+    }
+
+    public void useEffectMagicianWithPlayer(Player playerThatUseEffect, Player playerTargeted){
+        List<DistrictCard> temp = playerTargeted.getHands();
+        playerTargeted.setHands(playerThatUseEffect.getHands());
+        playerThatUseEffect.setHands(temp);
     }
 
     public void useEffectWarlord(Player playerThatUseEffect, Player playerToDestroy, DistrictCard districtToDestroy, Deck<DistrictCard> districtDiscardedDeck) {

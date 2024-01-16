@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
@@ -129,8 +130,42 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
+    public String whichMagicianEffect(List<Player> players) {
+        int randomIndex = random.nextInt(2);
+        switch (randomIndex) {
+            case 0 -> {
+                return "ExchangePlayer";
+            }
+            case 1 -> {
+                return "ExchangeDeck";
+            }
+            default -> {
+                return null;
+            }
+        }
+    }
+
+    @Override
     public boolean wantToUseEffect(boolean beforePuttingADistrict){
         int randomIndex = random.nextInt(2);
         return randomIndex == 0;
     }
+
+    @Override
+    public List<DistrictCard> chooseCardsToChange(){
+        List<DistrictCard> cardsToExchange = new ArrayList<>();
+        if (getHands().isEmpty())
+            return cardsToExchange;
+        int nbCards = random.nextInt(this.getHands().size())+1;
+        for(int i = 0; i<nbCards; i++){
+            cardsToExchange.add(this.getHands().get(i));
+        }
+        return cardsToExchange;
+    }
+
+    @Override
+    public Player selectMagicianTarget(List<Player> players){
+        return players.get(random.nextInt(players.size()));
+    }
+
 }

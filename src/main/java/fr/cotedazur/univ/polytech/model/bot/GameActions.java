@@ -66,6 +66,17 @@ public interface GameActions {
     String whichWarlordEffect(List<Player> players);
 
     /**
+     * function where the player choose the effect he wants use as magician
+     * @param players the players of the game
+     * @return the effect chosen
+     */
+    String whichMagicianEffect(List<Player> players);
+
+    List<DistrictCard> chooseCardsToChange();
+
+    Player selectMagicianTarget(List<Player> players);
+
+     /**
      * function where the player choose the color of the district he wants to replace the purple district ("School of Magic")
      * @return the color chosen
      */

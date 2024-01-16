@@ -170,6 +170,17 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
+    public String whichMagicianEffect(List<Player> players) {
+        int nbCardPlayer = this.getHands().size();
+        for (Player p : players) {
+            int nbCardOther = p.getHands().size();
+            if (nbCardOther > nbCardPlayer){
+                return "ExchangePlayer";
+            }
+        }
+        return "ExchangeDeck";
+    }
+    @Override
     public Player choosePlayerToDestroy(List<Player> players) {
         for (Player player : players) {
             for (DistrictCard districtCard : player.getBoard()) {
@@ -185,5 +196,26 @@ public class BotWeak extends Player implements GameActions {
             if (districtCard.getDistrictValue() <= 1) return districtCard;
         }
         return null;
+    }
+    @Override
+    public List<DistrictCard> chooseCardsToChange(){
+        List<DistrictCard> districtCards = new ArrayList<>();
+        for (DistrictCard d :this.getHands()){
+            if (d.getDistrictValue() >= 3){
+                districtCards.add(d);
+            }
+        }
+        return districtCards;
+    }
+
+    @Override
+    public Player selectMagicianTarget(List<Player> players){
+        Player highNbCards = players.get(0);
+        for (Player p : players){
+            if (p.getHands().size() >= highNbCards.getHands().size()){
+                highNbCards = p;
+            }
+        }
+        return highNbCards;
     }
 }

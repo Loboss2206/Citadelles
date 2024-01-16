@@ -193,10 +193,9 @@ public class Round {
             //Because Merchant automatically take +1 gold
             if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + 1);
 
-            if (player.wantToUseEffect(true)) {
-                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
-                if (player.getPlayerRole() == CharacterCard.WARLORD)
-                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
+             if(player.wantToUseEffect(true)){
+                effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
             }
 
             // Draw and place a district
@@ -205,10 +204,12 @@ public class Round {
             if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
             while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
 
+
             if (player.wantToUseEffect(false)) {
-                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
+                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
                 if (player.getPlayerRole() == CharacterCard.WARLORD)
-                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck);
+                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+
             }
 
             // Display the effect of the character card
