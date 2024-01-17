@@ -3,12 +3,12 @@ package fr.cotedazur.univ.polytech.view;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
 import java.util.StringJoiner;
-import java.util.logging.Logger;
 
 public class GameView {
     private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
@@ -238,5 +238,10 @@ public class GameView {
 
     public void noDisplay(boolean b) {
         display = !b;
+    }
+
+    public void printCharacterGetGolds(Player playerThatWantToUseEffect, Color characterColor, int golds) {
+        if (golds > 0)
+            displayMessage("Le joueur " + playerThatWantToUseEffect.getName() + " recupère " + golds + " pièces d'or grâce à ses quartiers " + characterColor.getColorName());
     }
 }
