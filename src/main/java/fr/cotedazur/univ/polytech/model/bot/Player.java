@@ -326,6 +326,11 @@ public abstract class Player implements GameActions {
     }
 
     public abstract Color chooseColorForDistrictCard();
+
+    @Override
+    public String toString() {
+        return getName();
+    }
 }
 
 
