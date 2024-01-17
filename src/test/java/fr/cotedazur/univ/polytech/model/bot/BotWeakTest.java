@@ -291,16 +291,23 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.MARKET);
         botWeak.setGolds(80);
         botWeak.setPlayerRole(CharacterCard.ASSASSIN);
-        assertEquals("drawCard",botWeak.startChoice(districtDeck));
+        assertEquals("drawCard",botWeak.startChoice());
 
         //when there is not enough golds
         botWeak.setGolds(0);
-        assertEquals("2golds",botWeak.startChoice(districtDeck));
+        assertEquals("2golds",botWeak.startChoice());
 
         //when hand is empty
         botWeak.setGolds(80);
         botWeak.getHands().clear();
-        assertEquals("drawCard",botWeak.startChoice(districtDeck));
+        assertEquals("drawCard",botWeak.startChoice());
+    }
+
+    @Test
+    void testDrawCard(){
+        botWeak.drawCard(DistrictCard.GREAT_WALL,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
+        DistrictCard cardTakenByTheBotWeak = botWeak.getHands().get(0);
+        assertEquals(DistrictCard.TAVERN,cardTakenByTheBotWeak);
     }
 
     @Test

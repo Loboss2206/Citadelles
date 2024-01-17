@@ -3,8 +3,8 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.deck.Deck;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public interface GameActions {
@@ -16,10 +16,9 @@ public interface GameActions {
 
     /**
      * function where the player choose between take 2 golds or draw a card
-     * @param districtDeck the district deck
      * @return his choice
      */
-    String startChoice(Deck<DistrictCard> districtDeck);
+    String startChoice();
 
     /**
      * function where the player choose to put or not a district on his board
@@ -81,4 +80,6 @@ public interface GameActions {
      * @return the color chosen
      */
     Color chooseColorForDistrictCard();
+
+    public List<DistrictCard> drawCard(DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
 }
