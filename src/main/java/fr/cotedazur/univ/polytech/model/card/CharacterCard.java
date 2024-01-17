@@ -88,7 +88,6 @@ public enum CharacterCard {
      */
     public void useEffect(Player player) {
         LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") utilise son pouvoir");
-        player.setUsedEffect(player.getPlayerRole().getCharacterName().toUpperCase() + "_" + player.getPlayerRole().getCharacterEffect().toUpperCase().replaceAll(" ", ""));
         Color color = null;
         if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
             color = player.chooseColorForDistrictCard();

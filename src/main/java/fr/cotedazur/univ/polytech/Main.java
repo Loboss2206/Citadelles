@@ -12,7 +12,6 @@ import java.util.ArrayList;
 public class Main {
     private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
-
     public static void main(String... args) {
 
         // Logger setup

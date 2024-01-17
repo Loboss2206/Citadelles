@@ -133,7 +133,7 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public String whichWarlordEffect(List<Player> players) {
-        int randomIndex = random.nextInt(2);
+        int randomIndex = random.nextInt(3);
         switch (randomIndex) {
             case 0 -> {
                 return "Destroy";
