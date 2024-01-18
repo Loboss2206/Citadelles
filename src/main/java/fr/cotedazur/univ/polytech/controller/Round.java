@@ -10,6 +10,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 
 public class Round {
@@ -173,7 +174,6 @@ public class Round {
     public void choiceActionsForTheRound() {
 
         for (Player player : playersSortedByCharacterNumber) {
-            String choice = null;
             if (player.isDead()) {
                 LOGGER.info("Le joueur " + player.getName() + " est mort, il ne peut pas jouer");
                 continue;
@@ -183,32 +183,8 @@ public class Round {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
 
-            //Take the choice
-            while(choice == null) {
-                choice = player.startChoice();
-                if(choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
-            }
-            if (choice.equals("2golds")){
-                player.collectTwoGolds();
-            } else if (choice.equals("drawCard")) {
-                ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
-                for(int i = 0;i<2;i++){
-                    if(!districtDeck.isEmpty())cardsThatPlayerDraw.add(districtDeck.draw());
-                }
-                ArrayList<DistrictCard> cardsThatThePlayerDontWant;
-                //If maybe there is only one card in the deck so the bot just take one card
-                if(cardsThatPlayerDraw.size() == 2){
-                    cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0) , cardsThatPlayerDraw.get(1));
-                }else{
-                    cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0));
-                }
+            this.drawOr2golds(player);
 
-                //Return the cards that the bot did not choose to the hand
-                for(DistrictCard card : cardsThatThePlayerDontWant){
-                    districtDeck.add(card);
-                }
-            }
-            view.printPlayerAction(choice, player);
             //Because architect automatically take +2 cards
             if (player.getPlayerRole() == CharacterCard.ARCHITECT)
                 player.getPlayerRole().useEffectArchitect(player, districtDeck);
@@ -218,9 +194,10 @@ public class Round {
 
 
             if (player.wantToUseEffect(true) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
-               effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-               if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-           }
+                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD)
+                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+            }
 
             // Draw and place a district
             int i = 0;
@@ -245,6 +222,50 @@ public class Round {
         }
     }
 
+    public void drawOr2golds(Player player) {
+        String choice = null;
+
+        //Take the choice
+        while (choice == null) {
+            choice = player.startChoice();
+            if (choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
+        }
+
+        //Process the choice
+        if (choice.equals("2golds")) {
+            player.collectTwoGolds();
+        } else if (choice.equals("drawCard")) {
+            playerWantToDrawCard(player);
+        }
+        view.printPlayerAction(choice, player);
+    }
+
+    public void playerWantToDrawCard(Player player){
+        ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
+        int maxDraw = 2; //Change for purple card
+        for (int i = 0; i < maxDraw; i++) {
+            if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
+        }
+        HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
+
+        //If maybe there is only one card in the deck so the bot just take one card
+        if (cardsThatPlayerDraw.size() == 2) {
+            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1));
+        } else {
+            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
+        }
+
+        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 1) {
+            player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+        }
+
+        //Return the cards that the bot did not choose to the hand
+        for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted")) {
+            districtDeck.add(card);
+        }
+    }
 
     public boolean noPlayerAddCompleteFirst() {
         for (Player player : players) {

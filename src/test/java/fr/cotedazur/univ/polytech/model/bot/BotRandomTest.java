@@ -9,7 +9,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -19,6 +21,8 @@ import static org.mockito.Mockito.*;
 
 class BotRandomTest {
     @Mock Random random = mock(Random.class);
+
+    HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
 
     BotRandom botRandom2;
     BotRandom botRandom1;
@@ -31,6 +35,8 @@ class BotRandomTest {
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
         botRandom1.setRandom(random);
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
     }
@@ -44,7 +50,7 @@ class BotRandomTest {
         assertEquals(botRandom2.putADistrict(), botRandom2.getHands().get(0));
         botRandom2.getBoard().clear();
 
-        botRandom2.drawCard(districtDeck.draw());
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
         botRandom2.setGolds(botRandom2.getHands().get(0).getDistrictValue());
         assertNotNull(botRandom2.putADistrict());
 
@@ -71,14 +77,15 @@ class BotRandomTest {
         //Taking the third card from the hand of the random bot
         when(random.nextInt(anyInt())).thenReturn(0);
         botRandom1.setGolds(20); //add golds to be able to put a district
-        botRandom1.drawCard(districtDeck.draw());
-        botRandom1.drawCard(districtDeck.draw());
-        botRandom1.drawCard(districtDeck.draw());
-        botRandom1.drawCard(districtDeck.draw());
-        when(random.nextInt(anyInt())).thenReturn(1);
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+
         //Store the card that will be drawn from the hand
-        DistrictCard districtCard = botRandom1.getHands().get(2);
         when(random.nextInt(anyInt())).thenReturn(2);
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+        DistrictCard districtCard = botRandom1.getHands().get(2);
         botRandom1.addCardToBoard(botRandom1.putADistrict());
         assertEquals(districtCard,botRandom1.getBoard().get(0));
     }
@@ -100,7 +107,8 @@ class BotRandomTest {
         int oldHandSize = botRandom1.getHands().size();
         botRandom1.startChoice();
 
-        botRandom1.drawCard(DistrictCard.MARKET,DistrictCard.PALACE);
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET,DistrictCard.PALACE);
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
         assertEquals(DistrictCard.PALACE,botRandom1.getHands().get(0));
         //Verify that the hand size is correct
        /* assertEquals(oldHandSize + 1,botRandom1.getHands().size());
@@ -122,8 +130,9 @@ class BotRandomTest {
 
         botRandom1.setGolds(20); //add golds to be able to put a district
 
-        botRandom1.drawCard(districtDeck.draw());
-        botRandom1.drawCard(districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
         botRandom1.setPlayerRole(CharacterCard.ASSASSIN);
 
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
@@ -138,8 +147,8 @@ class BotRandomTest {
         assertNull(botRandom1.choiceHowToPlayDuringTheRound());
 
         //Test when bot choose to not put a district
-        botRandom1.drawCard(districtDeck.draw());
-        botRandom1.drawCard(districtDeck.draw());
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw());
         when(random.nextInt(anyInt())).thenReturn(1);
         assertNull(botRandom1.choiceHowToPlayDuringTheRound());
     }

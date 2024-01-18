@@ -10,6 +10,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -21,6 +22,9 @@ class PlayerTest {
     BotRandom botRandom2;
     private Deck<DistrictCard> districtDeck;
 
+    HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
+
+
 
     @BeforeEach
     void setUp() {
@@ -31,6 +35,8 @@ class PlayerTest {
         botRandom2 = new BotRandom();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
     }
 
     /**
@@ -54,8 +60,8 @@ class PlayerTest {
     void testDrawCard() {
         Deck<DistrictCard> copyDeck;
         copyDeck = DeckFactory.createDistrictDeck();
-        ArrayList<DistrictCard> cardsReturnerd = (ArrayList<DistrictCard>) botRandom2.drawCard(districtDeck.draw(),districtDeck.draw());
-        districtDeck.add(cardsReturnerd.get(0));
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw(),districtDeck.draw());
+        districtDeck.add(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").get(0));
         //If the card is correctly removed
         assertEquals(66, copyDeck.size());
         assertEquals(65, districtDeck.size());

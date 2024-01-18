@@ -10,10 +10,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -25,6 +22,9 @@ class BotWeakTest {
     Player botWeak;
     Deck<DistrictCard> districtDeck;
 
+    HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
+
+
 
     @BeforeEach
     void setUp(){
@@ -32,6 +32,8 @@ class BotWeakTest {
         botWeak = new BotWeak();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
     }
 
     @Test
@@ -305,8 +307,8 @@ class BotWeakTest {
 
     @Test
     void testDrawCard(){
-        botWeak.drawCard(DistrictCard.GREAT_WALL,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
-        DistrictCard cardTakenByTheBotWeak = botWeak.getHands().get(0);
+        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.GREAT_WALL,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
+        DistrictCard cardTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").get(0);
         assertEquals(DistrictCard.TAVERN,cardTakenByTheBotWeak);
     }
 
