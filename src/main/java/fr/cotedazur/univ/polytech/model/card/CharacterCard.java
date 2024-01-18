@@ -166,7 +166,7 @@ public enum CharacterCard {
     public void useEffectArchitect(Player player, Deck<DistrictCard> districtDeck) {
         if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
             for (int i = 0; i < 2; i++) {
-                player.drawCard(districtDeck);
+                if(!districtDeck.isEmpty())player.getHands().add(districtDeck.draw());
             }
             LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") a pioché 2 cartes");
         }

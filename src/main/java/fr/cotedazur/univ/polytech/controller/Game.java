@@ -91,7 +91,7 @@ public class Game {
         //Draw 4 cards of District for each player at the beginning of the game
         for (Player player : players) {
             for (int i = 0; i < 4; i++) {
-                player.drawCard(this.districtDeck);
+                player.getHands().add(this.districtDeck.draw());
             }
         }
 

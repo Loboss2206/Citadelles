@@ -4,8 +4,6 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
-import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.*;
 
@@ -27,12 +25,12 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public String startChoice(Deck<DistrictCard> districtDeck) {
+    public String startChoice() {
         discoverValidCard();
         if (getHands().isEmpty() || !validCards.isEmpty()) {
-            return drawCard(districtDeck);
+            return "drawCard";
         }
-        return collectTwoGolds();
+        return "2golds";
     }
 
     @Override
@@ -112,6 +110,22 @@ public class BotWeak extends Player implements GameActions {
                 return getPlayerRole().getCharacterColor();
             }
         return null;
+    }
+
+    @Override
+    public List<DistrictCard> drawCard(DistrictCard... cards) {
+        ArrayList<DistrictCard> cardThatBotDontWant = new ArrayList<>(List.of(cards));
+        LOGGER.info("Cartes piochées : "+ Arrays.toString(cards));
+         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
+        cardThatBotDontWant.sort(districtCardComparator);
+        for(int i = 0; i < cardThatBotDontWant.size();i++){
+            if(i==0){
+                getHands().add(cardThatBotDontWant.get(i));
+                cardThatBotDontWant.remove(i);
+            }
+        }
+        LOGGER.info("Cartes jetées : "+ cardThatBotDontWant);
+        return cardThatBotDontWant;
     }
 
     /**

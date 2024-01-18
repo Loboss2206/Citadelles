@@ -9,6 +9,8 @@ import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -52,8 +54,8 @@ class PlayerTest {
     void testDrawCard() {
         Deck<DistrictCard> copyDeck;
         copyDeck = DeckFactory.createDistrictDeck();
-        botRandom2.drawCard(districtDeck);
-
+        ArrayList<DistrictCard> cardsReturnerd = (ArrayList<DistrictCard>) botRandom2.drawCard(districtDeck.draw(),districtDeck.draw());
+        districtDeck.add(cardsReturnerd.get(0));
         //If the card is correctly removed
         assertEquals(66, copyDeck.size());
         assertEquals(65, districtDeck.size());

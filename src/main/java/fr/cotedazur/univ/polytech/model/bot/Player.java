@@ -121,21 +121,6 @@ public abstract class Player implements GameActions {
 
     public void setHands(List<DistrictCard> hands){this.hands = hands;}
 
-    /**
-     * function that draw a card from the district deck if its possible, else the player take 2 golds
-     * @param districtDeck the district deck
-     * @return the name of the card drawn
-     */
-    public String drawCard(Deck<DistrictCard> districtDeck) {
-        if(districtDeck.isEmpty()) {
-            return collectTwoGolds();
-        }else {
-            hands.add(districtDeck.draw());
-            nbCardsInHand++;
-            LOGGER.info("Le joueur " + name + " a pioché la carte " + hands.get(hands.size() - 1).getDistrictName()+" ("+hands.get(hands.size() - 1).getDistrictValue()+" pièces d'or, il a maintenant "+nbCardsInHand+" cartes en main)");
-            return "drawCard";
-        }
-    }
 
     /**
      * function that take 2 golds, if the player has chosen this option instead of draw a card
