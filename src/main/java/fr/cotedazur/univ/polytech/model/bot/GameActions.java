@@ -4,7 +4,6 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface GameActions {
