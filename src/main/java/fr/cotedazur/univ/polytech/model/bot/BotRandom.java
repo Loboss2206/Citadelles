@@ -120,7 +120,7 @@ public class BotRandom extends Player implements GameActions {
         LOGGER.info("Cartes piochées : "+ Arrays.toString(cards));
         ArrayList<DistrictCard> cardThatBotDontWant = new ArrayList<>();
         for(int i = 0;i < cards.length;i++){
-            if(i == randomCard) {
+            if (i == randomCard) {
                 getHands().add(cards[i]);
             }else{
                 cardThatBotDontWant.add(cards[i]);
