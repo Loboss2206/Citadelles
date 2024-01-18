@@ -85,6 +85,39 @@ class GameTest {
         assertEquals(0,player4.getPoints());
         assertEquals(30,player.getPoints());
         assertEquals(18,player2.getPoints());
+
+        // Test with the Haunted city district card
+        player.getBoard().remove(DistrictCard.DRAGON_GATE);
+        player.getBoard().remove(DistrictCard.MARKET);
+        // Test when the player has the haunted city and he has played it late in the game
+        player.getBoard().add(DistrictCard.HAUNTED_CITY);
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(19,player.getPoints());
+        assertEquals(18,player2.getPoints());
+        // Test when the player has the haunted city and he has played it late in the game BUT its the architect at the end of the game
+        player.setPlayerRole(CharacterCard.ARCHITECT);
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(19,player.getPoints());
+        assertEquals(18,player2.getPoints());
+        // Test when the player has the haunted city and he has played it early in the game
+        player.setPlayerRole(CharacterCard.ASSASSIN);
+        player.getBoard().add(DistrictCard.MARKET);
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(21,player.getPoints());
+        assertEquals(18,player2.getPoints());
+        // Test when the player has the haunted city and he has played it early in the game BUT its the architect at the end of the game
+        player.setPlayerRole(CharacterCard.ARCHITECT);
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(24,player.getPoints());
+        assertEquals(18,player2.getPoints());
     }
 
     @Test
