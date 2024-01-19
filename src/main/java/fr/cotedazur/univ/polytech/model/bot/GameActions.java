@@ -4,7 +4,10 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public interface GameActions {
     /**
@@ -104,7 +107,7 @@ public interface GameActions {
      * function where the player choose the card he wants from the cards he draws
      *
      * @param cards the cards he draws
-     * @return the card(s) he doesn't want
+     *
      */
-    List<DistrictCard> drawCard(DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
+      public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
 }

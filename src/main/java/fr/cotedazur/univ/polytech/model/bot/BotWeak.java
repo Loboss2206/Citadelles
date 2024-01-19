@@ -113,19 +113,19 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public List<DistrictCard> drawCard(DistrictCard... cards) {
-        ArrayList<DistrictCard> cardThatBotDontWant = new ArrayList<>(List.of(cards));
-        LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
+    public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
+        ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
+        LOGGER.info("Cartes piochées : "+ Arrays.toString(cards));
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
-        cardThatBotDontWant.sort(districtCardComparator);
-        for (int i = 0; i < cardThatBotDontWant.size(); i++) {
-            if (i == 0) {
-                getHands().add(cardThatBotDontWant.get(i));
-                cardThatBotDontWant.remove(i);
+        listOfCardsForSort.sort(districtCardComparator);
+        for(int i = 0; i < listOfCardsForSort.size();i++){
+            if(i == 0){
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(listOfCardsForSort.get(i));
+            }else{
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(listOfCardsForSort.get(i));
             }
         }
-        LOGGER.info("Cartes jetées : " + cardThatBotDontWant);
-        return cardThatBotDontWant;
+        LOGGER.info("Cartes jetées : "+ cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted"));
     }
 
     /**

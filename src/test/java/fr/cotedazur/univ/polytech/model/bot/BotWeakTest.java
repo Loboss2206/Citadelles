@@ -22,6 +22,9 @@ class BotWeakTest {
     Player botWeak;
     Deck<DistrictCard> districtDeck;
 
+    HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
+
+
 
     @BeforeEach
     void setUp() {
@@ -29,6 +32,8 @@ class BotWeakTest {
         botWeak = new BotWeak();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
     }
 
     @Test
@@ -301,16 +306,17 @@ class BotWeakTest {
     }
 
     @Test
-    void testDrawCard() {
-        List<DistrictCard> cardsThePlayersDontWant = botWeak.drawCard(DistrictCard.GREAT_WALL, DistrictCard.PALACE, DistrictCard.TAVERN, DistrictCard.MARKET);//Just for the test we add 4 cards
-        DistrictCard cardTakenByTheBotWeak = botWeak.getHands().get(0);
-        assertEquals(DistrictCard.TAVERN, cardTakenByTheBotWeak);
-        assertEquals(3, cardsThePlayersDontWant.size());
-
-        // Test if the cards that it doesn't want are in the list
-        assertTrue(cardsThePlayersDontWant.contains(DistrictCard.GREAT_WALL));
-        assertTrue(cardsThePlayersDontWant.contains(DistrictCard.PALACE));
-        assertTrue(cardsThePlayersDontWant.contains(DistrictCard.MARKET));
+    void testDrawCard(){
+        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.GREAT_WALL,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
+        ArrayList<DistrictCard> cardTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted");
+        ArrayList<DistrictCard> cardsDontTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted");
+  
+        assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.GREAT_WALL));
+        assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.PALACE));
+        assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.MARKET));
+        assertEquals(DistrictCard.TAVERN,cardTakenByTheBotWeak.get(0));
+        assertEquals(3,cardsDontTakenByTheBotWeak.size());
+        assertEquals(1,cardTakenByTheBotWeak.size());
     }
 
     @Test
