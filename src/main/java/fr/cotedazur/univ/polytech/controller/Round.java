@@ -183,6 +183,7 @@ public class Round {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
 
+
             this.drawOr2golds(player);
 
             //Because architect automatically take +2 cards
@@ -242,16 +243,20 @@ public class Round {
 
     public void playerWantToDrawCard(Player player){
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
-        int maxDraw = 2; //Change for purple card
-        for (int i = 0; i < maxDraw; i++) {
+      
+        int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
+        for (int i = 0; i < nbCardToDraw; i++) {
             if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
         }
+
         HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
         cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
         cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
 
         //If maybe there is only one card in the deck so the bot just take one card
-        if (cardsThatPlayerDraw.size() == 2) {
+      if (cardsThatPlayerDraw.size() == 3) {
+             player.drawCard(cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1), cardsThatPlayerDraw.get(2));
+        else if (cardsThatPlayerDraw.size() == 2) {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1));
         } else {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
