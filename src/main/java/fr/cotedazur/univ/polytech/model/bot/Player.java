@@ -55,6 +55,8 @@ public abstract class Player implements GameActions {
     // Increment for each player created
     private static int count = 0;
 
+    private int whatIsTheRoundWhereThePlayerPutHisHauntedCity = 0;
+
     protected Player() {
         id = count++;
         this.name = "BOT" + id;
@@ -119,7 +121,9 @@ public abstract class Player implements GameActions {
         Player.count = count;
     }
 
-    public void setHands(List<DistrictCard> hands){this.hands = hands;}
+    public void setHands(List<DistrictCard> hands) {
+        this.hands = hands;
+    }
 
 
     /**
@@ -133,6 +137,7 @@ public abstract class Player implements GameActions {
 
     /**
      * add a card to the board
+     *
      * @param card the card to add
      */
     public void addCardToBoard(DistrictCard card) {
@@ -159,6 +164,7 @@ public abstract class Player implements GameActions {
 
     /**
      * check if a card is on the board of a player
+     *
      * @param card the card to check
      * @return true if the card is on the board, else false
      */
@@ -176,6 +182,7 @@ public abstract class Player implements GameActions {
 
     /**
      * check if the player has a playable card
+     *
      * @return true if the player has a playable card, else false
      */
     public boolean hasPlayableCard() {
@@ -200,6 +207,7 @@ public abstract class Player implements GameActions {
 
     /**
      * function that check if 2 object are equals
+     *
      * @return true if the obj is equals to this, else false
      */
     @Override
@@ -224,7 +232,7 @@ public abstract class Player implements GameActions {
         }
     }
 
-    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+    public boolean wantToUseEffect(boolean beforePuttingADistrict) {
         return beforePuttingADistrict;
     }
 
@@ -244,6 +252,7 @@ public abstract class Player implements GameActions {
 
     /**
      * function that copy a player without his hand
+     *
      * @return the copy of the player
      */
     public Player copy() {
@@ -259,6 +268,7 @@ public abstract class Player implements GameActions {
 
     /**
      * Check if a player has a district that can be destroyed
+     *
      * @param warlord the warlord
      * @return true if the player has a district that can be destroyed, else false
      */
@@ -293,13 +303,13 @@ public abstract class Player implements GameActions {
         this.name = name;
     }
 
-    public boolean isDead(){
+    public boolean isDead() {
         return isDead;
     }
 
     public void setDead(boolean isDead) {
         LOGGER.info("Le joueur " + name + (isDead ? " est" : " n'est plus") + " mort");
-    	this.isDead = isDead;
+        this.isDead = isDead;
     }
 
     public boolean isStolen() {
@@ -315,6 +325,14 @@ public abstract class Player implements GameActions {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public int getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() {
+        return whatIsTheRoundWhereThePlayerPutHisHauntedCity;
+    }
+
+    public void setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(int whatIsTheRoundWhereThePlayerPutHisHauntedCity) {
+        this.whatIsTheRoundWhereThePlayerPutHisHauntedCity = whatIsTheRoundWhereThePlayerPutHisHauntedCity;
     }
 }
 

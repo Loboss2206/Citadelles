@@ -161,7 +161,7 @@ public class Game {
             colors.put(color, false);
         }
 
-        if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && (player.getBoard().indexOf(DistrictCard.HAUNTED_CITY) < (player.getPlayerRole() == CharacterCard.ARCHITECT ? (player.getBoard().size() - 3) : (player.getBoard().size() - 1)))) {
+        if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() != roundNumber) {
             Color hauntedColor = player.chooseColorForDistrictCard();
             colors.put(hauntedColor, true);
         }

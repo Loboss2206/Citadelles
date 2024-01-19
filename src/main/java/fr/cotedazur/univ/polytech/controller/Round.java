@@ -184,30 +184,31 @@ public class Round {
             }
 
             //Take the choice
-            while(choice == null) {
+            while (choice == null) {
                 choice = player.startChoice();
-                if(choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
+                if (choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
             }
-            if (choice.equals("2golds")){
+            if (choice.equals("2golds")) {
                 player.collectTwoGolds();
             } else if (choice.equals("drawCard")) {
                 ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
-                for(int i = 0;i<2;i++){
-                    if(!districtDeck.isEmpty())cardsThatPlayerDraw.add(districtDeck.draw());
+                for (int i = 0; i < 2; i++) {
+                    if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
                 }
                 ArrayList<DistrictCard> cardsThatThePlayerDontWant;
                 //If maybe there is only one card in the deck so the bot just take one card
-                if(cardsThatPlayerDraw.size() == 2){
-                    cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0) , cardsThatPlayerDraw.get(1));
-                }else{
+                if (cardsThatPlayerDraw.size() == 2) {
+                    cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1));
+                } else {
                     cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0));
                 }
 
                 //Return the cards that the bot did not choose to the hand
-                for(DistrictCard card : cardsThatThePlayerDontWant){
+                for (DistrictCard card : cardsThatThePlayerDontWant) {
                     districtDeck.add(card);
                 }
             }
+
             view.printPlayerAction(choice, player);
             //Because architect automatically take +2 cards
             if (player.getPlayerRole() == CharacterCard.ARCHITECT)
@@ -218,9 +219,10 @@ public class Round {
 
 
             if (player.wantToUseEffect(true) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
-               effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-               if (player.getPlayerRole() == CharacterCard.WARLORD) effectController.playerWantToUseEffect(player,playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-           }
+                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+                if (player.getPlayerRole() == CharacterCard.WARLORD)
+                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+            }
 
             // Draw and place a district
             int i = 0;
@@ -228,6 +230,9 @@ public class Round {
             if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
             while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
 
+            // If the player has the haunted city, we set the round where he put the haunted city
+            if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() == 0)
+                player.setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(nbRound);
 
             if (player.wantToUseEffect(false) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
