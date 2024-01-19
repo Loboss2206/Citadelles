@@ -193,8 +193,7 @@ public class Round {
             } else if (choice.equals("drawCard")) {
                 List<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
 
-                int nbCardToDraw = 2;
-                if (player.getBoard().contains(DistrictCard.OBSERVATORY)) nbCardToDraw = 3;
+                int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
                 for (int i = 0; i < nbCardToDraw; i++) {
                     if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
                 }
