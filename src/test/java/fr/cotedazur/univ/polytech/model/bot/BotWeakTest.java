@@ -307,11 +307,11 @@ class BotWeakTest {
 
     @Test
     void testDrawCard(){
-        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.GREAT_WALL,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
+        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.CASTLE,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
         ArrayList<DistrictCard> cardTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted");
         ArrayList<DistrictCard> cardsDontTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted");
   
-        assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.GREAT_WALL));
+        assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.CASTLE));
         assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.PALACE));
         assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.MARKET));
         assertEquals(DistrictCard.TAVERN,cardTakenByTheBotWeak.get(0));
