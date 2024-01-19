@@ -183,8 +183,16 @@ public class Round {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
 
-
             this.drawOr2golds(player);
+
+            if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3) {
+                if (player.wantsToUseSmithyEffect()) {
+                    player.setGolds(player.getGolds() - 3);
+                    player.addCardToHand(districtDeck.draw());
+                    player.addCardToHand(districtDeck.draw());
+                    player.addCardToHand(districtDeck.draw());
+                }
+            }
 
             //Because architect automatically take +2 cards
             if (player.getPlayerRole() == CharacterCard.ARCHITECT)
@@ -192,7 +200,6 @@ public class Round {
 
             //Because Merchant automatically take +1 gold
             if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + 1);
-
 
             if (player.wantToUseEffect(true) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
