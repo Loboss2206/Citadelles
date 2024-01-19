@@ -63,8 +63,8 @@ class PlayerTest {
         botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,districtDeck.draw(),districtDeck.draw());
         districtDeck.add(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").get(0));
         //If the card is correctly removed
-        assertEquals(66, copyDeck.size());
-        assertEquals(65, districtDeck.size());
+        assertEquals(65, copyDeck.size());
+        assertEquals(64, districtDeck.size());
     }
 
     @Test

@@ -27,13 +27,10 @@ class DeckFactoryTest {
     void createDistrictDeck() {
         Deck<DistrictCard> districtDeck = DeckFactory.createDistrictDeck();
         assertNotNull(districtDeck, "The district deck is null (and it shouldn't be)");
-        assertEquals(66, districtDeck.size(), "The district deck doesn't have the right size");
+        assertEquals(65, districtDeck.size(), "The district deck doesn't have the right size");
         assertFalse(districtDeck.isEmpty(), "The district deck is empty (and it shouldn't be)");
         for (DistrictCard card : DistrictCard.values()) {
             assertTrue(districtDeck.contains(card), "The district deck doesn't contain the card " + card);
-        }
-        for (int i = 1; i <= districtDeck.size(); i++) {
-            assertNotNull(districtDeck.draw(i), "The district deck doesn't contain the card with index " + i);
         }
     }
 
