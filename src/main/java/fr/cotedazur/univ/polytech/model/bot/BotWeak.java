@@ -106,25 +106,25 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public Color chooseColorForDistrictCard() {
-            if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
-                return getPlayerRole().getCharacterColor();
-            }
+        if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+            return getPlayerRole().getCharacterColor();
+        }
         return null;
     }
 
     @Override
     public List<DistrictCard> drawCard(DistrictCard... cards) {
         ArrayList<DistrictCard> cardThatBotDontWant = new ArrayList<>(List.of(cards));
-        LOGGER.info("Cartes piochées : "+ Arrays.toString(cards));
-         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
+        LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
+        DistrictCardComparator districtCardComparator = new DistrictCardComparator();
         cardThatBotDontWant.sort(districtCardComparator);
-        for(int i = 0; i < cardThatBotDontWant.size();i++){
-            if(i==0){
+        for (int i = 0; i < cardThatBotDontWant.size(); i++) {
+            if (i == 0) {
                 getHands().add(cardThatBotDontWant.get(i));
                 cardThatBotDontWant.remove(i);
             }
         }
-        LOGGER.info("Cartes jetées : "+ cardThatBotDontWant);
+        LOGGER.info("Cartes jetées : " + cardThatBotDontWant);
         return cardThatBotDontWant;
     }
 
@@ -188,12 +188,13 @@ public class BotWeak extends Player implements GameActions {
         int nbCardPlayer = this.getHands().size();
         for (Player p : players) {
             int nbCardOther = p.getHands().size();
-            if (nbCardOther > nbCardPlayer){
+            if (nbCardOther > nbCardPlayer) {
                 return "ExchangePlayer";
             }
         }
         return "ExchangeDeck";
     }
+
     @Override
     public Player choosePlayerToDestroy(List<Player> players) {
         for (Player player : players) {
@@ -211,11 +212,12 @@ public class BotWeak extends Player implements GameActions {
         }
         return null;
     }
+
     @Override
-    public List<DistrictCard> chooseCardsToChange(){
+    public List<DistrictCard> chooseCardsToChange() {
         List<DistrictCard> districtCards = new ArrayList<>();
-        for (DistrictCard d :this.getHands()){
-            if (d.getDistrictValue() >= 3){
+        for (DistrictCard d : this.getHands()) {
+            if (d.getDistrictValue() >= 3) {
                 districtCards.add(d);
             }
         }
@@ -223,10 +225,10 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public Player selectMagicianTarget(List<Player> players){
+    public Player selectMagicianTarget(List<Player> players) {
         Player highNbCards = players.get(0);
-        for (Player p : players){
-            if (p.getHands().size() >= highNbCards.getHands().size()){
+        for (Player p : players) {
+            if (p.getHands().size() >= highNbCards.getHands().size()) {
                 highNbCards = p;
             }
         }
