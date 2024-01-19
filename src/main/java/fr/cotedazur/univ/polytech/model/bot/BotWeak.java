@@ -113,6 +113,18 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
+    public DistrictCard chooseHandCardToDiscard() {
+        if (!getHands().isEmpty()) {
+            for (DistrictCard districtCard : getHands()) {
+                if (districtCard.getDistrictValue() >= 3) {
+                    return districtCard;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));

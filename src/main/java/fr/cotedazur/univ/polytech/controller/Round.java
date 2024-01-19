@@ -213,6 +213,12 @@ public class Round {
             if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
             while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
 
+            // If the player has a laboratory, he can discard a card to earn 1 gold
+            if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)){
+                player.getHands().remove(player.chooseHandCardToDiscard());
+                player.setGolds(player.getGolds() + 1);
+            }
+
             // If the player has the haunted city, we set the round where he put the haunted city
             if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() == 0)
                 player.setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(nbRound);
