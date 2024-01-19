@@ -9,10 +9,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -117,7 +114,7 @@ class BotRandomTest {
         assertEquals(oldHandSize + 1,botRandom1.getHands().size());
 
         //Verify that the cards the players don't want are correct
-        assertEquals(DistrictCard.MARKET, cardsThePlayersDontWant.get(0));
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").get(0));
     }
 
     @Test
@@ -127,15 +124,16 @@ class BotRandomTest {
         int oldHandSize = botRandom1.getHands().size();
         botRandom1.startChoice();
 
-        List<DistrictCard> cardsThePlayersDontWant = botRandom1.drawCard(DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
+        botRandom1.getHands().add(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").get(0));
         assertEquals(DistrictCard.PALACE, botRandom1.getHands().get(0));
 
         //Verify that the hand size is correct
         assertEquals(oldHandSize + 1,botRandom1.getHands().size());
 
         //Verify that the cards the players don't want are correct
-        assertEquals(DistrictCard.MARKET, cardsThePlayersDontWant.get(0));
-        assertEquals(DistrictCard.CASTLE, cardsThePlayersDontWant.get(1));
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").get(0));
+        assertEquals(DistrictCard.CASTLE, cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").get(1));
     }
 
     @Test

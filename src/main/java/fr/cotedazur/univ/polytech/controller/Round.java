@@ -241,9 +241,9 @@ public class Round {
         view.printPlayerAction(choice, player);
     }
 
-    public void playerWantToDrawCard(Player player){
+    public void playerWantToDrawCard(Player player) {
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
-      
+
         int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
         for (int i = 0; i < nbCardToDraw; i++) {
             if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
@@ -254,9 +254,9 @@ public class Round {
         cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
 
         //If maybe there is only one card in the deck so the bot just take one card
-      if (cardsThatPlayerDraw.size() == 3) {
-             player.drawCard(cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1), cardsThatPlayerDraw.get(2));
-        else if (cardsThatPlayerDraw.size() == 2) {
+        if (cardsThatPlayerDraw.size() == 3) {
+            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1), cardsThatPlayerDraw.get(2));
+        } else if (cardsThatPlayerDraw.size() == 2) {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1));
         } else {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
