@@ -183,10 +183,9 @@ public class Round {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
 
-
             this.drawOr2golds(player);
 
-            //Because architect automatically take +2 cards
+          //Because architect automatically take +2 cards
             if (player.getPlayerRole() == CharacterCard.ARCHITECT)
                 player.getPlayerRole().useEffectArchitect(player, districtDeck);
 
@@ -206,6 +205,9 @@ public class Round {
             if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
             while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
 
+            // If the player has the haunted city, we set the round where he put the haunted city
+            if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() == 0)
+                player.setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(nbRound);
 
             if (player.wantToUseEffect(false) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
