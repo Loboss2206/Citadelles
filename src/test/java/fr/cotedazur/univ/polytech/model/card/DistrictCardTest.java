@@ -12,7 +12,7 @@ class DistrictCardTest {
         assertEquals("Champ de bataille", DistrictCard.BATTLEFIELD.getDistrictName());
         assertEquals("Cathédrale", DistrictCard.CATHEDRAL.getDistrictName());
         assertEquals("Château", DistrictCard.CASTLE.getDistrictName());
-        assertEquals("Ville hantée", DistrictCard.HAUNTED_CITY.getDistrictName());
+        assertEquals("Cour des miracles", DistrictCard.HAUNTED_CITY.getDistrictName());
         assertEquals("Bibliothèque", DistrictCard.LIBRARY.getDistrictName());
     }
 

@@ -9,12 +9,10 @@ public enum DistrictCard {
     TEMPLE(3, "Temple", 1, "blue"), CHURCH(3, "Église", 2, "blue"), MONASTERY(3, "Monastère", 3, "blue"),
     CATHEDRAL(2, "Cathédrale", 5, "blue"), WATCHTOWER(3, "Tour de guet", 1, "red"), PRISON(3, "Prison", 2, "red"),
     BATTLEFIELD(3, "Champ de bataille", 3, "red"), FORTRESS(2, "Forteresse", 5, "red"), MANOR(5, "Manoir", 3, "yellow"),
-    CASTLE(4, "Château", 4, "yellow"), PALACE(3, "Palais", 5, "yellow"), HAUNTED_CITY(1, "Ville hantée", 2, "purple"),
-    KEEP(2, "Donjon", 3, "purple"), LABORATORY(1, "Laboratoire", 5, "purple"), SMITHY(1, "Forge", 5, "purple"),
-    GRAVEYARD(1, "Cimetière", 5, "purple"), OBSERVATORY(1, "Observatoire", 5, "purple"),
-    SCHOOL_OF_MAGIC(1, "École de Magie", 6, "purple"), LIBRARY(1, "Bibliothèque", 6, "purple"),
-    GREAT_WALL(1, "Grande Muraille", 6, "purple"), UNIVERSITY(1, "Université", 6, "purple"),
-    DRAGON_GATE(1, "Porte du Dragon", 6, "purple");
+    CASTLE(4, "Château", 4, "yellow"), PALACE(3, "Palais", 5, "yellow"), HAUNTED_CITY(1, "Cour des miracles", 2, "purple"),
+    KEEP(2, "Donjon", 3, "purple"), LABORATORY(1, "Laboratoire", 5, "purple"), SMITHY(1, "Manufacture", 5, "purple"),
+    GRAVEYARD(1, "Cimetière", 5, "purple"), OBSERVATORY(1, "Observatoire", 5, "purple"), SCHOOL_OF_MAGIC(1, "École de Magie", 6, "purple"),
+    LIBRARY(1, "Bibliothèque", 6, "purple"), UNIVERSITY(1, "Université", 6, "purple"), DRAGON_GATE(1, "Dracoport", 6, "purple");
 
     /**
      * The quantity of this district card in the deck.

@@ -1,9 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
@@ -115,19 +112,17 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public List<DistrictCard> drawCard(DistrictCard... cards) {
+    public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         int randomCard = random.nextInt(cards.length);
         LOGGER.info("Cartes piochées : "+ Arrays.toString(cards));
-        ArrayList<DistrictCard> cardThatBotDontWant = new ArrayList<>();
         for(int i = 0;i < cards.length;i++){
             if(i == randomCard) {
-                getHands().add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(cards[i]);
             }else{
-                cardThatBotDontWant.add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(cards[i]);
             }
         }
-        LOGGER.info("Cartes jetées : "+ cardThatBotDontWant);
-        return cardThatBotDontWant;
+        LOGGER.info("Cartes jetées : "+ cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted"));
     }
 
 
