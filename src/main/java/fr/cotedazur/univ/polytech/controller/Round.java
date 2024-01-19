@@ -183,34 +183,6 @@ public class Round {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
 
-            //Take the choice
-            while (choice == null) {
-                choice = player.startChoice();
-                if (choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
-            }
-            if (choice.equals("2golds")) {
-                player.collectTwoGolds();
-            } else if (choice.equals("drawCard")) {
-                ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
-                for (int i = 0; i < 2; i++) {
-                    if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
-                }
-                ArrayList<DistrictCard> cardsThatThePlayerDontWant;
-                //If maybe there is only one card in the deck so the bot just take one card
-                if (cardsThatPlayerDraw.size() == 2) {
-                    cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1));
-                } else {
-                    cardsThatThePlayerDontWant = (ArrayList<DistrictCard>) player.drawCard(cardsThatPlayerDraw.get(0));
-                }
-
-                //Return the cards that the bot did not choose to the hand
-                for (DistrictCard card : cardsThatThePlayerDontWant) {
-                    districtDeck.add(card);
-                }
-            }
-
-            view.printPlayerAction(choice, player);
-
             this.drawOr2golds(player);
 
           //Because architect automatically take +2 cards
