@@ -109,5 +109,18 @@ public interface GameActions {
      * @param cards the cards he draws
      *
      */
-      public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
+     void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
+
+     /**
+     * function where the player choose to use the effect of his character or not
+     * @param beforePuttingADistrict true if it is before putting a district, false otherwise
+     * @return true if he wants to use the effect, false otherwise
+     */
+     boolean wantToUseEffect(boolean beforePuttingADistrict);
+
+     /**
+     * function where the player choose to use the effect of the smithy or not
+     * @return true if he wants to use the effect, false otherwise
+     */
+    boolean wantsToUseSmithyEffect();
 }

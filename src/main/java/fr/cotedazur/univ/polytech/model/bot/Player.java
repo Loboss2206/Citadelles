@@ -150,6 +150,18 @@ public abstract class Player implements GameActions {
     }
 
     /**
+     * add a card to the hand
+     *
+     * @param card the card to add
+     */
+    public void addCardToHand(DistrictCard card) {
+        hands.add(card);
+        nbCardsInHand++;
+        LOGGER.info("Le joueur " + name + " a pioché le quartier " + card.getDistrictName() + "(" + card.getDistrictValue() + " pièces d'or) (couleur " + card.getDistrictColor() + ")");
+        LOGGER.info(" il a maintenant " + board.size() + " quartiers sur son plateau, il lui reste " + nbCardsInHand + " cartes en main");
+    }
+
+    /**
      * Function that check all the cards in the hand of the player and add the cards that are buy-able by the player to the list validCards
      */
     public void discoverValidCard() {
@@ -230,10 +242,6 @@ public abstract class Player implements GameActions {
             addCardToBoard(districtToPut);
             if (view != null) view.printPlayerAction("putDistrict", this);
         }
-    }
-
-    public boolean wantToUseEffect(boolean beforePuttingADistrict) {
-        return beforePuttingADistrict;
     }
 
     @Override

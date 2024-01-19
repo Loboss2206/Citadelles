@@ -241,4 +241,16 @@ class BotRandomTest {
         assertEquals(DistrictCard.CASTLE, botRandom1.chooseDistrictToDestroy(botRandom2, botRandom2.getBoard()));
     }
 
+    @Test
+    void testWantToUseEffect() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.wantToUseEffect(true));
+        assertTrue(botRandom1.wantToUseEffect(false));
+    }
+
+    @Test
+    void wantsToUseSmithyEffect() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.wantsToUseSmithyEffect());
+    }
 }
