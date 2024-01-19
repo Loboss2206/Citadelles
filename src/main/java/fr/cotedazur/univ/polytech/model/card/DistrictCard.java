@@ -75,13 +75,13 @@ public enum DistrictCard {
 
     /**
      * Returns true if the district card can be destroyed by the warlord
+     *
      * @param golds The number of golds of the warlord
      * @return true if the district card can be destroyed by the warlord, else false
      */
     public boolean isDestroyableDistrict(int golds) {
         if (golds >= getDistrictValue() - 1) {
             return !getDistrictName().equals("Donjon");
-        }
-        else return false;
+        } else return false;
     }
 }

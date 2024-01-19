@@ -107,7 +107,6 @@ public interface GameActions {
      * function where the player choose the card he wants from the cards he draws
      *
      * @param cards the cards he draws
-     *
      */
-      public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
+    public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
 }

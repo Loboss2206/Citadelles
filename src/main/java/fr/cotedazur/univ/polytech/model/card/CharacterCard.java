@@ -111,8 +111,8 @@ public enum CharacterCard {
             player.setGolds(player.getGolds() + 1);
     }
 
-    public void useEffectThief(Player playerThatUseEffect,Player stolenPlayer, boolean hasBeenStolen) {
-        if(hasBeenStolen) {
+    public void useEffectThief(Player playerThatUseEffect, Player stolenPlayer, boolean hasBeenStolen) {
+        if (hasBeenStolen) {
             if (stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
                 if (playerThatUseEffect.getPlayerRole() == THIEF) {
                     playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
@@ -123,26 +123,26 @@ public enum CharacterCard {
                     }
                 }
             }
-        }else{
+        } else {
             stolenPlayer.setHasBeenStolen(true);
         }
     }
 
-    public void useEffectMagicianWithDeck(Player playerThatUseEffect, List<DistrictCard> cardsToRemove, Deck<DistrictCard> districtDeck){
+    public void useEffectMagicianWithDeck(Player playerThatUseEffect, List<DistrictCard> cardsToRemove, Deck<DistrictCard> districtDeck) {
         int nbCards = cardsToRemove.size();
-        while(!cardsToRemove.isEmpty()){
+        while (!cardsToRemove.isEmpty()) {
             DistrictCard card = cardsToRemove.get(0);
             districtDeck.add(card);
             playerThatUseEffect.getHands().remove(card);
             cardsToRemove.remove(0);
         }
-        for (int i = 0; i < nbCards;i++){
+        for (int i = 0; i < nbCards; i++) {
             DistrictCard drawn = districtDeck.draw();
             playerThatUseEffect.getHands().add(drawn);
         }
     }
 
-    public void useEffectMagicianWithPlayer(Player playerThatUseEffect, Player playerTargeted){
+    public void useEffectMagicianWithPlayer(Player playerThatUseEffect, Player playerTargeted) {
         List<DistrictCard> temp = playerTargeted.getHands();
         playerTargeted.setHands(playerThatUseEffect.getHands());
         playerThatUseEffect.setHands(temp);
@@ -166,7 +166,7 @@ public enum CharacterCard {
     public void useEffectArchitect(Player player, Deck<DistrictCard> districtDeck) {
         if (player.getPlayerRole() == CharacterCard.ARCHITECT) {
             for (int i = 0; i < 2; i++) {
-                if(!districtDeck.isEmpty())player.getHands().add(districtDeck.draw());
+                if (!districtDeck.isEmpty()) player.getHands().add(districtDeck.draw());
             }
             LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") a pioché 2 cartes");
         }

@@ -185,7 +185,7 @@ public class Round {
 
             this.drawOr2golds(player);
 
-          //Because architect automatically take +2 cards
+            //Because architect automatically take +2 cards
             if (player.getPlayerRole() == CharacterCard.ARCHITECT)
                 player.getPlayerRole().useEffectArchitect(player, districtDeck);
 

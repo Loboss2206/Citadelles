@@ -32,7 +32,6 @@ public class BotRandom extends Player implements GameActions {
     }
 
 
-
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
         int randomIndex = random.nextInt(2);
@@ -78,8 +77,7 @@ public class BotRandom extends Player implements GameActions {
         int rand = random.nextInt(2);
         if (rand == 0) {
             return null;
-        }
-        else {
+        } else {
             return players.get(random.nextInt(players.size()));
         }
     }
@@ -105,24 +103,24 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public Color chooseColorForDistrictCard() {
-            if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
-                return Color.values()[random.nextInt(Color.values().length)];
-            }
+        if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+            return Color.values()[random.nextInt(Color.values().length)];
+        }
         return null;
     }
 
     @Override
     public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         int randomCard = random.nextInt(cards.length);
-        LOGGER.info("Cartes piochées : "+ Arrays.toString(cards));
-        for(int i = 0;i < cards.length;i++){
-            if(i == randomCard) {
+        LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
+        for (int i = 0; i < cards.length; i++) {
+            if (i == randomCard) {
                 cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(cards[i]);
-            }else{
+            } else {
                 cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(cards[i]);
             }
         }
-        LOGGER.info("Cartes jetées : "+ cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted"));
+        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted"));
     }
 
 
@@ -159,25 +157,25 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public boolean wantToUseEffect(boolean beforePuttingADistrict){
+    public boolean wantToUseEffect(boolean beforePuttingADistrict) {
         int randomIndex = random.nextInt(2);
         return randomIndex == 0;
     }
 
     @Override
-    public List<DistrictCard> chooseCardsToChange(){
+    public List<DistrictCard> chooseCardsToChange() {
         List<DistrictCard> cardsToExchange = new ArrayList<>();
         if (getHands().isEmpty())
             return cardsToExchange;
-        int nbCards = random.nextInt(this.getHands().size())+1;
-        for(int i = 0; i<nbCards; i++){
+        int nbCards = random.nextInt(this.getHands().size()) + 1;
+        for (int i = 0; i < nbCards; i++) {
             cardsToExchange.add(this.getHands().get(i));
         }
         return cardsToExchange;
     }
 
     @Override
-    public Player selectMagicianTarget(List<Player> players){
+    public Player selectMagicianTarget(List<Player> players) {
         return players.get(random.nextInt(players.size()));
     }
 

@@ -204,10 +204,20 @@ public class GameView {
         System.out.println("----------------------------------------------------------------------\n");
     }
 
+    /**
+     * print when a player has been killed
+     *
+     * @param characterCard     the role killed
+     */
     public void killPlayer(CharacterCard characterCard) {
         displayMessage("Le joueur ayant le role: " + characterCard.getCharacterName() + " est mort.");
     }
 
+    /**
+     * print when a role has been stole
+     *
+     * @param characterCard     the role stolen
+     */
     public void stolenPlayer(CharacterCard characterCard) {
         displayMessage("Le joueur ayant le rôle: " + characterCard.getCharacterName() + " s'est fait voler");
     }
@@ -224,10 +234,25 @@ public class GameView {
     }
 
     /**
-     * print the board of all the players
+     * print when a player exchange his hand with another player of another player
      *
-     * @param players the list of players
+     * @param playerMagician    the player who want to exchange
+     * @param playerTargeted    the player who underwent the exchange
      */
+    public void exchangePlayerCard(Player playerMagician, Player playerTargeted) {
+        displayMessage("Le joueur : " + playerMagician.getName() + " s'est fait échanger ces cartes avec : " + playerTargeted.getName());
+    }
+
+    /**
+     * print when a player exchange some cards in his hands with the Deck
+     *
+     * @param playerMagician    the player who want to exchange with the deck
+     * @param cards             the cards that the player give to the deck
+     */
+    public void exchangeDeckCard(Player playerMagician, List<DistrictCard> cards) {
+        displayMessage("Le joueur : " + playerMagician.getName() + " a échanger " + cards.size() + " cartes avec le deck");
+    }
+
     public void printBoardOfAllPlayers(List<Player> players) {
         System.out.println("--------------------------Board des joueurs---------------------------");
         for (Player p : players) {
