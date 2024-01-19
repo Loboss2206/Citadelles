@@ -334,6 +334,8 @@ public abstract class Player implements GameActions {
     public void setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(int whatIsTheRoundWhereThePlayerPutHisHauntedCity) {
         this.whatIsTheRoundWhereThePlayerPutHisHauntedCity = whatIsTheRoundWhereThePlayerPutHisHauntedCity;
     }
+
+    public abstract DistrictCard chooseHandCardToDiscard();
 }
 
 

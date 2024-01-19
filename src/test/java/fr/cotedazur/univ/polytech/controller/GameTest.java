@@ -11,8 +11,7 @@ import org.junit.jupiter.api.Test;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class GameTest {
     ArrayList<Player> players;
@@ -97,13 +96,42 @@ class GameTest {
         assertEquals(19,player.getPoints());
         assertEquals(18,player2.getPoints());
         // Test when the player has the haunted city and he has played it early in the game
-        player.setPlayerRole(CharacterCard.ASSASSIN);
         player.getBoard().add(DistrictCard.MARKET);
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
         assertEquals(24,player.getPoints());
         assertEquals(18,player2.getPoints());
+
+        //Test the case when the player not putted the card laboratory this turn
+        assertFalse(player.getBoard().contains(DistrictCard.LABORATORY));
+
+        // Test the case when the player has putted the card laboratory this turn
+        player.getBoard().add(DistrictCard.LABORATORY);
+        player.setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(1);
+        game.roundNumber = 1;
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(29,player.getPoints());
+        assertEquals(18,player2.getPoints());
+
+        //Test the case when the player has putted the card laboratory the previous turn
+        game.roundNumber = 2;
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(26,player.getPoints());
+        assertEquals(18,player2.getPoints());
+
+        //Test the case when the player has putted the card laboratory the previous previous turn
+        game.roundNumber = 3;
+        player.setPoints(0);
+        player2.setPoints(0);
+        game.calculatePoints();
+        assertEquals(26,player.getPoints());
+        assertEquals(18,player2.getPoints());
+
     }
 
     @Test
