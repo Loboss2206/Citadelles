@@ -55,6 +55,8 @@ public abstract class Player implements GameActions {
     // Increment for each player created
     private static int count = 0;
 
+    private int whatIsTheRoundWhereThePlayerPutHisHauntedCity = 0;
+
     protected Player() {
         id = count++;
         this.name = "BOT" + id;
@@ -331,6 +333,14 @@ public abstract class Player implements GameActions {
     @Override
     public String toString() {
         return getName();
+    }
+
+    public int getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() {
+        return whatIsTheRoundWhereThePlayerPutHisHauntedCity;
+    }
+
+    public void setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(int whatIsTheRoundWhereThePlayerPutHisHauntedCity) {
+        this.whatIsTheRoundWhereThePlayerPutHisHauntedCity = whatIsTheRoundWhereThePlayerPutHisHauntedCity;
     }
 }
 
