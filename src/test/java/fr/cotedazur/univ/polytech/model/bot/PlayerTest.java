@@ -80,6 +80,18 @@ class PlayerTest {
     }
 
     @Test
+    void testAddCardOnTheHand() {
+        assertTrue(botRandom2.getHands().isEmpty());
+        botRandom2.addCardToHand(DistrictCard.TRADING_POST);
+        assertNotNull(botRandom2.getHands().get(0));
+        assertEquals(DistrictCard.TRADING_POST, botRandom2.getHands().get(0));
+
+        botRandom2.getHands().clear();
+        botRandom2.addCardToHand(DistrictCard.CASTLE);
+        assertEquals(1, botRandom2.getHands().size());
+    }
+
+    @Test
     void hasCardOnTheBoard() {
         botRandom2.getHands().add(DistrictCard.TRADING_POST);
         botRandom2.getHands().add(DistrictCard.TRADING_POST);

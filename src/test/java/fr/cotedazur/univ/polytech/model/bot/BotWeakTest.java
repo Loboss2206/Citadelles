@@ -353,4 +353,18 @@ class BotWeakTest {
         botWeak2.addCardToBoard(DistrictCard.MANOR);
         assertNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
     }
+
+    @Test
+    void testWantToUseEffect() {
+        assertTrue(botWeak.wantToUseEffect(true));
+        assertFalse(botWeak.wantToUseEffect(false));
+    }
+
+    @Test
+    void wantsToUseSmithyEffect() {
+        botWeak.setGolds(4);
+        assertFalse(botWeak.wantsToUseSmithyEffect());
+        botWeak.setGolds(8);
+        assertTrue(botWeak.wantsToUseSmithyEffect());
+    }
 }
