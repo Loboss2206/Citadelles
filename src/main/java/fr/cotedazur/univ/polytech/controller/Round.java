@@ -264,7 +264,7 @@ public class Round {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
         }
 
-        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").isEmpty()) {
+        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cadsWanted").size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
             player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
         }
 
