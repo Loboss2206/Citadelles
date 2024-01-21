@@ -53,8 +53,14 @@ public class GameView {
         switch (action) {
             case "2golds" ->
                     displayMessage(playerNameAndRole + " a choisi de prendre 2 pièces d'or, il possède maintenant " + player.getGolds() + " pièces d'or.");
-            case "drawCard" ->
+            case "drawCard" -> {
+                if(player.getBoard().contains(DistrictCard.LIBRARY)) {
+                    displayMessage(playerNameAndRole + " a choisi de piocher deux carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
+                }
+                else {
                     displayMessage(playerNameAndRole + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
+                }
+            }
             case "putDistrict" ->
                     displayMessage(playerNameAndRole + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
             default -> throw new IllegalStateException("Unexpected action: " + action);

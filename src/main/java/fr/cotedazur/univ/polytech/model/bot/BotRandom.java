@@ -112,9 +112,16 @@ public class BotRandom extends Player implements GameActions {
     @Override
     public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         int randomCard = random.nextInt(cards.length);
+        int randomSecondCard = -1;
+        if (this.getBoard().contains(DistrictCard.LIBRARY) && cards.length > 1){
+            do {
+                randomSecondCard = random.nextInt(cards.length);
+            }
+            while (randomSecondCard == randomCard);
+        }
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         for (int i = 0; i < cards.length; i++) {
-            if (i == randomCard) {
+            if (i == randomCard || i == randomSecondCard) {
                 cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(cards[i]);
             } else {
                 cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(cards[i]);

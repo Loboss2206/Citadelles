@@ -119,7 +119,7 @@ public class BotWeak extends Player implements GameActions {
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
         listOfCardsForSort.sort(districtCardComparator);
         for (int i = 0; i < listOfCardsForSort.size(); i++) {
-            if (i == 0) {
+            if (i == 0 || (this.getBoard().contains(DistrictCard.LIBRARY) && i == 1)) {
                 cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(listOfCardsForSort.get(i));
             } else {
                 cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(listOfCardsForSort.get(i));

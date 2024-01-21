@@ -320,6 +320,27 @@ class BotWeakTest {
     }
 
     @Test
+    void testLibraryAndObservatory(){
+        botWeak.getBoard().add(DistrictCard.LIBRARY);
+        botWeak.getBoard().add(DistrictCard.OBSERVATORY);
+        int oldHandSize = botWeak.getHands().size();
+
+        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.SCHOOL_OF_MAGIC);
+        botWeak.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 2,botWeak.getHands().size());
+
+        //Verify that there is 2 cards claimed and 1 card leaved
+        assertEquals(2,cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size());
+        assertEquals(1,cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").size());
+
+        assertTrue(botWeak.getHands().contains(DistrictCard.MARKET));
+        assertTrue(botWeak.getHands().contains(DistrictCard.PALACE));
+    }
+
+
+    @Test
     void testChoosePlayerToDestroyInEmptyList() {
         assertNull(botWeak.choosePlayerToDestroy(Collections.emptyList()));
     }
