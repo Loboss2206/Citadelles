@@ -153,6 +153,21 @@ class BotRandomTest {
     }
 
     @Test
+    void testLibraryWithOneCard(){
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 1,botRandom2.getHands().size());
+
+        //Verify that the cards the players want are correct
+        assertTrue(botRandom2.getHands().contains(DistrictCard.MARKET));
+    }
+
+    @Test
     void testLibraryAndObservatory(){
         botRandom2.getBoard().add(DistrictCard.LIBRARY);
         botRandom2.getBoard().add(DistrictCard.OBSERVATORY);
