@@ -182,12 +182,14 @@ public class EffectController {
             String action = playerThatWantToUseEffect.whichMagicianEffect(players);
             if (action.equals("ExchangeDeck")) {
                 List<DistrictCard> cardToRemove = playerThatWantToUseEffect.chooseCardsToChange();
+                view.exchangeDeckCard(playerThatWantToUseEffect, cardToRemove);
                 if (!cardToRemove.isEmpty()) {
                     playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithDeck(playerThatWantToUseEffect, cardToRemove, districtDeck);
                 }
             } else if (action.equals("ExchangePlayer")) {
                 Player playerTargeted = playerThatWantToUseEffect.selectMagicianTarget(players);
                 playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithPlayer(playerThatWantToUseEffect, playerTargeted);
+                view.exchangePlayerCard(playerThatWantToUseEffect, playerTargeted);
             } else {
                 throw new UnsupportedOperationException("L'action demandé est " + action);
             }

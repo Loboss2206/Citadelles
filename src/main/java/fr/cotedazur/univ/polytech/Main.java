@@ -16,7 +16,7 @@ public class Main {
 
         // Logger setup
         LamaLogger.setupFileLog(true, "game.log");
-        LamaLogger.setupConsole(true,true);
+        LamaLogger.setupConsole(true, true);
         LOGGER.setLevel(java.util.logging.Level.INFO); // Change to Level.OFF to disable the logger or Level.INFO to enable it
 
         // View setup
@@ -33,7 +33,7 @@ public class Main {
         }
 
         // Game setup
-        Game game = new Game(players,view);
+        Game game = new Game(players, view);
 
         // Start the game
         game.startGame();

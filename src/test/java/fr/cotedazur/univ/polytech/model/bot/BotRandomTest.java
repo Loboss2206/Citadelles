@@ -137,6 +137,54 @@ class BotRandomTest {
     }
 
     @Test
+    void testLibrary(){
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET, DistrictCard.PALACE);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 2,botRandom2.getHands().size());
+
+        //Verify that the cards the players want are correct
+        assertTrue(botRandom2.getHands().contains(DistrictCard.MARKET));
+        assertTrue(botRandom2.getHands().contains(DistrictCard.PALACE));
+    }
+
+    @Test
+    void testLibraryWithOneCard(){
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 1,botRandom2.getHands().size());
+
+        //Verify that the cards the players want are correct
+        assertTrue(botRandom2.getHands().contains(DistrictCard.MARKET));
+    }
+
+    @Test
+    void testLibraryAndObservatory(){
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        botRandom2.getBoard().add(DistrictCard.OBSERVATORY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 2,botRandom2.getHands().size());
+
+        //Verify that there is 2 cards claimed and 1 card leaved
+        assertEquals(2,cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size());
+        assertEquals(1,cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").size());
+    }
+
+    @Test
     void testChoiceToPutADistrict() {
         //Put a district for the first call of the fonction and choose the
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(0);

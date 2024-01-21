@@ -278,13 +278,15 @@ public class Round {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
         }
 
-        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 1) {
+        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
             player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
         }
 
         //Return the cards that the bot did not choose to the hand
-        for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted")) {
-            districtDeck.add(card);
+        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").isEmpty()) {
+            for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted")) {
+                districtDeck.add(card);
+            }
         }
     }
 

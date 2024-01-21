@@ -67,7 +67,7 @@ public class Deck<T extends Enum<T>> {
     /**
      * Shuffles the cards in the deck using the Fisher-Yates algorithm.
      */
-    public void shuffle(){
+    public void shuffle() {
         for (int i = getCards().size() - 1; i > 0; i--) {
             int j = (int) (Math.random() * (i + 1));
             T temp = getCards().get(i);

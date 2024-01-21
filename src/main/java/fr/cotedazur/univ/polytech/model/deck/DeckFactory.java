@@ -34,7 +34,7 @@ public class DeckFactory {
                 cards.add(card);
             }
         }
-return new Deck<>(cards);
+        return new Deck<>(cards);
     }
 
     /**
