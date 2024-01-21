@@ -185,13 +185,21 @@ public class Round {
 
             this.drawOr2golds(player);
 
+            if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3) {
+                if (player.wantsToUseSmithyEffect()) {
+                    player.setGolds(player.getGolds() - 3);
+                    player.addCardToHand(districtDeck.draw());
+                    player.addCardToHand(districtDeck.draw());
+                    player.addCardToHand(districtDeck.draw());
+                }
+            }
+
             //Because architect automatically take +2 cards
             if (player.getPlayerRole() == CharacterCard.ARCHITECT)
                 player.getPlayerRole().useEffectArchitect(player, districtDeck);
 
             //Because Merchant automatically take +1 gold
             if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + 1);
-
 
             if (player.wantToUseEffect(true) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
@@ -204,6 +212,12 @@ public class Round {
             int maxDistrictThatCanBePut = 1;
             if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
             while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
+
+            // If the player has a laboratory, he can discard a card to earn 1 gold
+            if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)){
+                player.getHands().remove(player.chooseHandCardToDiscard());
+                player.setGolds(player.getGolds() + 1);
+            }
 
             // If the player has the haunted city, we set the round where he put the haunted city
             if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() == 0)

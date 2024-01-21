@@ -110,6 +110,17 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
+    public DistrictCard chooseHandCardToDiscard() {
+        boolean wantToUseDistrictCard = random.nextBoolean();
+        if (!getHands().isEmpty()) {
+            if (wantToUseDistrictCard) {
+                return getHands().get(random.nextInt(getHands().size()));
+            }
+        }
+        return null;
+    }
+
+    @Override
     public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         int randomCard = random.nextInt(cards.length);
         int randomSecondCard = -1;
@@ -165,6 +176,12 @@ public class BotRandom extends Player implements GameActions {
 
     @Override
     public boolean wantToUseEffect(boolean beforePuttingADistrict) {
+        int randomIndex = random.nextInt(2);
+        return randomIndex == 0;
+    }
+
+    @Override
+    public boolean wantsToUseSmithyEffect() {
         int randomIndex = random.nextInt(2);
         return randomIndex == 0;
     }
