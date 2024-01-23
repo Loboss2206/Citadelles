@@ -1,7 +1,5 @@
 package fr.cotedazur.univ.polytech.model.deck;
 
-import fr.cotedazur.univ.polytech.logger.LamaLogger;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +10,7 @@ import java.util.List;
  * @param <T> the type of cards in the deck
  */
 public class Deck<T extends Enum<T>> {
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Deck.class.getName());
 
     private final List<T> cards;
 

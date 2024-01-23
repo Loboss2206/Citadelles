@@ -1,11 +1,8 @@
 package fr.cotedazur.univ.polytech.model.card;
 
-import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.view.GameView;
 
-import javax.swing.plaf.TableHeaderUI;
 import java.util.List;
 
 /**
@@ -23,7 +20,7 @@ public enum CharacterCard {
     ARCHITECT("Architecte", 7, Color.GRAY, "Piochez 2 cartes et possibilité de poser jusqu'à 3 bâtiments (si vous avez l'argent nécessaire)"),
     WARLORD("Condottiere", 8, Color.RED, "Détruisez un quartier en payant 1 pièce d'or de moins que son coût");
 
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(CharacterCard.class.getName());
 
     private final String characterName;
     private final int characterNumber;
