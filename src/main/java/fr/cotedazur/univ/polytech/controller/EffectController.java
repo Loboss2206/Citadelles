@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.view.GameView;
 
@@ -20,6 +21,8 @@ public class EffectController {
 
     private GameView view;
 
+    private StackOfGolds stackOfGolds;
+
     public EffectController() {
         nbTimesEffectIsUsed.put("EarnDistrictBishop", 0);
         nbTimesEffectIsUsed.put("EarnDistrictWarlord", 0);
@@ -35,9 +38,14 @@ public class EffectController {
         this.view = view;
     }
 
-    public EffectController(GameView view) {
+    public void setStackOfCoins(StackOfGolds stackOfGolds) {
+        this.stackOfGolds = stackOfGolds;
+    }
+
+    public EffectController(GameView view, StackOfGolds stackOfGolds) {
         this();
         this.view = view;
+        this.stackOfGolds = stackOfGolds;
     }
 
     public List<Player> playerNeededForEffectWithoutSensibleInformationForThief(List<Player> players, Player playerThatUseEffect) {
@@ -199,7 +207,7 @@ public class EffectController {
     public void playerWantToUseEffectKing(Player playerThatWantToUseEffect) {
         if (this.getNbTimesEffectIsUsed().get("EarnDistrictKing") == 0) {
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getNbTimesEffectIsUsed().put("EarnDistrictKing", 1);
         } else {
@@ -210,7 +218,7 @@ public class EffectController {
     public void playerWantToUseEffectBishop(Player playerThatWantToUseEffect) {
         if (this.getNbTimesEffectIsUsed().get("EarnDistrictBishop") == 0) {
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getNbTimesEffectIsUsed().put("EarnDistrictBishop", 1);
         } else {
@@ -221,7 +229,7 @@ public class EffectController {
     public void playerWantToUseEffectMerchant(Player playerThatWantToUseEffect) {
         if (this.getNbTimesEffectIsUsed().get("EarnDistrictMerchant") == 0) {
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getNbTimesEffectIsUsed().put("EarnDistrictMerchant", 1);
         } else {
@@ -239,7 +247,7 @@ public class EffectController {
             if (warlordEffect.equals("EarnDistrictWarlord")) {
                 // Case where the warlord earn golds for each red district he has
                 int golds = playerThatWantToUseEffect.getGolds();
-                playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect);
+                playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
                 view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
                 this.getNbTimesEffectIsUsed().put("EarnDistrictWarlord", 1);
             } else {
@@ -267,7 +275,7 @@ public class EffectController {
 
                 if (districtToDestroy != null) {
                     // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
-                    playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardDeck);
+                    playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardDeck, this.stackOfGolds);
                     this.getNbTimesEffectIsUsed().put("Destroy", 1);
                     if (view != null && playerToDestroy.getPlayerRole() != null)
                         view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);

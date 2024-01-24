@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
@@ -28,9 +29,11 @@ public class Round {
     private CharacterCard faceDownCharacterDiscarded;
     private int nbRound;
 
+    private StackOfGolds stackOfGolds;
+
     private final EffectController effectController;
 
-    public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound) {
+    public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound, StackOfGolds stackOfGolds) {
         this.players = players;
         this.playersSortedByCharacterNumber = new ArrayList<>(players);
         this.view = view;
@@ -46,6 +49,8 @@ public class Round {
 
         this.nbRound = nbRound;
 
+        this.stackOfGolds = stackOfGolds;
+
         //reset the players effect boolean
         for (Player player : players) {
             player.setUsedEffect("");
@@ -55,10 +60,11 @@ public class Round {
 
         effectController = new EffectController();
         effectController.setView(view);
+        effectController.setStackOfCoins(stackOfGolds);
     }
 
     public Round() {
-        effectController = new EffectController(view);
+        effectController = new EffectController(view, stackOfGolds);
     }
 
     /**
@@ -172,13 +178,13 @@ public class Round {
      * Function that allows each player to choose their actions for the current round (choose 2golds or draw a card and choose to put a district or not)
      */
     public void choiceActionsForTheRound() {
-
         for (Player player : playersSortedByCharacterNumber) {
             if (player.isDead()) {
                 LOGGER.info("Le joueur " + player.getName() + " est mort, il ne peut pas jouer");
                 continue;
             }
 
+            //If player is dead he will not be stolen
             if (player.isStolen()) {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
@@ -188,6 +194,7 @@ public class Round {
             if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3) {
                 if (player.wantsToUseSmithyEffect()) {
                     player.setGolds(player.getGolds() - 3);
+                    stackOfGolds.addGoldsToStack(3);
                     player.addCardToHand(districtDeck.draw());
                     player.addCardToHand(districtDeck.draw());
                     player.addCardToHand(districtDeck.draw());
@@ -199,7 +206,7 @@ public class Round {
                 player.getPlayerRole().useEffectArchitect(player, districtDeck);
 
             //Because Merchant automatically take +1 gold
-            if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + 1);
+            if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
 
             if (player.wantToUseEffect(true) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
                 effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
@@ -211,12 +218,14 @@ public class Round {
             int i = 0;
             int maxDistrictThatCanBePut = 1;
             if (player.getPlayerRole() == CharacterCard.ARCHITECT) maxDistrictThatCanBePut = 3;
-            while (i++ < maxDistrictThatCanBePut) player.drawAndPlaceADistrict(view);
+            while (i++ < maxDistrictThatCanBePut) {
+                this.putDistrictForPlayer(player);
+            }
 
             // If the player has a laboratory, he can discard a card to earn 1 gold
             if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)){
                 player.getHands().remove(player.chooseHandCardToDiscard());
-                player.setGolds(player.getGolds() + 1);
+                player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
             }
 
             // If the player has the haunted city, we set the round where he put the haunted city
@@ -246,11 +255,12 @@ public class Round {
         while (choice == null) {
             choice = player.startChoice();
             if (choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
+            if(choice.equals("2golds") && stackOfGolds.getNbGolds() == 0) choice = "cantPlay";
         }
 
         //Process the choice
         if (choice.equals("2golds")) {
-            player.collectTwoGolds();
+            this.collectTwoGoldsForPlayer(player);
         } else if (choice.equals("drawCard")) {
             playerWantToDrawCard(player);
         }
@@ -319,5 +329,28 @@ public class Round {
         return faceUpCharactersDiscarded;
     }
 
+    public void collectTwoGoldsForPlayer(Player player){
+        int nbMaxCoins = 0;
+        for(int i = 0;i<2;i++){
+            nbMaxCoins += stackOfGolds.takeAGold();
+        }
+        player.setGolds(player.getGolds() + nbMaxCoins);
+    }
 
+    public void putDistrictForPlayer(Player player){
+        DistrictCard districtToPut;
+        do {
+            districtToPut = player.choiceHowToPlayDuringTheRound();
+        } while (player.hasCardOnTheBoard(districtToPut) && player.hasPlayableCard());
+        if (districtToPut != null && !player.hasCardOnTheBoard(districtToPut)) {
+            player.addCardToBoard(districtToPut);
+            player.removeGold(districtToPut.getDistrictValue());
+            this.stackOfGolds.addGoldsToStack(districtToPut.getDistrictValue());
+            if (view != null) view.printPlayerAction("putDistrict", player);
+        }
+    }
+
+    public StackOfGolds getStackOfGolds() {
+        return stackOfGolds;
+    }
 }

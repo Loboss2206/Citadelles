@@ -1,17 +1,14 @@
 package fr.cotedazur.univ.polytech.model.card;
 
-import fr.cotedazur.univ.polytech.controller.Game;
-import fr.cotedazur.univ.polytech.controller.Round;
+
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
-import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
-import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestClassOrder;
 import org.mockito.Mock;
 
 import java.util.ArrayList;
@@ -19,13 +16,10 @@ import java.util.List;
 import java.util.Random;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class CharacterCardTest {
     Player player;
-    Deck<DistrictCard> districtDeck;
 
     @Mock
     Random random = mock(Random.class);
@@ -40,7 +34,7 @@ class CharacterCardTest {
     }
 
     @Test
-    void useEffectForKing() {
+    void testUseEffectForKing() {
         player.setPlayerRole(CharacterCard.KING);
 
         player.addCardToBoard(DistrictCard.CASTLE);
@@ -49,7 +43,7 @@ class CharacterCardTest {
         player.addCardToBoard(DistrictCard.PALACE);
         player.setGolds(0);
 
-        player.getPlayerRole().useEffect(player);
+        player.getPlayerRole().useEffect(player, new StackOfGolds());
         assertEquals(3, player.getGolds());
     }
 
@@ -63,8 +57,8 @@ class CharacterCardTest {
 
         when(random.nextInt(anyInt())).thenReturn(0);
 
-        botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck);
-        botRandom1.getPlayerRole().useEffect(botRandom1, (Player) null);
+        botRandom1.getPlayerRole().useEffect(player, new StackOfCoins())(botRandom1, districtDeck);
+        botRandom1.getPlayerRole().useEffect(player, new StackOfCoins())(botRandom1, (Player) null);
 
         assertEquals(0, botRandom1.getHands().size());
         assertEquals(45, botRandom1.getGolds());
@@ -78,15 +72,15 @@ class CharacterCardTest {
         botRandom1.setPlayerRole(CharacterCard.ARCHITECT);
         when(random.nextInt(anyInt())).thenReturn(1);
 
-        botRandom1.getPlayerRole().useEffect(botRandom1, districtDeck);
-        botRandom1.getPlayerRole().useEffect(botRandom1, (Player) null);
+        botRandom1.getPlayerRole().useEffect(player, new StackOfCoins())(botRandom1, districtDeck);
+        botRandom1.getPlayerRole().useEffect(player, new StackOfCoins())(botRandom1, (Player) null);
 
         assertEquals(2, botRandom1.getHands().size());
         assertEquals(50, botRandom1.getGolds());
     }*/
   
   @Test
-    void useEffectForMerchant() {
+    void testUseEffectForMerchant() {
         player.setGolds(50);
 
         player.setPlayerRole(CharacterCard.MERCHANT);
@@ -95,46 +89,44 @@ class CharacterCardTest {
         player.addCardToBoard(DistrictCard.MARKET);
         player.addCardToBoard(DistrictCard.TAVERN);
         player.addCardToBoard(DistrictCard.PALACE);
-        player.getPlayerRole().useEffect(player);
-        // We count the decrease of the putted cards (50-4-2-1-5 = 38 golds left)
-        // Then we add the 1 gold for the merchant and 1 gold per green district (38+1+1+1 = 41 golds)
-        assertEquals(40, player.getGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        //The golds don't change because it's the game that manages the golds
+        assertEquals(52, player.getGolds());
 
         player.addCardToBoard(DistrictCard.DOCKS);
-        player.getPlayerRole().useEffect(player);
+        player.getPlayerRole().useEffect(player, new StackOfGolds());
         // Adding a green district (1 gold) and the passive effect of the merchant (1 gold) minus the cost of the district (3 golds)
         // 41 + 1 + 1 + 1 + 1 - 3 = 42 golds
-        assertEquals(40, player.getGolds());
+        assertEquals(55, player.getGolds());
 
         player.addCardToBoard(DistrictCard.CATHEDRAL);
-        player.getPlayerRole().useEffect(player);
+        player.getPlayerRole().useEffect(player, new StackOfGolds());
         // Adding a blue district (0 golds) and the passive effect of the merchant (1 gold) minus the cost of the district (5 golds)
         // 42 + 1 + 1 + 1 + 1 + 0 - 5 = 41 golds
-        assertEquals(38, player.getGolds());
+        assertEquals(58, player.getGolds());
     }
   
   @Test
-    void useEffectForBishop() {
+    void testUseEffectForBishop() {
         player.setGolds(28);
         player.setPlayerRole(CharacterCard.BISHOP);
         player.addCardToBoard(DistrictCard.CASTLE);
         player.addCardToBoard(DistrictCard.MARKET);
         player.addCardToBoard(DistrictCard.MONASTERY);
         player.addCardToBoard(DistrictCard.TEMPLE);
-        player.getPlayerRole().useEffect(player);
+        player.getPlayerRole().useEffect(player, new StackOfGolds());
         //Should be 20 because when we add a district on the board we withdraw from his golds
-        assertEquals(20, player.getGolds());
+        assertEquals(30, player.getGolds());
 
         player.addCardToBoard(DistrictCard.CATHEDRAL);
-        player.getPlayerRole().useEffect(player);
+        player.getPlayerRole().useEffect(player, new StackOfGolds());
 
         //Should be 18 because when we add a district on the board we withdraw from his golds, and now we have 3 blue district, so we add 3 in the number of golds instead of 2
-        assertEquals(18, player.getGolds());
+        assertEquals(33, player.getGolds());
     }
     @Test
-    void useEffectForThief() {
+    void testUseEffectForThief() {
         player = new BotWeak();
-        ArrayList<Player> listPlayer= new ArrayList<>();
         player.setGolds(20);
         player.setPlayerRole(CharacterCard.THIEF);
 
@@ -153,9 +145,8 @@ class CharacterCardTest {
         assertEquals(31,player2.getGolds());
     }
     @Test
-    void useEffectForMagicianWithPlayer(){
+    void testUseEffectForMagicianWithPlayer(){
         player = new BotWeak();
-        ArrayList<Player> listPlayer= new ArrayList<>();
         List<DistrictCard> districts = new ArrayList<>();
         districts.add(DistrictCard.SMITHY);
         districts.add(DistrictCard.DRAGON_GATE);
@@ -174,7 +165,7 @@ class CharacterCardTest {
     }
 
     @Test
-    void useEffectForMagicianWithDeck(){
+    void testUseEffectForMagicianWithDeck(){
         Deck<DistrictCard> Deck = new Deck<>();
         Deck.add(DistrictCard.TAVERN);
         Deck.add(DistrictCard.LIBRARY);
@@ -212,20 +203,20 @@ class CharacterCardTest {
         player.addCardToBoard(DistrictCard.CASTLE);
         player.setGolds(0);
 
-        characterCard.earnGoldsFromDistricts(player, Color.YELLOW);
+        characterCard.earnGoldsFromDistricts(player, Color.YELLOW, new StackOfGolds());
         assertEquals(1, player.getGolds());
 
         player.addCardToBoard(DistrictCard.MARKET);
         player.setGolds(0);
 
-        characterCard.earnGoldsFromDistricts(player, Color.YELLOW);
+        characterCard.earnGoldsFromDistricts(player, Color.YELLOW, new StackOfGolds());
         assertEquals(1, player.getGolds());
 
         player.addCardToBoard(DistrictCard.MANOR);
         player.addCardToBoard(DistrictCard.PALACE);
         player.setGolds(0);
 
-        characterCard.earnGoldsFromDistricts(player, Color.YELLOW);
+        characterCard.earnGoldsFromDistricts(player, Color.YELLOW, new StackOfGolds());
         assertEquals(3, player.getGolds());
     }
 }
