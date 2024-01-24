@@ -122,4 +122,10 @@ public interface GameActions {
      * @return true if he wants to use the effect, false otherwise
      */
     boolean wantsToUseSmithyEffect();
+
+    /**
+     * function where the player choose to use the effect of the graveyard or not
+     * @return true if he wants to use the effect, false otherwise
+     */
+    boolean chooseUseGraveyardEffect();
 }

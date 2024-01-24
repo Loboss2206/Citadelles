@@ -256,4 +256,9 @@ public class BotWeak extends Player implements GameActions {
         }
         return highNbCards;
     }
+
+    @Override
+    public boolean chooseUseGraveyardEffect(){
+        return true;
+    }
 }

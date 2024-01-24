@@ -203,4 +203,9 @@ public class BotRandom extends Player implements GameActions {
         return players.get(random.nextInt(players.size()));
     }
 
+    @Override
+    public boolean chooseUseGraveyardEffect() {
+        int choice = random.nextInt(2);
+        return choice == 0;
+    }
 }

@@ -275,4 +275,8 @@ public class GameView {
         if (golds > 0)
             displayMessage("Le joueur " + playerThatWantToUseEffect.getName() + " recupère " + golds + " pièces d'or grâce à ses quartiers " + characterColor.getColorName());
     }
+
+    public void printGraveyardEffect(Player playerHasGraveyard, DistrictCard districtToDestroy) {
+        displayMessage("Le joueur " + playerHasGraveyard.getName() + " recupère le quartier " + districtToDestroy.getDistrictName() + " grace au cimetière");
+    }
 }

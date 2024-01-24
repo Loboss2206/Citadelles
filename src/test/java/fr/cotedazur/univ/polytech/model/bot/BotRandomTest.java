@@ -22,6 +22,7 @@ class BotRandomTest {
 
     HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
 
+    BotRandom botRandom3;
     BotRandom botRandom2;
     BotRandom botRandom1;
 
@@ -32,7 +33,9 @@ class BotRandomTest {
         LamaLogger.mute();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
+        botRandom3 = new BotRandom();
         botRandom1.setRandom(random);
+        botRandom3.setRandom(random);
         cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
         cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
         this.districtDeck = DeckFactory.createDistrictDeck();
@@ -300,5 +303,11 @@ class BotRandomTest {
     void wantsToUseSmithyEffect() {
         when(random.nextInt(anyInt())).thenReturn(0);
         assertTrue(botRandom1.wantsToUseSmithyEffect());
+    }
+
+    @Test
+    void testChooseUseGraveyardEffect() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.chooseUseGraveyardEffect());
     }
 }
