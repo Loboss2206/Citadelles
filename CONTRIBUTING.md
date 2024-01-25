@@ -4,9 +4,9 @@
 
 - [Code of Conduct](#code-of-conduct)
 - [How to Contribute](#how-to-contribute)
-  - [Create an Issue](#create-an-issue)
-  - [Issue Lifecycle](#issue-lifecycle)
-  - [Submit a Pull Request](#submit-a-pull-request)
+    - [Create an Issue](#create-an-issue)
+    - [Issue Lifecycle](#issue-lifecycle)
+    - [Submit a Pull Request](#submit-a-pull-request)
 - [Build from Source](#build-from-source)
 - [Source Code Style](#source-code-style)
 - [Reference Docs](#reference-docs)
@@ -21,7 +21,9 @@ This project is governed by the [Team I CODE_OF_CONDUCT](CODE_OF_CONDUCT.md).
 
 Before creating a ticket, please take the time to check if it is not already created.
 
-Once you're ready, create an issue on [GitHub](https://github.com/pns-si3-projects/projet2-ps-23-24-citadels-2024-i/issues) with a little description of the feature / fix / etc.
+Once you're ready, create an issue
+on [GitHub](https://github.com/pns-si3-projects/projet2-ps-23-24-citadels-2024-i/issues) with a little description of
+the feature / fix / etc.
 
 #### Issue Lifecycle
 
@@ -44,7 +46,8 @@ follow-up reports will need to be created as new issues with a fresh description
    [Rewriting History section of Pro Git](https://git-scm.com/book/en/Git-Tools-Rewriting-History)
    for an overview of streamlining the commit history.
 
-1. This project use [conventional commits](https://www.conventionalcommits.org). Please format your commit messages accordingly.
+1. This project use [conventional commits](https://www.conventionalcommits.org). Please format your commit messages
+   accordingly.
    Mark the issue fixed, e.g. `Closes #123` in the commit. See the
    [Commit Guidelines section of Pro Git](https://git-scm.com/book/en/Distributed-Git-Contributing-to-a-Project#Commit-Guidelines)
    for best practices around commit messages, and use `git log` to see some examples.
@@ -62,13 +65,15 @@ when asked to make changes.
 
 ### Build from Source
 
-This document describes how to build the Citadels of the Team I from the command line. You may also be interested to see Code Style.
+This document describes how to build the Citadels of the Team I from the command line. You may also be interested to see
+Code Style.
 
 Our project uses [Maven](https://maven.apache.org/download.cgi?.).
 
 #### Before You Start
 
-To build you will need `Git` and `JDK 17` in a location detected by `Maven`. Be sure that your JAVA_HOME environment variable points to the jdk17 folder extracted from the JDK download.
+To build you will need `Git` and `JDK 17` in a location detected by `Maven`. Be sure that your JAVA_HOME environment
+variable points to the jdk17 folder extracted from the JDK download.
 
 #### Get the Source Code
 
@@ -107,7 +112,8 @@ mvn exec:java
 
 #### Class declaration
 
-Try as much as possible to put the implements, extends section of a class declaration on the same line as the class itself.
+Try as much as possible to put the implements, extends section of a class declaration on the same line as the class
+itself.
 
 Order the classes so that the most important comes first.
 
@@ -117,7 +123,8 @@ Order the classes so that the most important comes first.
 
 Constant names use `CONSTANT_CASE`: all uppercase letters, with words separated by underscores.
 
-Every constant is a `static final field`, but not all `static final` fields are constants. Constant case should therefore be chosen only if the field is really a constant.
+Every constant is a `static final field`, but not all `static final` fields are constants. Constant case should
+therefore be chosen only if the field is really a constant.
 
 Example:
 
@@ -139,7 +146,8 @@ Avoid using single characters as variable names. For instance prefer `Method met
 
 ##### Null Checks
 
-Use the asserts to check that a method argument is not null. Format the exception message so that the name of the parameter comes first with its first character capitalized, followed by "must not be null". For instance
+Use the asserts to check that a method argument is not null. Format the exception message so that the name of the
+parameter comes first with its first character capitalized, followed by "must not be null". For instance
 
 ```java
 public void handle(Event event) {
@@ -154,11 +162,13 @@ Always add `@Override` on methods overriding or implementing a method declared i
 
 ##### Field and method references
 
-A field of a class should always be referenced using `this`. A method of a class, however, should never be referenced using `this`.
+A field of a class should always be referenced using `this`. A method of a class, however, should never be referenced
+using `this`.
 
 ###### Local variable type inference
 
-The use of `var` for variable declarations (local variable type inference) is not permitted. Instead, declare variables using the concrete type or interface (where applicable).
+The use of `var` for variable declarations (local variable type inference) is not permitted. Instead, declare variables
+using the concrete type or interface (where applicable).
 
 ##### Javadoc
 

@@ -1,25 +1,23 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
+import fr.cotedazur.univ.polytech.model.bot.DispatchState;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.view.GameView;
 
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Round {
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Round.class.getName());
-
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private final EffectController effectController;
     private List<Player> players;
     private List<Player> playersSortedByCharacterNumber;
     private GameView view;
-
     //Decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck; // This deck will be used when the warlord destroy a district or when the magician swap his hand with the deck
@@ -27,10 +25,7 @@ public class Round {
     private Deck<CharacterCard> faceUpCharactersDiscarded;
     private CharacterCard faceDownCharacterDiscarded;
     private int nbRound;
-
     private StackOfGolds stackOfGolds;
-
-    private final EffectController effectController;
 
     public Round(List<Player> players, GameView view, Deck<DistrictCard> districtDeck, Deck<DistrictCard> districtDiscardDeck, int nbRound, StackOfGolds stackOfGolds) {
         this.players = players;
@@ -127,8 +122,6 @@ public class Round {
 
         //1 card has to be discarded face-down
         faceDownCharacterDiscarded = characterDeck.draw();
-
-        //view.printDiscardedCardFaceDown(faceDownCharacterDiscarded);
         LOGGER.info("Carte defaussée face cachée : " + faceDownCharacterDiscarded.getCharacterName());
     }
 
@@ -190,28 +183,11 @@ public class Round {
 
             this.drawOr2golds(player);
 
-            if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3) {
-                if (player.wantsToUseSmithyEffect()) {
-                    player.setGolds(player.getGolds() - 3);
-                    stackOfGolds.addGoldsToStack(3);
-                    player.addCardToHand(districtDeck.draw());
-                    player.addCardToHand(districtDeck.draw());
-                    player.addCardToHand(districtDeck.draw());
-                }
-            }
+            // We play the district cards effects
+            playDistrictCards(player);
 
-            //Because architect automatically take +2 cards
-            if (player.getPlayerRole() == CharacterCard.ARCHITECT)
-                player.getPlayerRole().useEffectArchitect(player, districtDeck);
-
-            //Because Merchant automatically take +1 gold
-            if (player.getPlayerRole() == CharacterCard.MERCHANT) player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
-
-            if (player.wantToUseEffect(true) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
-                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-                if (player.getPlayerRole() == CharacterCard.WARLORD)
-                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-            }
+            // We play the character cards effects before the player put a district
+            playerWillingToUseEffect(player, true);
 
             // Draw and place a district
             int i = 0;
@@ -221,46 +197,93 @@ public class Round {
                 this.putDistrictForPlayer(player);
             }
 
-            // If the player has a laboratory, he can discard a card to earn 1 gold
-            if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)){
-                player.getHands().remove(player.chooseHandCardToDiscard());
-                player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
-            }
-
-            // If the player has the haunted city, we set the round where he put the haunted city
-            if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() == 0)
-                player.setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(nbRound);
-
-            if (player.wantToUseEffect(false) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
-                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-                if (player.getPlayerRole() == CharacterCard.WARLORD)
-                    effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
-
-            }
+            // We play the character cards effects after the player put a district
+            playerWillingToUseEffect(player, false);
 
             // Display the effect of the character card
             view.printCharacterUsedEffect(player);
 
-
-            if (player.getBoard().size() >= 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
+            determineFirstPlayerTo8Districts(player);
             view.printEndTurnOfPlayer(player);
         }
     }
 
+    /**
+     * Function that allows each player to play his district cards
+     *
+     * @param player the player who will play his district cards
+     */
+    private void playDistrictCards(Player player) {
+        if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3 && (player.wantsToUseSmithyEffect())) {
+            player.setGolds(player.getGolds() - 3);
+            stackOfGolds.addGoldsToStack(3);
+            player.addCardToHand(districtDeck.draw());
+            player.addCardToHand(districtDeck.draw());
+            player.addCardToHand(districtDeck.draw());
+        }
+
+        //Because architect automatically take +2 cards
+        if (player.getPlayerRole() == CharacterCard.ARCHITECT)
+            player.getPlayerRole().useEffectArchitect(player, districtDeck);
+
+        //Because Merchant automatically take +1 gold
+        if (player.getPlayerRole() == CharacterCard.MERCHANT)
+            player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
+
+        // If the player has a laboratory, he can discard a card to earn 1 gold
+        if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)) {
+            player.getHands().remove(player.chooseHandCardToDiscard());
+            player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
+        }
+
+        // If the player has the haunted city, we set the round where he put the haunted city
+        if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() == 0)
+            player.setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(nbRound);
+    }
+
+    /**
+     * Set the first player to 8 districts by checking if the player has 8 districts and if no player has already been set as first to 8 districts
+     *
+     * @param player the player to check
+     */
+    private void determineFirstPlayerTo8Districts(Player player) {
+        if (player.getBoard().size() >= 8 && noPlayerAddCompleteFirst()) player.setFirstToAdd8district(true);
+    }
+
+    /**
+     * Function that allows each player to choose if he wants to use his effect
+     *
+     * @param player                 the player who will use his effect
+     * @param beforePuttingADistrict true if the player want to use his effect before putting a district, false otherwise
+     */
+    private void playerWillingToUseEffect(Player player, boolean beforePuttingADistrict) {
+        if (player.wantToUseEffect(beforePuttingADistrict) && player.getPlayerRole() != CharacterCard.ARCHITECT) {
+            effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+            if (player.getPlayerRole() == CharacterCard.WARLORD)
+                effectController.playerWantToUseEffect(player, playersSortedByCharacterNumber, districtDiscardDeck, districtDeck);
+        }
+    }
+
+    /**
+     * Function that allows each player to choose if he wants to draw a card or take 2 golds
+     *
+     * @param player the player who will choose to draw a card or take 2 golds
+     */
     public void drawOr2golds(Player player) {
-        String choice = null;
+        DispatchState choice = null;
 
         //Take the choice
         while (choice == null) {
             choice = player.startChoice();
-            if (choice.equals("drawCard") && districtDeck.isEmpty()) choice = "2golds";
-            if(choice.equals("2golds") && stackOfGolds.getNbGolds() == 0) choice = "cantPlay";
+            if (choice.equals(DispatchState.DRAWCARD) && districtDeck.isEmpty()) choice = DispatchState.TWOGOLDS;
+            if (choice.equals(DispatchState.TWOGOLDS) && stackOfGolds.getNbGolds() == 0)
+                choice = DispatchState.CANTPLAY;
         }
 
         //Process the choice
-        if (choice.equals("2golds")) {
+        if (choice.equals(DispatchState.TWOGOLDS)) {
             this.collectTwoGoldsForPlayer(player);
-        } else if (choice.equals("drawCard")) {
+        } else if (choice.equals(DispatchState.DRAWCARD)) {
             playerWantToDrawCard(player);
         }
         view.printPlayerAction(choice, player);
@@ -274,9 +297,9 @@ public class Round {
             if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
         }
 
-        HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
+        Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
 
         //If maybe there is only one card in the deck so the bot just take one card
         if (cardsThatPlayerDraw.size() == 3) {
@@ -287,13 +310,13 @@ public class Round {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
         }
 
-        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
-            player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
+            player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
         }
 
         //Return the cards that the bot did not choose to the hand
-        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").isEmpty()) {
-            for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted")) {
+        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).isEmpty()) {
+            for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED)) {
                 districtDeck.add(card);
             }
         }
@@ -328,15 +351,15 @@ public class Round {
         return faceUpCharactersDiscarded;
     }
 
-    public void collectTwoGoldsForPlayer(Player player){
+    public void collectTwoGoldsForPlayer(Player player) {
         int nbMaxCoins = 0;
-        for(int i = 0;i<2;i++){
+        for (int i = 0; i < 2; i++) {
             nbMaxCoins += stackOfGolds.takeAGold();
         }
         player.setGolds(player.getGolds() + nbMaxCoins);
     }
 
-    public void putDistrictForPlayer(Player player){
+    public void putDistrictForPlayer(Player player) {
         DistrictCard districtToPut;
         do {
             districtToPut = player.choiceHowToPlayDuringTheRound();
@@ -345,7 +368,7 @@ public class Round {
             player.addCardToBoard(districtToPut);
             player.removeGold(districtToPut.getDistrictValue());
             this.stackOfGolds.addGoldsToStack(districtToPut.getDistrictValue());
-            if (view != null) view.printPlayerAction("putDistrict", player);
+            if (view != null) view.printPlayerAction(DispatchState.PLACEDISTRICT, player);
         }
     }
 

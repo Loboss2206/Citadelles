@@ -4,15 +4,15 @@ package fr.cotedazur.univ.polytech.model.card;
  * This enum represents the different district cards in the game.
  */
 public enum DistrictCard {
-    TAVERN(5, "Taverne", 1, "green"), MARKET(4, "Marché", 2, "green"), TRADING_POST(3, "Comptoir commercial", 2, "green"),
-    DOCKS(3, "Quais", 3, "green"), HARBOR(3, "Port", 4, "green"), TOWN_HALL(2, "Mairie", 5, "green"),
-    TEMPLE(3, "Temple", 1, "blue"), CHURCH(3, "Église", 2, "blue"), MONASTERY(3, "Monastère", 3, "blue"),
-    CATHEDRAL(2, "Cathédrale", 5, "blue"), WATCHTOWER(3, "Tour de guet", 1, "red"), PRISON(3, "Prison", 2, "red"),
-    BATTLEFIELD(3, "Champ de bataille", 3, "red"), FORTRESS(2, "Forteresse", 5, "red"), MANOR(5, "Manoir", 3, "yellow"),
-    CASTLE(4, "Château", 4, "yellow"), PALACE(3, "Palais", 5, "yellow"), HAUNTED_CITY(1, "Cour des miracles", 2, "purple"),
-    KEEP(2, "Donjon", 3, "purple"), LABORATORY(1, "Laboratoire", 5, "purple"), SMITHY(1, "Manufacture", 5, "purple"),
-    GRAVEYARD(1, "Cimetière", 5, "purple"), OBSERVATORY(1, "Observatoire", 5, "purple"), SCHOOL_OF_MAGIC(1, "École de Magie", 6, "purple"),
-    LIBRARY(1, "Bibliothèque", 6, "purple"), UNIVERSITY(1, "Université", 6, "purple"), DRAGON_GATE(1, "Dracoport", 6, "purple");
+    TAVERN(5, "Taverne", 1, Color.GREEN), MARKET(4, "Marché", 2, Color.GREEN), TRADING_POST(3, "Comptoir commercial", 2, Color.GREEN),
+    DOCKS(3, "Quais", 3, Color.GREEN), HARBOR(3, "Port", 4, Color.GREEN), TOWN_HALL(2, "Mairie", 5, Color.GREEN),
+    TEMPLE(3, "Temple", 1, Color.BLUE), CHURCH(3, "Église", 2, Color.BLUE), MONASTERY(3, "Monastère", 3, Color.BLUE),
+    CATHEDRAL(2, "Cathédrale", 5, Color.BLUE), WATCHTOWER(3, "Tour de guet", 1, Color.RED), PRISON(3, "Prison", 2, Color.RED),
+    BATTLEFIELD(3, "Champ de bataille", 3, Color.RED), FORTRESS(2, "Forteresse", 5, Color.RED), MANOR(5, "Manoir", 3, Color.YELLOW),
+    CASTLE(4, "Château", 4, Color.YELLOW), PALACE(3, "Palais", 5, Color.YELLOW), HAUNTED_CITY(1, "Cour des miracles", 2, Color.PURPLE),
+    KEEP(2, "Donjon", 3, Color.PURPLE), LABORATORY(1, "Laboratoire", 5, Color.PURPLE), SMITHY(1, "Manufacture", 5, Color.PURPLE),
+    GRAVEYARD(1, "Cimetière", 5, Color.PURPLE), OBSERVATORY(1, "Observatoire", 5, Color.PURPLE), SCHOOL_OF_MAGIC(1, "École de Magie", 6, Color.PURPLE),
+    LIBRARY(1, "Bibliothèque", 6, Color.PURPLE), UNIVERSITY(1, "Université", 6, Color.PURPLE), DRAGON_GATE(1, "Dracoport", 6, Color.PURPLE);
 
     /**
      * The quantity of this district card in the deck.
@@ -30,11 +30,11 @@ public enum DistrictCard {
      * @param districtValue  The value of the district card.
      * @param districtColor  The color of the district card.
      */
-    DistrictCard(int quantityInDeck, String districtName, int districtValue, String districtColor) {
+    DistrictCard(int quantityInDeck, String districtName, int districtValue, Color districtColor) {
         this.quantityInDeck = quantityInDeck;
         this.districtName = districtName;
         this.districtValue = districtValue;
-        this.districtColor = Color.valueOf(districtColor.toUpperCase());
+        this.districtColor = districtColor;
     }
 
     /**

@@ -1,8 +1,9 @@
 package fr.cotedazur.univ.polytech.model.card;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
-import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 
 import java.util.List;
 
@@ -12,16 +13,9 @@ import java.util.List;
 
 public enum CharacterCard {
 
-    ASSASSIN("Assassin", 1, Color.GRAY, "Tuez un personnage"),
-    THIEF("Voleur", 2, Color.GRAY, "Volez l'argent d'un autre joueur"),
-    MAGICIAN("Magicien", 3, Color.GRAY, "Echangez vos cartes avec celles d'un autre joueur"),
-    KING("Roi", 4, Color.YELLOW, "Prenez 1 pièce d'or pour chaque quartier jaune que vous possédez"),
-    BISHOP("Évêque", 5, Color.BLUE, "Prenez 1 pièce d'or pour chaque quartier bleu que vous possédez. Les quartiers de l'Évêque ne peuvent pas être détruits par le Condottiere."),
-    MERCHANT("Marchand", 6, Color.GREEN, "Prenez 1 pièce d'or pour chaque quartier vert dans votre quartier et une pièce d'or supplémentaire après une action"),
-    ARCHITECT("Architecte", 7, Color.GRAY, "Piochez 2 cartes et possibilité de poser jusqu'à 3 bâtiments (si vous avez l'argent nécessaire)"),
-    WARLORD("Condottiere", 8, Color.RED, "Détruisez un quartier en payant 1 pièce d'or de moins que son coût");
+    ASSASSIN("Assassin", 1, Color.GRAY, "Tuez un personnage"), THIEF("Voleur", 2, Color.GRAY, "Volez l'argent d'un autre joueur"), MAGICIAN("Magicien", 3, Color.GRAY, "Echangez vos cartes avec celles d'un autre joueur"), KING("Roi", 4, Color.YELLOW, "Prenez 1 pièce d'or pour chaque quartier jaune que vous possédez"), BISHOP("Évêque", 5, Color.BLUE, "Prenez 1 pièce d'or pour chaque quartier bleu que vous possédez. Les quartiers de l'Évêque ne peuvent pas être détruits par le Condottiere."), MERCHANT("Marchand", 6, Color.GREEN, "Prenez 1 pièce d'or pour chaque quartier vert dans votre quartier et une pièce d'or supplémentaire après une action"), ARCHITECT("Architecte", 7, Color.GRAY, "Piochez 2 cartes et possibilité de poser jusqu'à 3 bâtiments (si vous avez l'argent nécessaire)"), WARLORD("Condottiere", 8, Color.RED, "Détruisez un quartier en payant 1 pièce d'or de moins que son coût");
 
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(CharacterCard.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
     private final String characterName;
     private final int characterNumber;
@@ -86,40 +80,33 @@ public enum CharacterCard {
      */
     public void useEffect(Player player, StackOfGolds stackOfGolds) {
         LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") utilise son pouvoir");
-        Color color = null;
+        Color colorDistrictCard = null;
         if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
-            color = player.chooseColorForDistrictCard();
+            colorDistrictCard = player.chooseColorForDistrictCard();
         }
         switch (this) {
-
-            case KING -> {
-                earnGoldsFromDistricts(player, Color.YELLOW, stackOfGolds);
-            }
-            case BISHOP -> {
-                earnGoldsFromDistricts(player, Color.BLUE, stackOfGolds);
-            }
-            case MERCHANT -> {
-                earnGoldsFromDistricts(player, Color.GREEN, stackOfGolds);
-            }
-            case WARLORD -> {
-                earnGoldsFromDistricts(player, Color.RED, stackOfGolds);
+            case KING -> earnGoldsFromDistricts(player, Color.YELLOW, stackOfGolds);
+            case BISHOP -> earnGoldsFromDistricts(player, Color.BLUE, stackOfGolds);
+            case MERCHANT -> earnGoldsFromDistricts(player, Color.GREEN, stackOfGolds);
+            case WARLORD -> earnGoldsFromDistricts(player, Color.RED, stackOfGolds);
+            default -> {
+                // No default action
             }
         }
-        if (color == player.getPlayerRole().getCharacterColor())
+        if (colorDistrictCard == player.getPlayerRole().getCharacterColor())
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
     }
 
     public void useEffectThief(Player playerThatUseEffect, Player stolenPlayer, boolean hasBeenStolen) {
         if (hasBeenStolen) {
-            if (stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN) {
-                if (playerThatUseEffect.getPlayerRole() == THIEF) {
-                    playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
-                    stolenPlayer.setGolds(0);
-                    if (stolenPlayer.getPlayerRole() != null && playerThatUseEffect.getPlayerRole() != null) {
-                        LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " (" + playerThatUseEffect.getPlayerRole().getCharacterName() + ") a volé " + stolenPlayer.getName() + " (" + stolenPlayer.getPlayerRole().getCharacterName() + ")");
-                        LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " a maintenant " + playerThatUseEffect.getGolds() + " pièces d'or");
-                    }
+            if (stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN && (playerThatUseEffect.getPlayerRole() == THIEF)) {
+                playerThatUseEffect.setGolds(playerThatUseEffect.getGolds() + stolenPlayer.getGolds());
+                stolenPlayer.setGolds(0);
+                if (stolenPlayer.getPlayerRole() != null && playerThatUseEffect.getPlayerRole() != null) {
+                    LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " (" + playerThatUseEffect.getPlayerRole().getCharacterName() + ") a volé " + stolenPlayer.getName() + " (" + stolenPlayer.getPlayerRole().getCharacterName() + ")");
+                    LOGGER.info("Le joueur " + playerThatUseEffect.getName() + " a maintenant " + playerThatUseEffect.getGolds() + " pièces d'or");
                 }
+
             }
         } else {
             stolenPlayer.setHasBeenStolen(true);

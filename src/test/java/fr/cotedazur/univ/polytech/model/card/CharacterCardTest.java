@@ -5,8 +5,8 @@ import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
 import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
-import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
 class CharacterCardTest {
@@ -78,8 +78,8 @@ class CharacterCardTest {
         assertEquals(2, botRandom1.getHands().size());
         assertEquals(50, botRandom1.getGolds());
     }*/
-  
-  @Test
+
+    @Test
     void testUseEffectForMerchant() {
         player.setGolds(50);
 
@@ -105,8 +105,8 @@ class CharacterCardTest {
         // 42 + 1 + 1 + 1 + 1 + 0 - 5 = 41 golds
         assertEquals(58, player.getGolds());
     }
-  
-  @Test
+
+    @Test
     void testUseEffectForBishop() {
         player.setGolds(28);
         player.setPlayerRole(CharacterCard.BISHOP);
@@ -124,6 +124,7 @@ class CharacterCardTest {
         //Should be 18 because when we add a district on the board we withdraw from his golds, and now we have 3 blue district, so we add 3 in the number of golds instead of 2
         assertEquals(33, player.getGolds());
     }
+
     @Test
     void testUseEffectForThief() {
         player = new BotWeak();
@@ -133,19 +134,20 @@ class CharacterCardTest {
         Player player2 = new BotRandom();
         player2.setGolds(31);
 
-        player.getPlayerRole().useEffectThief(player,player2,true);
-        assertEquals(51,player.getGolds());
-        assertEquals(0,player2.getGolds());
+        player.getPlayerRole().useEffectThief(player, player2, true);
+        assertEquals(51, player.getGolds());
+        assertEquals(0, player2.getGolds());
 
         //Test when assassin (should not take the golds)
         player2.setGolds(31);
         player2.setPlayerRole(CharacterCard.ASSASSIN);
-        player.getPlayerRole().useEffectThief(player,player2,true);
-        assertEquals(51,player.getGolds());
-        assertEquals(31,player2.getGolds());
+        player.getPlayerRole().useEffectThief(player, player2, true);
+        assertEquals(51, player.getGolds());
+        assertEquals(31, player2.getGolds());
     }
+
     @Test
-    void testUseEffectForMagicianWithPlayer(){
+    void testUseEffectForMagicianWithPlayer() {
         player = new BotWeak();
         List<DistrictCard> districts = new ArrayList<>();
         districts.add(DistrictCard.SMITHY);
@@ -159,13 +161,13 @@ class CharacterCardTest {
         Player player2 = new BotRandom();
         player2.setHands(districtsp2);
 
-        player.getPlayerRole().useEffectMagicianWithPlayer(player,player2);
-        assertEquals(districts,player2.getHands());
-        assertEquals(districtsp2,player.getHands());
+        player.getPlayerRole().useEffectMagicianWithPlayer(player, player2);
+        assertEquals(districts, player2.getHands());
+        assertEquals(districtsp2, player.getHands());
     }
 
     @Test
-    void testUseEffectForMagicianWithDeck(){
+    void testUseEffectForMagicianWithDeck() {
         Deck<DistrictCard> Deck = new Deck<>();
         Deck.add(DistrictCard.TAVERN);
         Deck.add(DistrictCard.LIBRARY);
@@ -184,7 +186,7 @@ class CharacterCardTest {
         System.out.println(player.getHands());
 
 
-        player.getPlayerRole().useEffectMagicianWithDeck(player,districtsDiscard,Deck);
+        player.getPlayerRole().useEffectMagicianWithDeck(player, districtsDiscard, Deck);
         assertEquals(DistrictCard.MARKET, player.getHands().get(0));
         assertEquals(DistrictCard.TAVERN, player.getHands().get(1));
         assertEquals(DistrictCard.LIBRARY, player.getHands().get(2));

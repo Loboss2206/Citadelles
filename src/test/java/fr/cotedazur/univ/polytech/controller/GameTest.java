@@ -70,20 +70,20 @@ class GameTest {
         player4.setPlayerRole(CharacterCard.BISHOP);
         game.calculatePoints();
 
-        assertEquals(0,player3.getPoints());
-        assertEquals(0,player4.getPoints());
-        assertEquals(22,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(0, player3.getPoints());
+        assertEquals(0, player4.getPoints());
+        assertEquals(22, player.getPoints());
+        assertEquals(18, player2.getPoints());
 
         //Test with the Dragon gate district card
         player.getBoard().add(DistrictCard.DRAGON_GATE);
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(0,player3.getPoints());
-        assertEquals(0,player4.getPoints());
-        assertEquals(30,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(0, player3.getPoints());
+        assertEquals(0, player4.getPoints());
+        assertEquals(30, player.getPoints());
+        assertEquals(18, player2.getPoints());
 
         // Test with the Haunted city district card
         player.getBoard().remove(DistrictCard.DRAGON_GATE);
@@ -93,15 +93,15 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(19,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(19, player.getPoints());
+        assertEquals(18, player2.getPoints());
         // Test when the player has the haunted city and he has played it early in the game
         player.getBoard().add(DistrictCard.MARKET);
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(24,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(24, player.getPoints());
+        assertEquals(18, player2.getPoints());
 
         //Test the case when the player not putted the card laboratory this turn
         assertFalse(player.getBoard().contains(DistrictCard.LABORATORY));
@@ -113,24 +113,24 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(29,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(29, player.getPoints());
+        assertEquals(18, player2.getPoints());
 
         //Test the case when the player has putted the card laboratory the previous turn
         game.roundNumber = 2;
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(26,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(26, player.getPoints());
+        assertEquals(18, player2.getPoints());
 
         //Test the case when the player has putted the card laboratory the previous previous turn
         game.roundNumber = 3;
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(26,player.getPoints());
-        assertEquals(18,player2.getPoints());
+        assertEquals(26, player.getPoints());
+        assertEquals(18, player2.getPoints());
 
     }
 
@@ -146,7 +146,7 @@ class GameTest {
         player4.setPoints(11);
 
         players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
-        game = new Game(players,new GameView());
+        game = new Game(players, new GameView());
 
         assertEquals(player1, game.getPlayers().get(0));
         assertEquals(player2, game.getPlayers().get(1));
@@ -169,7 +169,7 @@ class GameTest {
         Player player4 = new BotRandom();
 
         players = new ArrayList<>(Arrays.asList(player1, player2, player3, player4));
-        game = new Game(players,new GameView());
+        game = new Game(players, new GameView());
 
         for (Player player : game.getPlayers()) {
             player.setCrowned(false);

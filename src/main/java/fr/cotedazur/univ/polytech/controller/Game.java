@@ -1,12 +1,13 @@
 package fr.cotedazur.univ.polytech.controller;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.*;
@@ -14,7 +15,7 @@ import java.util.*;
 public class Game {
 
     // Logger
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Game.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
     // All the players that play in the game
     private final List<Player> players;
@@ -24,20 +25,15 @@ public class Game {
 
     // The comparator of the players
     private final PlayerComparator playerComparator;
-
+    private final StackOfGolds stackOfGolds;
+    // Random Object
+    private final Random random = new Random();
+    // The round number
+    int roundNumber = 0;
     // All the decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck;
-
-    // The round number
-    int roundNumber = 0;
-
     private int maxRound = 100; //prevent an infinite game
-
-    private final StackOfGolds stackOfGolds;
-
-    // Random Object
-    private final Random random = new Random();
 
 
     public Game(List<Player> players, GameView view) {
@@ -106,7 +102,7 @@ public class Game {
             setCrownedPlayerToFirstPlace();
 
             //Create and start the round
-            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, ++roundNumber,this.stackOfGolds);
+            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, ++roundNumber, this.stackOfGolds);
             round.startRound();
         } while (!isGameFinished() && roundNumber != maxRound);
 

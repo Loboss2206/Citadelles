@@ -1,10 +1,10 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
-import java.util.*;
-
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+
+import java.util.*;
 
 
 public class BotRandom extends Player implements GameActions {
@@ -16,14 +16,14 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String startChoice() {
+    public DispatchState startChoice() {
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
-                return "2golds";
+                return DispatchState.TWOGOLDS;
             }
             case 1 -> {
-                return "drawCard";
+                return DispatchState.DRAWCARD;
             }
             default -> {
                 return null;
@@ -112,19 +112,18 @@ public class BotRandom extends Player implements GameActions {
     @Override
     public DistrictCard chooseHandCardToDiscard() {
         boolean wantToUseDistrictCard = random.nextBoolean();
-        if (!getHands().isEmpty()) {
-            if (wantToUseDistrictCard) {
-                return getHands().get(random.nextInt(getHands().size()));
-            }
+        if (!getHands().isEmpty() && (wantToUseDistrictCard)) {
+            return getHands().get(random.nextInt(getHands().size()));
+
         }
         return null;
     }
 
     @Override
-    public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
+    public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         int randomCard = random.nextInt(cards.length);
         int randomSecondCard = -1;
-        if (this.getBoard().contains(DistrictCard.LIBRARY) && cards.length > 1){
+        if (this.getBoard().contains(DistrictCard.LIBRARY) && cards.length > 1) {
             do {
                 randomSecondCard = random.nextInt(cards.length);
             }
@@ -133,24 +132,24 @@ public class BotRandom extends Player implements GameActions {
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         for (int i = 0; i < cards.length; i++) {
             if (i == randomCard || i == randomSecondCard) {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).add(cards[i]);
             } else {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).add(cards[i]);
             }
         }
-        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted"));
+        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED));
     }
 
 
     @Override
-    public String whichWarlordEffect(List<Player> players) {
+    public DispatchState whichWarlordEffect(List<Player> players) {
         int randomIndex = random.nextInt(3);
         switch (randomIndex) {
             case 0 -> {
-                return "Destroy";
+                return DispatchState.KILL;
             }
             case 1 -> {
-                return "EarnDistrictWarlord";
+                return DispatchState.EARNDISTRICT_WARLORD;
             }
             default -> {
                 return null;
@@ -159,14 +158,14 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public String whichMagicianEffect(List<Player> players) {
+    public DispatchState whichMagicianEffect(List<Player> players) {
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
-                return "ExchangePlayer";
+                return DispatchState.EXCHANGEPLAYER;
             }
             case 1 -> {
-                return "ExchangeDeck";
+                return DispatchState.EXCHANGEDECK;
             }
             default -> {
                 return null;
