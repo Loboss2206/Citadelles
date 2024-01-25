@@ -10,7 +10,7 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 
 public class Main {
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Main.class.getName());
 
     public static void main(String... args) {
 

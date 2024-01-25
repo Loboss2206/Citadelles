@@ -1,6 +1,5 @@
 package fr.cotedazur.univ.polytech.controller;
 
-import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
@@ -15,7 +14,7 @@ import java.util.*;
 public class Game {
 
     // Logger
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(Game.class.getName());
 
     // All the players that play in the game
     private final List<Player> players;
