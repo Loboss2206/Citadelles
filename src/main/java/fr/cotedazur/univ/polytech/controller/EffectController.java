@@ -276,8 +276,16 @@ public class EffectController {
                     // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
                     playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardDeck, this.stackOfGolds);
                     this.getNbTimesEffectIsUsed().put("Destroy", 1);
-                    if (view != null && playerToDestroy.getPlayerRole() != null)
+                    if (view != null && playerToDestroy.getPlayerRole() != null) {
                         view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
+                    }
+                    // If a bot has the graveyard, it can retrieve it by paying 1 gold
+                    Player playerHasGraveyard = someoneHasGraveyard(players);
+                    if (playerHasGraveyard != null && (playerHasGraveyard.chooseUseGraveyardEffect() && (playerHasGraveyard.getGolds() >= 1))){
+                            playerHasGraveyard.setGolds(playerHasGraveyard.getGolds() - 1);
+                            playerHasGraveyard.addCardToHand(districtToDestroy);
+                            view.printGraveyardEffect(playerHasGraveyard, districtToDestroy);
+                    }
                 }
             }
         }
@@ -307,4 +315,14 @@ public class EffectController {
     public Player getPlayerWhoStole() {
         return playerWhoStole;
     }
+
+    public Player someoneHasGraveyard(List<Player> players){
+        for (Player player : players){
+            if (player.getBoard().contains(DistrictCard.GRAVEYARD)){
+                return player;
+            }
+        }
+        return null;
+    }
 }
+
