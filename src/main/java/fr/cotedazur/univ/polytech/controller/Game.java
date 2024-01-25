@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
@@ -31,8 +32,13 @@ public class Game {
     // The round number
     int roundNumber = 0;
 
+    private int maxRound = 100; //prevent an infinite game
+
+    private final StackOfGolds stackOfGolds;
+
     // Random Object
     private final Random random = new Random();
+
 
     public Game(List<Player> players, GameView view) {
         this.view = view;
@@ -40,6 +46,9 @@ public class Game {
 
         // Add players
         this.players = players;
+
+        this.stackOfGolds = new StackOfGolds();
+
 
         // Choose a random king among the players
         chooseRandomKing();
@@ -97,9 +106,9 @@ public class Game {
             setCrownedPlayerToFirstPlace();
 
             //Create and start the round
-            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, ++roundNumber);
+            Round round = new Round(this.players, this.view, this.districtDeck, this.districtDiscardDeck, ++roundNumber,this.stackOfGolds);
             round.startRound();
-        } while (!isGameFinished());
+        } while (!isGameFinished() && roundNumber != maxRound);
 
         // End of the game
         calculatePoints();
@@ -216,5 +225,9 @@ public class Game {
     public String startGameTest() {
         startGame();
         return players.get(0).getClass().getName();
+    }
+
+    public StackOfGolds getStackOfCoins() {
+        return stackOfGolds;
     }
 }

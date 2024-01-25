@@ -27,7 +27,10 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public String startChoice() {
         discoverValidCard();
-        if (getHands().isEmpty() || !validCards.isEmpty()) {
+        if(getGolds() == 0){
+            return "2golds";
+        }
+        if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 15) {
             return "drawCard";
         }
         return "2golds";

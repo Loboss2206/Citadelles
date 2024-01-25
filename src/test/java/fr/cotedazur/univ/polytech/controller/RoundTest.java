@@ -2,8 +2,11 @@ package fr.cotedazur.univ.polytech.controller;
 
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
+import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
@@ -68,7 +71,7 @@ class RoundTest {
     @Test
     void testPresenceOfDiscardedKingWith4Player(){
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1 , new StackOfGolds());
         round.startRound();
         assertSame(2, round.getCharacterDiscardDeck().size());
         assertFalse(round.getCharacterDiscardDeck().contains(CharacterCard.KING));
@@ -77,7 +80,7 @@ class RoundTest {
     @Test
     void testPresenceOfDiscardedKingWith5Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5));
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1, new StackOfGolds());
         round.startRound();
         assertSame(1, round.getCharacterDiscardDeck().size());
         assertNotSame(CharacterCard.KING, round.getCharacterDiscardDeck().getCards().get(0));
@@ -86,7 +89,7 @@ class RoundTest {
     @Test
     void testNumberDiscardFaceUpWith6Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6));
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1, new StackOfGolds());
         round.startRound();
         assertSame(0, round.getCharacterDiscardDeck().size());
     }
@@ -94,7 +97,7 @@ class RoundTest {
     @Test
     void testNumberDiscardFaceUpWith7Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4, botRandom5, botRandom6, botRandom7));
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1, new StackOfGolds());
         round.startRound();
         assertSame(0, round.getCharacterDiscardDeck().size());
     }
@@ -113,12 +116,27 @@ class RoundTest {
         assertFalse(botRandom3.isCrowned());
         assertFalse(botRandom4.isCrowned());
 
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1, new StackOfGolds());
         round.setNewCrownedPlayer();
 
         assertFalse(botRandom1.isCrowned());
         assertTrue(botRandom2.isCrowned());
         assertFalse(botRandom3.isCrowned());
         assertFalse(botRandom4.isCrowned());
+    }
+
+    @Test
+    void testPutDistrictForPlayer(){
+        Player player = new BotWeak();
+        player.setGolds(4);
+        player.setPlayerRole(CharacterCard.BISHOP);
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1 , new StackOfGolds());
+        round.getStackOfGolds().takeAGold();
+        round.getStackOfGolds().takeAGold();round.getStackOfGolds().takeAGold();round.getStackOfGolds().takeAGold();
+        player.addCardToHand(DistrictCard.MARKET);
+        player.addCardToHand(DistrictCard.CASTLE);
+        round.putDistrictForPlayer(player);
+        assertEquals(2, player.getGolds());
+        assertEquals(28,round.getStackOfGolds().getNbGolds());
     }
 }

@@ -53,15 +53,16 @@ public class GameView {
             case "2golds" ->
                     displayMessage(playerNameAndRole + " a choisi de prendre 2 pièces d'or, il possède maintenant " + player.getGolds() + " pièces d'or.");
             case "drawCard" -> {
-                if(player.getBoard().contains(DistrictCard.LIBRARY)) {
+                if (player.getBoard().contains(DistrictCard.LIBRARY)) {
                     displayMessage(playerNameAndRole + " a choisi de piocher deux carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
-                }
-                else {
+                } else {
                     displayMessage(playerNameAndRole + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
                 }
             }
             case "putDistrict" ->
                     displayMessage(playerNameAndRole + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
+            case "cantPlay" ->
+                    displayMessage(playerNameAndRole + " ne peut rien faire car il n'y a plus de pieces ni de cartes :");
             default -> throw new IllegalStateException("Unexpected action: " + action);
         }
     }
@@ -212,7 +213,7 @@ public class GameView {
     /**
      * print when a player has been killed
      *
-     * @param characterCard     the role killed
+     * @param characterCard the role killed
      */
     public void killPlayer(CharacterCard characterCard) {
         displayMessage("Le joueur ayant le role: " + characterCard.getCharacterName() + " est mort.");
@@ -221,7 +222,7 @@ public class GameView {
     /**
      * print when a role has been stole
      *
-     * @param characterCard     the role stolen
+     * @param characterCard the role stolen
      */
     public void stolenPlayer(CharacterCard characterCard) {
         displayMessage("Le joueur ayant le rôle: " + characterCard.getCharacterName() + " s'est fait voler");
@@ -241,8 +242,8 @@ public class GameView {
     /**
      * print when a player exchange his hand with another player of another player
      *
-     * @param playerMagician    the player who want to exchange
-     * @param playerTargeted    the player who underwent the exchange
+     * @param playerMagician the player who want to exchange
+     * @param playerTargeted the player who underwent the exchange
      */
     public void exchangePlayerCard(Player playerMagician, Player playerTargeted) {
         displayMessage("Le joueur : " + playerMagician.getName() + " s'est fait échanger ces cartes avec : " + playerTargeted.getName());
@@ -251,8 +252,8 @@ public class GameView {
     /**
      * print when a player exchange some cards in his hands with the Deck
      *
-     * @param playerMagician    the player who want to exchange with the deck
-     * @param cards             the cards that the player give to the deck
+     * @param playerMagician the player who want to exchange with the deck
+     * @param cards          the cards that the player give to the deck
      */
     public void exchangeDeckCard(Player playerMagician, List<DistrictCard> cards) {
         displayMessage("Le joueur : " + playerMagician.getName() + " a échanger " + cards.size() + " cartes avec le deck");

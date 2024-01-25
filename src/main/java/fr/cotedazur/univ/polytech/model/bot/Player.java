@@ -144,7 +144,6 @@ public abstract class Player implements GameActions {
         nbCardsInHand--;
         LOGGER.info("Le joueur " + name + " a posé le quartier " + card.getDistrictName() + "(" + card.getDistrictValue() + " pièces d'or) (couleur " + card.getDistrictColor() + ")");
         LOGGER.info(" sur son plateau, il a maintenant " + board.size() + " quartiers sur son plateau, il lui reste " + nbCardsInHand + " cartes en main");
-        removeGold(card.getDistrictValue());
     }
 
     /**

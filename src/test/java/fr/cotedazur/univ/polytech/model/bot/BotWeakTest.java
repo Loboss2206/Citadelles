@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.controller.EffectController;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.view.GameView;
@@ -13,9 +14,7 @@ import org.junit.jupiter.api.Test;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 class BotWeakTest {
 
@@ -102,12 +101,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.MARKET);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.MARKET);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(7, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -129,7 +128,7 @@ class BotWeakTest {
         player3.setPlayerRole(CharacterCard.MERCHANT);
         players.add(player3);
 
-        EffectController effectController = new EffectController(new GameView());
+        EffectController effectController = new EffectController(new GameView(), new StackOfGolds());
         effectController.playerWantToUseEffect(botWeak, players, new Deck<>(), districtDeck);
 
         assertTrue(player3.isStolen());
@@ -163,12 +162,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(7, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -178,12 +177,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(6, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -193,12 +192,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(6, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -208,12 +207,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(6, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -224,12 +223,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
@@ -239,12 +238,12 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
         botWeak.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.addCardToBoard(DistrictCard.TOWN_HALL);
         botWeak.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botWeak.setGolds(5);
-        botWeak.getPlayerRole().useEffect(botWeak);
+        botWeak.getPlayerRole().useEffect(botWeak, new StackOfGolds());
         assertEquals(5, botWeak.getGolds());
         botWeak.getHands().clear();
         botWeak.getBoard().clear();
