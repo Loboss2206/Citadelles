@@ -11,7 +11,6 @@ import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.*;
 
-
 public class EffectController {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
@@ -40,20 +39,50 @@ public class EffectController {
         this.stackOfGolds = stackOfGolds;
     }
 
-    public void setView(GameView view) {
-        this.view = view;
+    public Player getPlayerWhoStole() {
+        return playerWhoStole;
     }
 
-    public void setStackOfCoins(StackOfGolds stackOfGolds) {
-        this.stackOfGolds = stackOfGolds;
+    public Map<DispatchState, Boolean> getIsEffectUsed() {
+        return isEffectUsed;
     }
 
     /**
-     * @param players the list of the players
+     * @param characterCards           the list of the character cards
+     * @param characterCardsToGetRidOf the list of the character cards to get rid of
+     * @return the list of the character cards without the character cards to get rid of
+     */
+    public List<CharacterCard> getRidOfASetOfCharacterCard(List<CharacterCard> characterCards, List<CharacterCard> characterCardsToGetRidOf) {
+        ArrayList<CharacterCard> newList = new ArrayList<>();
+        for (CharacterCard characterCard : characterCards) {
+            if (!characterCardsToGetRidOf.contains(characterCard)) newList.add(characterCard);
+        }
+        LOGGER.info("La liste des personnages sans les personnages à éliminer est: " + newList);
+        return newList;
+    }
+
+    // Methods to get the information that the players must have
+
+    /**
+     * @return the list of role that the player can choose to kill
+     */
+    public List<CharacterCard> rolesNeededForAssassinEffect() {
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
+    }
+
+    /**
+     * @return the list of role that the player can choose to steal
+     */
+    public List<CharacterCard> rolesNeededForThiefEffect() {
+        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN, CharacterCard.THIEF));
+    }
+
+    /**
+     * @param players             the list of the players
      * @param playerThatUseEffect the warlord
      * @return the list of the players that can be destroyed by the warlord
      */
-    public List<Player> playerNeededForWarlordEffect(List<Player> players, Player playerThatUseEffect) {
+    public List<Player> playersNeededForWarlordEffect(List<Player> players, Player playerThatUseEffect) {
         ArrayList<Player> newList = new ArrayList<>();
         for (Player player : players) {
             if (player.playerHasADestroyableDistrict(playerThatUseEffect)) {
@@ -64,15 +93,7 @@ public class EffectController {
         return newList;
     }
 
-    public List<CharacterCard> roleNeededForThiefEffect() {
-        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN, CharacterCard.THIEF));
-    }
-
-    public List<CharacterCard> roleNeededForAssassinEffect() {
-        return getRidOfASetOfCharacterCard(Arrays.asList(CharacterCard.values()), List.of(CharacterCard.ASSASSIN));
-    }
-
-    public List<Player> playerNeededForEffectWithoutSensibleInformationForAssassin(List<Player> players, Player playerThatUseEffect) {
+    public List<Player> playerNeededWithoutSensibleInformation(List<Player> players, Player playerThatUseEffect) {
         ArrayList<Player> newList = new ArrayList<>();
         for (Player player : players) {
             if (player != playerThatUseEffect) {
@@ -97,6 +118,13 @@ public class EffectController {
         return newList;
     }
 
+    /**
+     * Copy the player without the sensible information
+     *
+     * @param playerCopy          the player to copy
+     * @param playerThatUseEffect the player that use the effect
+     * @return the copy of the player
+     */
     private Player playerCopy(Player playerCopy, Player playerThatUseEffect) {
         Player copyPlayer = playerCopy.copy();
         if (playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead()) {
@@ -107,20 +135,16 @@ public class EffectController {
         return copyPlayer;
     }
 
-    public Map<DispatchState, Boolean> getIsEffectUsed() {
-        return isEffectUsed;
-    }
+    // Methods to call the methods needed according to the role of the player
 
-    public List<CharacterCard> getRidOfASetOfCharacterCard(List<CharacterCard> characterCards, List<CharacterCard> characterCardsToGetRidOf) {
-        ArrayList<CharacterCard> newList = new ArrayList<>();
-        for (CharacterCard characterCard : characterCards) {
-            if (!characterCardsToGetRidOf.contains(characterCard)) newList.add(characterCard);
-        }
-        LOGGER.info("La liste des personnages sans les personnages à éliminer est: " + newList);
-        return newList;
-    }
-
-
+    /**
+     * Call the methods needed according to the role of the player
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param players                   the list of the players
+     * @param districtDiscardDeck       the discard deck of the districts
+     * @param districtDeck              the deck of the districts
+     */
     public void playerWantToUseEffect(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardDeck, Deck<DistrictCard> districtDeck) {
         LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") veut utiliser son effet");
 
@@ -137,9 +161,15 @@ public class EffectController {
         }
     }
 
+    /**
+     * Call the methods needed for the assassin
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param players                   the list of the players
+     */
     public void playerWantToUseEffectAssassin(Player playerThatWantToUseEffect, List<Player> players) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.KILL))) {
-            CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededForEffectWithoutSensibleInformationForAssassin(players, playerThatWantToUseEffect), this.roleNeededForAssassinEffect());
+            CharacterCard roleKilled = playerThatWantToUseEffect.selectWhoWillBeAffectedByAssassinEffect(this.playerNeededWithoutSensibleInformation(players, playerThatWantToUseEffect), this.rolesNeededForAssassinEffect());
             LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le personnage " + roleKilled.getCharacterName() + " pour être éliminé");
             if (roleKilled != CharacterCard.ASSASSIN) {
                 for (Player playerAffected : players) {
@@ -155,9 +185,15 @@ public class EffectController {
         }
     }
 
+    /**
+     * Call the methods needed for the thief
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param players                   the list of the players
+     */
     public void playerWantToUseEffectThief(Player playerThatWantToUseEffect, List<Player> players) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.STEAL))) {
-            CharacterCard roleStolen = playerThatWantToUseEffect.selectWhoWillBeAffectedByThiefEffect(players, this.roleNeededForThiefEffect());
+            CharacterCard roleStolen = playerThatWantToUseEffect.selectWhoWillBeAffectedByThiefEffect(this.playerNeededWithoutSensibleInformation(players, playerThatWantToUseEffect), this.rolesNeededForThiefEffect());
             LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le personnage " + roleStolen.getCharacterName() + " pour être volé");
             if (roleStolen != CharacterCard.ASSASSIN) {
                 for (Player player1 : players) {
@@ -174,6 +210,13 @@ public class EffectController {
         }
     }
 
+    /**
+     * Call the methods needed for the magician
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param players                   the list of the players
+     * @param districtDeck              the deck of the districts
+     */
     private void playerWantToUseEffectMagician(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDeck) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EXCHANGE))) {
             DispatchState action = playerThatWantToUseEffect.whichMagicianEffect(players);
@@ -193,6 +236,11 @@ public class EffectController {
         }
     }
 
+    /**
+     * Call the methods needed for the king
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     */
     public void playerWantToUseEffectKing(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_KING))) {
             int golds = playerThatWantToUseEffect.getGolds();
@@ -204,6 +252,11 @@ public class EffectController {
         }
     }
 
+    /**
+     * Call the methods needed for the bishop
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     */
     public void playerWantToUseEffectBishop(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_BISHOP))) {
             int golds = playerThatWantToUseEffect.getGolds();
@@ -215,6 +268,11 @@ public class EffectController {
         }
     }
 
+    /**
+     * Call the methods needed for the merchant
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     */
     public void playerWantToUseEffectMerchant(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_MERCHANT))) {
             int golds = playerThatWantToUseEffect.getGolds();
@@ -226,57 +284,70 @@ public class EffectController {
         }
     }
 
-    public void playerWantToUseEffectWarlord(Player player, List<Player> players, Deck<DistrictCard> deck) {
+    /**
+     * Call the methods needed for the warlord
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param players                   the list of the players
+     * @param districtDiscardedDeck     the discard deck of the districts
+     */
+    public void playerWantToUseEffectWarlord(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardedDeck) {
         // Recover the effect that the warlord will use
 
-        DispatchState effect = warlordChooseEffectToUse(player, players);
+        DispatchState effect = warlordChooseEffectToUse(playerThatWantToUseEffect, players);
 
-        LOGGER.info(String.format("Le joueur %s (%s) a choisi l'effet %s pour le warlord", player.getName(), player.getPlayerRole().getCharacterName(), effect));
+        LOGGER.info(String.format("Le joueur %s (%s) a choisi l'effet %s pour le warlord", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), effect));
 
         if (effect == null) return;
 
         if (effect.equals(DispatchState.EARNDISTRICT_WARLORD)) {
             // Case where the warlord earn golds for each red district he has
-            int golds = player.getGolds();
-            player.getPlayerRole().useEffect(player, stackOfGolds);
-            view.printCharacterGetGolds(player, player.getPlayerRole().getCharacterColor(), player.getGolds() - golds);
+            int golds = playerThatWantToUseEffect.getGolds();
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
+            view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_WARLORD, true);
         } else {
             // Case where the warlord destroy a district
 
             // Create the list of the players that can be destroyed by the warlord
-            List<Player> playersNeeded = playerNeededForWarlordEffect(players, player);
+            List<Player> playersNeeded = playersNeededForWarlordEffect(players, playerThatWantToUseEffect);
 
             if (playersNeeded.isEmpty()) return;
 
-            Player playerToDestroy = player.choosePlayerToDestroy(playersNeeded);
-            LOGGER.info(String.format("Le joueur %s (%s) a choisi le joueur %s pour être détruit", player.getName(), player.getPlayerRole().getCharacterName(), playerToDestroy != null ? playerToDestroy.getName() : "null"));
+            Player playerToDestroy = playerThatWantToUseEffect.choosePlayerToDestroy(playersNeeded);
+            LOGGER.info(String.format("Le joueur %s (%s) a choisi le joueur %s pour être détruit", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), playerToDestroy != null ? playerToDestroy.getName() : "null"));
 
             if (playerToDestroy == null) return;
 
             // If the bot choose a player to destroy, we create the list of the districts that can be destroyed by the warlord for the playerToDestroy
-            List<DistrictCard> districtsNeeded = districtNeededForWarlordEffect(player, playerToDestroy);
+            List<DistrictCard> districtsNeeded = districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy);
 
             if (districtsNeeded.isEmpty()) return;
 
-            DistrictCard districtToDestroy = player.chooseDistrictToDestroy(playerToDestroy, districtsNeeded);
-            LOGGER.info(String.format("Le joueur %s (%s) a choisi le quartier %s du joueur %s pour être détruit", player.getName(), player.getPlayerRole().getCharacterName(), districtToDestroy.getDistrictName(), playerToDestroy.getName()));
+            DistrictCard districtToDestroy = playerThatWantToUseEffect.chooseDistrictToDestroy(playerToDestroy, districtsNeeded);
+            LOGGER.info(String.format("Le joueur %s (%s) a choisi le quartier %s du joueur %s pour être détruit", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), districtToDestroy.getDistrictName(), playerToDestroy.getName()));
 
             // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
-            player.getPlayerRole().useEffectWarlord(player, playerToDestroy, districtToDestroy, deck, this.stackOfGolds);
+            playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardedDeck, this.stackOfGolds);
             this.getIsEffectUsed().put(DispatchState.DESTROY, true);
             if (view != null && playerToDestroy.getPlayerRole() != null) {
-                view.printDistrictDestroyed(player, playerToDestroy, districtToDestroy);
+                view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
             }
 
             // If a bot has the graveyard, it can retrieve it by paying 1 gold
-            useGraveYard(players, districtToDestroy);
+            useGraveyard(players, districtToDestroy);
         }
     }
 
-    private void useGraveYard(List<Player> players, DistrictCard districtToDestroy) {
+    /**
+     * player choose to use the effect of the graveyard for the player who has it
+     *
+     * @param players           the list of the players
+     * @param districtToDestroy district which has been destroyed
+     */
+    private void useGraveyard(List<Player> players, DistrictCard districtToDestroy) {
         Player playerHasGraveyard = someoneHasGraveyard(players);
-        if (playerHasGraveyard != null && playerHasGraveyard.chooseUseGraveyardEffect() && playerHasGraveyard.getGolds() >= 1) {
+        if (playerHasGraveyard != null && playerHasGraveyard.chooseUseGraveyardEffect(districtToDestroy) && playerHasGraveyard.getGolds() >= 1) {
             playerHasGraveyard.setGolds(playerHasGraveyard.getGolds() - 1);
             stackOfGolds.addGoldsToStack(1);
             playerHasGraveyard.addCardToHand(districtToDestroy);
@@ -284,6 +355,28 @@ public class EffectController {
         }
     }
 
+    /**
+     * Checks if any player in the given list has the Graveyard district in their board.
+     *
+     * @param players A list of players to check for the Graveyard district.
+     * @return The first player found with the Graveyard district, or null if none have it.
+     */
+    public Player someoneHasGraveyard(List<Player> players) {
+        for (Player player : players) {
+            if (player.getBoard().contains(DistrictCard.GRAVEYARD)) {
+                return player;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Determines the warlord effect to be used based on the current state and available options.
+     *
+     * @param playerThatWantToUseEffect The player who wants to use the warlord effect.
+     * @param players                   A list of players in the game.
+     * @return The chosen warlord effect represented by a DispatchState enum.
+     */
     private DispatchState warlordChooseEffectToUse(Player playerThatWantToUseEffect, List<Player> players) {
         DispatchState warlordEffect = null;
 
@@ -303,19 +396,6 @@ public class EffectController {
         }
 
         return warlordEffect;
-    }
-
-    public Player getPlayerWhoStole() {
-        return playerWhoStole;
-    }
-
-    public Player someoneHasGraveyard(List<Player> players) {
-        for (Player player : players) {
-            if (player.getBoard().contains(DistrictCard.GRAVEYARD)) {
-                return player;
-            }
-        }
-        return null;
     }
 }
 

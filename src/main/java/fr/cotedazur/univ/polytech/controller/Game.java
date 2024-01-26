@@ -26,6 +26,7 @@ public class Game {
     // The comparator of the players
     private final PlayerComparator playerComparator;
     private final StackOfGolds stackOfGolds;
+
     // Random Object
     private final Random random = new Random();
     // The round number
@@ -33,7 +34,7 @@ public class Game {
     // All the decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck;
-    private int maxRound = 100; //prevent an infinite game
+    private final int maxRound = 100; //prevent an infinite game
 
 
     public Game(List<Player> players, GameView view) {
@@ -147,8 +148,6 @@ public class Game {
 
             //If the player complete 8 quarters
             addBonusPointsForPlayerWhoAdd8Districts(player);
-
-            //Bonus off purple cards (will be implemented later)
         }
     }
 
@@ -221,9 +220,5 @@ public class Game {
     public String startGameTest() {
         startGame();
         return players.get(0).getClass().getName();
-    }
-
-    public StackOfGolds getStackOfCoins() {
-        return stackOfGolds;
     }
 }

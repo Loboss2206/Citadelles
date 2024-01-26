@@ -262,7 +262,7 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public boolean chooseUseGraveyardEffect() {
+    public boolean chooseUseGraveyardEffect(DistrictCard districtDestroyed) {
         return true;
     }
 

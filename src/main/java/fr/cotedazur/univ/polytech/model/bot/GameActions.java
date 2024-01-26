@@ -129,5 +129,5 @@ public interface GameActions {
      *
      * @return true if he wants to use the effect, false otherwise
      */
-    boolean chooseUseGraveyardEffect();
+    boolean chooseUseGraveyardEffect(DistrictCard districtDestroyed);
 }

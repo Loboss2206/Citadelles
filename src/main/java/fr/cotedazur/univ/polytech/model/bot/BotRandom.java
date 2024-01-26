@@ -203,7 +203,7 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public boolean chooseUseGraveyardEffect() {
+    public boolean chooseUseGraveyardEffect(DistrictCard districtDestroyed) {
         int choice = random.nextInt(2);
         return choice == 0;
     }
