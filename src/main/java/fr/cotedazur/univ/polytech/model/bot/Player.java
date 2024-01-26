@@ -160,7 +160,7 @@ public abstract class Player implements GameActions {
                 validCards.add(card);
             }
         }
-        LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards.toString());
+        LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards);
     }
 
     /**
@@ -270,7 +270,7 @@ public abstract class Player implements GameActions {
      * @return true if the player has a district that can be destroyed, else false
      */
     public boolean playerHasADestroyableDistrict(Player warlord) {
-        if (this.getBoard().isEmpty() || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead())) {
+        if (this.getBoard().isEmpty() || this.getBoard().size() >= 8 || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead())) {
             LOGGER.info("Le joueur " + name + " n'a pas de quartier détruisable");
             return false;
         }
