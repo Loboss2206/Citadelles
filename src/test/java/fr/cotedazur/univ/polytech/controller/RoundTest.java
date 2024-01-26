@@ -6,8 +6,8 @@ import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -69,9 +69,9 @@ class RoundTest {
     }
 
     @Test
-    void testPresenceOfDiscardedKingWith4Player(){
+    void testPresenceOfDiscardedKingWith4Player() {
         players.addAll(Arrays.asList(botRandom1, botRandom2, botRandom3, botRandom4));
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1 , new StackOfGolds());
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1, new StackOfGolds());
         round.startRound();
         assertSame(2, round.getCharacterDiscardDeck().size());
         assertFalse(round.getCharacterDiscardDeck().contains(CharacterCard.KING));
@@ -126,17 +126,19 @@ class RoundTest {
     }
 
     @Test
-    void testPutDistrictForPlayer(){
+    void testPutDistrictForPlayer() {
         Player player = new BotWeak();
         player.setGolds(4);
         player.setPlayerRole(CharacterCard.BISHOP);
-        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(),1 , new StackOfGolds());
+        Round round = new Round(players, new GameView(), DeckFactory.createDistrictDeck(), DeckFactory.createEmptyDistrictDeck(), 1, new StackOfGolds());
         round.getStackOfGolds().takeAGold();
-        round.getStackOfGolds().takeAGold();round.getStackOfGolds().takeAGold();round.getStackOfGolds().takeAGold();
+        round.getStackOfGolds().takeAGold();
+        round.getStackOfGolds().takeAGold();
+        round.getStackOfGolds().takeAGold();
         player.addCardToHand(DistrictCard.MARKET);
         player.addCardToHand(DistrictCard.CASTLE);
         round.putDistrictForPlayer(player);
         assertEquals(2, player.getGolds());
-        assertEquals(28,round.getStackOfGolds().getNbGolds());
+        assertEquals(28, round.getStackOfGolds().getNbGolds());
     }
 }

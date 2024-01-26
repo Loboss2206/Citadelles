@@ -4,25 +4,26 @@ import fr.cotedazur.univ.polytech.controller.EffectController;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
+import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
 
 class BotWeakTest {
 
     Player botWeak;
     Deck<DistrictCard> districtDeck;
 
-    HashMap<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new HashMap<>();
-
+    Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
 
 
     @BeforeEach
@@ -31,8 +32,8 @@ class BotWeakTest {
         botWeak = new BotWeak();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsWanted", new ArrayList<>());
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put("cardsNotWanted", new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
     }
 
     @Test
@@ -292,47 +293,47 @@ class BotWeakTest {
         botWeak.getHands().add(DistrictCard.MARKET);
         botWeak.setGolds(80);
         botWeak.setPlayerRole(CharacterCard.ASSASSIN);
-        assertEquals("drawCard", botWeak.startChoice());
+        assertEquals(DispatchState.DRAWCARD, botWeak.startChoice());
 
         //when there is not enough golds
         botWeak.setGolds(0);
-        assertEquals("2golds", botWeak.startChoice());
+        assertEquals(DispatchState.TWOGOLDS, botWeak.startChoice());
 
         //when hand is empty
         botWeak.setGolds(80);
         botWeak.getHands().clear();
-        assertEquals("drawCard", botWeak.startChoice());
+        assertEquals(DispatchState.DRAWCARD, botWeak.startChoice());
     }
 
     @Test
-    void testDrawCard(){
-        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.CASTLE,DistrictCard.PALACE,DistrictCard.TAVERN,DistrictCard.MARKET);//Just for the test we add 4 cards
-        ArrayList<DistrictCard> cardTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted");
-        ArrayList<DistrictCard> cardsDontTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted");
-  
+    void testDrawCard() {
+        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.CASTLE, DistrictCard.PALACE, DistrictCard.TAVERN, DistrictCard.MARKET);//Just for the test we add 4 cards
+        ArrayList<DistrictCard> cardTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED);
+        ArrayList<DistrictCard> cardsDontTakenByTheBotWeak = cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED);
+
         assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.CASTLE));
         assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.PALACE));
         assertTrue(cardsDontTakenByTheBotWeak.contains(DistrictCard.MARKET));
-        assertEquals(DistrictCard.TAVERN,cardTakenByTheBotWeak.get(0));
-        assertEquals(3,cardsDontTakenByTheBotWeak.size());
-        assertEquals(1,cardTakenByTheBotWeak.size());
+        assertEquals(DistrictCard.TAVERN, cardTakenByTheBotWeak.get(0));
+        assertEquals(3, cardsDontTakenByTheBotWeak.size());
+        assertEquals(1, cardTakenByTheBotWeak.size());
     }
 
     @Test
-    void testLibraryAndObservatory(){
+    void testLibraryAndObservatory() {
         botWeak.getBoard().add(DistrictCard.LIBRARY);
         botWeak.getBoard().add(DistrictCard.OBSERVATORY);
         int oldHandSize = botWeak.getHands().size();
 
-        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant,DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.SCHOOL_OF_MAGIC);
-        botWeak.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted"));
+        botWeak.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.SCHOOL_OF_MAGIC);
+        botWeak.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
 
         //Verify that the hand size is correct
-        assertEquals(oldHandSize + 2,botWeak.getHands().size());
+        assertEquals(oldHandSize + 2, botWeak.getHands().size());
 
         //Verify that there is 2 cards claimed and 1 card leaved
-        assertEquals(2,cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").size());
-        assertEquals(1,cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").size());
+        assertEquals(2, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size());
+        assertEquals(1, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).size());
 
         assertTrue(botWeak.getHands().contains(DistrictCard.MARKET));
         assertTrue(botWeak.getHands().contains(DistrictCard.PALACE));

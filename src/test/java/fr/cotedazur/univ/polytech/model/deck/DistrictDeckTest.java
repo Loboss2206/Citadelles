@@ -1,10 +1,9 @@
 package fr.cotedazur.univ.polytech.model.deck;
 
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import org.junit.jupiter.api.Test;
 
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 class DistrictDeckTest {
 

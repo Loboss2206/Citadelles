@@ -9,6 +9,8 @@ import java.util.*;
 
 public class BotWeak extends Player implements GameActions {
 
+    private final Random random = new Random();
+
     public BotWeak() {
         super();
     }
@@ -25,15 +27,15 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public String startChoice() {
+    public DispatchState startChoice() {
         discoverValidCard();
-        if(getGolds() == 0){
-            return "2golds";
+        if (getGolds() == 0) {
+            return DispatchState.TWOGOLDS;
         }
         if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 15) {
-            return "drawCard";
+            return DispatchState.DRAWCARD;
         }
-        return "2golds";
+        return DispatchState.TWOGOLDS;
     }
 
     @Override
@@ -71,7 +73,7 @@ public class BotWeak extends Player implements GameActions {
             LOGGER.info("Le joueur " + getName() + " prend l'architecte, car il est désigné comme optimal");
             return characters.indexOf(CharacterCard.ARCHITECT);
         } else if (hasColoredCards()) {
-            HashMap<Color, Integer> colorMap = createColorMap(characters);
+            Map<Color, Integer> colorMap = createColorMap(characters);
             List<Map.Entry<Color, Integer>> entryList = new ArrayList<>(colorMap.entrySet());
             entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
 
@@ -82,7 +84,6 @@ public class BotWeak extends Player implements GameActions {
 
         }
 
-        Random random = new Random();
         return random.nextInt(characters.size());
     }
 
@@ -128,19 +129,19 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
+    public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
         listOfCardsForSort.sort(districtCardComparator);
         for (int i = 0; i < listOfCardsForSort.size(); i++) {
             if (i == 0 || (this.getBoard().contains(DistrictCard.LIBRARY) && i == 1)) {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsWanted").add(listOfCardsForSort.get(i));
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).add(listOfCardsForSort.get(i));
             } else {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted").add(listOfCardsForSort.get(i));
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).add(listOfCardsForSort.get(i));
             }
         }
-        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get("cardsNotWanted"));
+        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED));
     }
 
     @Override
@@ -171,8 +172,8 @@ public class BotWeak extends Player implements GameActions {
      * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
      * and the values are the counts of cards of that color in the given list.
      */
-    private HashMap<Color, Integer> createColorMap(List<CharacterCard> characters) {
-        HashMap<Color, Integer> hashMap = new HashMap<>();
+    private Map<Color, Integer> createColorMap(List<CharacterCard> characters) {
+        Map<Color, Integer> hashMap = new EnumMap<>(Color.class);
         if (characters.contains(CharacterCard.KING))
             hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
         if (characters.contains(CharacterCard.BISHOP))
@@ -199,25 +200,25 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public String whichWarlordEffect(List<Player> players) {
+    public DispatchState whichWarlordEffect(List<Player> players) {
         for (Player player : players) {
             for (DistrictCard districtCard : player.getBoard()) {
-                if (districtCard.getDistrictValue() <= 1) return "Destroy";
+                if (districtCard.getDistrictValue() <= 1) return DispatchState.KILL;
             }
         }
-        return "EarnDistrictWarlord";
+        return DispatchState.EARNDISTRICT_WARLORD;
     }
 
     @Override
-    public String whichMagicianEffect(List<Player> players) {
+    public DispatchState whichMagicianEffect(List<Player> players) {
         int nbCardPlayer = this.getHands().size();
         for (Player p : players) {
             int nbCardOther = p.getHands().size();
             if (nbCardOther > nbCardPlayer) {
-                return "ExchangePlayer";
+                return DispatchState.EXCHANGEPLAYER;
             }
         }
-        return "ExchangeDeck";
+        return DispatchState.EXCHANGEDECK;
     }
 
     @Override
@@ -261,7 +262,21 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public boolean chooseUseGraveyardEffect(){
+    public boolean chooseUseGraveyardEffect() {
         return true;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        BotWeak botWeak = (BotWeak) o;
+        return Objects.equals(random, botWeak.random);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(super.hashCode(), random);
     }
 }

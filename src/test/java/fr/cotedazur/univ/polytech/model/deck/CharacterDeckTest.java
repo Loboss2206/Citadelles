@@ -1,8 +1,7 @@
 package fr.cotedazur.univ.polytech.model.deck;
 
-import org.junit.jupiter.api.Test;
-
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 

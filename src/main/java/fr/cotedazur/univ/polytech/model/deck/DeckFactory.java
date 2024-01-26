@@ -1,16 +1,20 @@
 package fr.cotedazur.univ.polytech.model.deck;
 
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 
 /**
  * The DeckFactory class is responsible for creating different types of decks.
  */
 public class DeckFactory {
+
+    private DeckFactory() {
+        // This class should not be instantiated.
+    }
 
     /**
      * Creates a character deck containing all the role cards.

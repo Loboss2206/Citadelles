@@ -5,7 +5,6 @@ import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -22,7 +21,7 @@ public interface GameActions {
      *
      * @return his choice
      */
-    String startChoice();
+    DispatchState startChoice();
 
     /**
      * function where the player choose to put or not a district on his board
@@ -71,7 +70,7 @@ public interface GameActions {
      * @param players the players of the game
      * @return the effect chosen
      */
-    String whichWarlordEffect(List<Player> players);
+    DispatchState whichWarlordEffect(List<Player> players);
 
     /**
      * function where the player choose the effect he wants use as magician
@@ -79,7 +78,7 @@ public interface GameActions {
      * @param players the players of the game
      * @return the effect chosen
      */
-    String whichMagicianEffect(List<Player> players);
+    DispatchState whichMagicianEffect(List<Player> players);
 
     /**
      * function where the player choose the cards he wants to exchange with the deck
@@ -108,23 +107,26 @@ public interface GameActions {
      *
      * @param cards the cards he draws
      */
-     void drawCard(Map<String, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
+    void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards);//When we will implement th purple card that let us draw 3 cards
 
-     /**
+    /**
      * function where the player choose to use the effect of his character or not
+     *
      * @param beforePuttingADistrict true if it is before putting a district, false otherwise
      * @return true if he wants to use the effect, false otherwise
      */
-     boolean wantToUseEffect(boolean beforePuttingADistrict);
+    boolean wantToUseEffect(boolean beforePuttingADistrict);
 
-     /**
+    /**
      * function where the player choose to use the effect of the smithy or not
+     *
      * @return true if he wants to use the effect, false otherwise
      */
     boolean wantsToUseSmithyEffect();
 
     /**
      * function where the player choose to use the effect of the graveyard or not
+     *
      * @return true if he wants to use the effect, false otherwise
      */
     boolean chooseUseGraveyardEffect();

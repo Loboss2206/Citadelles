@@ -1,5 +1,7 @@
 package fr.cotedazur.univ.polytech.view;
 
+import fr.cotedazur.univ.polytech.logger.LamaLogger;
+import fr.cotedazur.univ.polytech.model.bot.DispatchState;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
@@ -10,7 +12,7 @@ import java.util.List;
 import java.util.StringJoiner;
 
 public class GameView {
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(GameView.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
     private boolean display = true;
 
@@ -28,7 +30,7 @@ public class GameView {
      * @param i the current round number
      */
     public void printStartRound(int i) {
-        System.out.println("----------------------------------------------------------------------\n");
+        displayMessage("----------------------------------------------------------------------\n");
         displayMessage("Début du round n°" + i);
     }
 
@@ -47,21 +49,21 @@ public class GameView {
      * @param action the action used
      * @param player the player concerned
      */
-    public void printPlayerAction(String action, Player player) {
+    public void printPlayerAction(DispatchState action, Player player) {
         String playerNameAndRole = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
         switch (action) {
-            case "2golds" ->
+            case TWOGOLDS ->
                     displayMessage(playerNameAndRole + " a choisi de prendre 2 pièces d'or, il possède maintenant " + player.getGolds() + " pièces d'or.");
-            case "drawCard" -> {
+            case DRAWCARD -> {
                 if (player.getBoard().contains(DistrictCard.LIBRARY)) {
                     displayMessage(playerNameAndRole + " a choisi de piocher deux carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
                 } else {
                     displayMessage(playerNameAndRole + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
                 }
             }
-            case "putDistrict" ->
+            case PLACEDISTRICT ->
                     displayMessage(playerNameAndRole + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
-            case "cantPlay" ->
+            case CANTPLAY ->
                     displayMessage(playerNameAndRole + " ne peut rien faire car il n'y a plus de pieces ni de cartes :");
             default -> throw new IllegalStateException("Unexpected action: " + action);
         }
@@ -82,7 +84,7 @@ public class GameView {
      * @param listOfPlayers the list of players already sorted by the game controller
      */
     public void printPlayersRanking(List<Player> listOfPlayers) {
-        System.out.println("----------------------------------------------------------------------\n");
+        displayMessage("----------------------------------------------------------------------\n");
         displayMessage("Fin du jeu, voici le classement :");
         int i = 0;//Used for ranking the player
         for (Player player : listOfPlayers) {
@@ -203,11 +205,11 @@ public class GameView {
      * @param players the list of players
      */
     public void printRecapOfAllPlayers(List<Player> players) {
-        System.out.println("---------------------Récapitulatif des joueurs------------------------");
+        displayMessage("---------------------Récapitulatif des joueurs------------------------");
         for (Player player : players) {
             displayMessage("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") possède " + player.getGolds() + " pièces d'or et " + player.getHands().size() + " cartes dans sa main");
         }
-        System.out.println("----------------------------------------------------------------------\n");
+        displayMessage("----------------------------------------------------------------------\n");
     }
 
     /**
@@ -260,11 +262,11 @@ public class GameView {
     }
 
     public void printBoardOfAllPlayers(List<Player> players) {
-        System.out.println("--------------------------Board des joueurs---------------------------");
+        displayMessage("--------------------------Board des joueurs---------------------------");
         for (Player p : players) {
             displayMessage(p.getName() + " | board : " + p.getBoard());
         }
-        System.out.println("-----------------------------------------------------------------------\n");
+        displayMessage("-----------------------------------------------------------------------\n");
     }
 
     public void noDisplay(boolean b) {

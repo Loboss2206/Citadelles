@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BotAVsBotBTest {
     ArrayList<Player> players = new ArrayList<>();
@@ -34,10 +34,10 @@ class BotAVsBotBTest {
     }
 
     @Test
-    void testBattleBetweenBotRandomAndWeak(){
+    void testBattleBetweenBotRandomAndWeak() {
         int numberOfWeakBot = 0;
         int numberOfRandomBot = 0;
-        for(int i = 0; i < 100; i++){
+        for (int i = 0; i < 100; i++) {
             player = new BotRandom();
 
             player2 = new BotWeak();
@@ -60,9 +60,9 @@ class BotAVsBotBTest {
 
             game = new Game(players, new GameView());
             String winnerOfTheGameClass = game.startGameTest();
-            if(winnerOfTheGameClass.equals(BotRandom.class.getName()))
+            if (winnerOfTheGameClass.equals(BotRandom.class.getName()))
                 numberOfRandomBot++;
-            else if(winnerOfTheGameClass.equals(BotWeak.class.getName()))
+            else if (winnerOfTheGameClass.equals(BotWeak.class.getName()))
                 numberOfWeakBot++;
         }
         System.out.println(((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
