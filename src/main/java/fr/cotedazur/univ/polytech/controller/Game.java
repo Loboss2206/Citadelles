@@ -3,6 +3,7 @@ package fr.cotedazur.univ.polytech.controller;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
+import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
@@ -164,8 +165,10 @@ public class Game {
         }
 
         if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() != roundNumber) {
-            Color hauntedColor = player.chooseColorForDistrictCard();
-            colors.put(hauntedColor, true);
+            if (player.getPlayerRole() == CharacterCard.KING || player.getPlayerRole() == CharacterCard.BISHOP || player.getPlayerRole() == CharacterCard.MERCHANT || player.getPlayerRole() == CharacterCard.WARLORD) {
+                Color hauntedColor = player.chooseColorForDistrictCard();
+                colors.put(hauntedColor, true);
+            }
         }
 
         for (DistrictCard card : player.getBoard()) {

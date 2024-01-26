@@ -121,7 +121,7 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(26, player.getPoints());
+        assertEquals(29, player.getPoints());
         assertEquals(18, player2.getPoints());
 
         //Test the case when the player has putted the card laboratory the previous previous turn
@@ -129,7 +129,7 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(26, player.getPoints());
+        assertEquals(29, player.getPoints());
         assertEquals(18, player2.getPoints());
 
     }

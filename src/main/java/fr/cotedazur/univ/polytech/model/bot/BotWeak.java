@@ -110,10 +110,7 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public Color chooseColorForDistrictCard() {
-        if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
-            return getPlayerRole().getCharacterColor();
-        }
-        return null;
+        return getPlayerRole().getCharacterColor();
     }
 
     @Override
