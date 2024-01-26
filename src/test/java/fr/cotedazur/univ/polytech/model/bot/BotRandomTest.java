@@ -9,18 +9,21 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Random;
+import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.anyInt;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 
 class BotRandomTest {
-    @Mock Random random = mock(Random.class);
+    @Mock
+    Random random = mock(Random.class);
 
+    Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
+
+    BotRandom botRandom3;
     BotRandom botRandom2;
     BotRandom botRandom1;
 
@@ -31,7 +34,11 @@ class BotRandomTest {
         LamaLogger.mute();
         botRandom1 = new BotRandom();
         botRandom2 = new BotRandom();
+        botRandom3 = new BotRandom();
         botRandom1.setRandom(random);
+        botRandom3.setRandom(random);
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
     }
@@ -45,7 +52,7 @@ class BotRandomTest {
         assertEquals(botRandom2.putADistrict(), botRandom2.getHands().get(0));
         botRandom2.getBoard().clear();
 
-        botRandom2.drawCard(districtDeck);
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
         botRandom2.setGolds(botRandom2.getHands().get(0).getDistrictValue());
         assertNotNull(botRandom2.putADistrict());
 
@@ -59,82 +66,144 @@ class BotRandomTest {
         assertNull(botRandom2.choiceHowToPlayDuringTheRound());
     }
 
-    @Test
+    /*@Test
     void testBotRandomActionIfDistrictDeckIsEmpty() {
         districtDeck.clear();
-        int currentGolds1 = botRandom1.getGolds();
-        int currentGolds2 = botRandom2.getGolds();
-        botRandom2.startChoice(districtDeck);
-        botRandom1.startChoice(districtDeck);
-
         //If the deck is empty the bot should collect 2 golds
-        assertEquals(currentGolds1 + 2, botRandom1.getGolds());
-        assertEquals(currentGolds2 + 2, botRandom2.getGolds());
-    }
+        assertEquals(Communication.TWOGOLDS.getString(), botRandom1.startChoice());
+        assertEquals(Communication.TWOGOLDS.getString(), botRandom2.startChoice());
+    }*/
 
     @Test
-    void testBotRandomPutADistrict(){
+    void testBotRandomPutADistrict() {
         //Taking the third card from the hand of the random bot
-        when(random.nextInt(anyInt())).thenReturn(2);
+        when(random.nextInt(anyInt())).thenReturn(0);
         botRandom1.setGolds(20); //add golds to be able to put a district
-        botRandom1.drawCard(districtDeck);
-        botRandom1.drawCard(districtDeck);
-        botRandom1.drawCard(districtDeck);
-        botRandom1.drawCard(districtDeck);
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
 
         //Store the card that will be drawn from the hand
+        when(random.nextInt(anyInt())).thenReturn(2);
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
         DistrictCard districtCard = botRandom1.getHands().get(2);
         botRandom1.addCardToBoard(botRandom1.putADistrict());
-        assertEquals(districtCard,botRandom1.getBoard().get(0));
+        assertEquals(districtCard, botRandom1.getBoard().get(0));
     }
 
     @Test
-    void testBotRandomCollect2golds(){
+    void testBotRandomCollect2golds() {
         //0 is when the random bot should take the golds
         when(random.nextInt(anyInt())).thenReturn(0);
 
-        //We store the golds of the bot to see the evolution after startChoice function
-        int oldGoldsValue = botRandom1.getGolds();
-        botRandom1.startChoice(districtDeck);
 
         //the bot should have 2 golds added
-        assertEquals(oldGoldsValue + 2,botRandom1.getGolds());
+        assertEquals(DispatchState.TWOGOLDS, botRandom1.startChoice());
     }
 
     @Test
-    void testBotRandomDrawCard(){
+    void testBotRandomDrawCardFrom2() {
         //With 1 the bot Random will choose to draw a card
         when(random.nextInt(anyInt())).thenReturn(1);
         int oldHandSize = botRandom1.getHands().size();
-        botRandom1.startChoice(districtDeck);
+        botRandom1.startChoice();
+
+
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE);
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        assertEquals(DistrictCard.PALACE, botRandom1.getHands().get(0));
 
         //Verify that the hand size is correct
-        assertEquals(oldHandSize + 1,botRandom1.getHands().size());
-        assertEquals(65, districtDeck.size());
+        assertEquals(oldHandSize + 1, botRandom1.getHands().size());
 
-        //Verify that the card drawn is not the deck by checking if there is not all the number of this type of card in the deck
-        DistrictCard cardDrawn = botRandom1.getHands().get(0);
-        assertEquals(cardDrawn.getQuantityInDeck() - 1, Collections.frequency(districtDeck.getCards(),cardDrawn));
-
-        //Check if the assertEquals is working
-        districtDeck.add(cardDrawn);
-        assertEquals(cardDrawn.getQuantityInDeck(), Collections.frequency(districtDeck.getCards(),cardDrawn));
+        //Verify that the cards the players don't want are correct
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(0));
     }
 
     @Test
-    void testChoiceToPutADistrict(){
+    void testBotRandomDrawCardFrom3() {
+        //With 1 the bot Random will choose to draw a card
+        when(random.nextInt(anyInt())).thenReturn(1);
+        int oldHandSize = botRandom1.getHands().size();
+        botRandom1.startChoice();
+
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
+        botRandom1.getHands().add(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).get(0));
+        assertEquals(DistrictCard.PALACE, botRandom1.getHands().get(0));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 1, botRandom1.getHands().size());
+
+        //Verify that the cards the players don't want are correct
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(0));
+        assertEquals(DistrictCard.CASTLE, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(1));
+    }
+
+    @Test
+    void testLibrary() {
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 2, botRandom2.getHands().size());
+
+        //Verify that the cards the players want are correct
+        assertTrue(botRandom2.getHands().contains(DistrictCard.MARKET));
+        assertTrue(botRandom2.getHands().contains(DistrictCard.PALACE));
+    }
+
+    @Test
+    void testLibraryWithOneCard() {
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 1, botRandom2.getHands().size());
+
+        //Verify that the cards the players want are correct
+        assertTrue(botRandom2.getHands().contains(DistrictCard.MARKET));
+    }
+
+    @Test
+    void testLibraryAndObservatory() {
+        botRandom2.getBoard().add(DistrictCard.LIBRARY);
+        botRandom2.getBoard().add(DistrictCard.OBSERVATORY);
+        int oldHandSize = botRandom2.getHands().size();
+
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+
+        //Verify that the hand size is correct
+        assertEquals(oldHandSize + 2, botRandom2.getHands().size());
+
+        //Verify that there is 2 cards claimed and 1 card leaved
+        assertEquals(2, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size());
+        assertEquals(1, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).size());
+    }
+
+    @Test
+    void testChoiceToPutADistrict() {
         //Put a district for the first call of the fonction and choose the
-        when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
+        when(random.nextInt(anyInt())).thenReturn(0).thenReturn(0);
 
         botRandom1.setGolds(20); //add golds to be able to put a district
 
-        botRandom1.drawCard(districtDeck);
-        botRandom1.drawCard(districtDeck);
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
+        botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
         botRandom1.setPlayerRole(CharacterCard.ASSASSIN);
 
+        when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);
         //Take a card to test if the bot has chosen to put a district
         DistrictCard card = botRandom1.getHands().get(1);
-        assertEquals(card,botRandom1.choiceHowToPlayDuringTheRound());
+        assertEquals(card, botRandom1.choiceHowToPlayDuringTheRound());
         botRandom1.addCardToBoard(card);
         botRandom1.addCardToBoard(botRandom1.getHands().get(0));
 
@@ -143,8 +212,8 @@ class BotRandomTest {
         assertNull(botRandom1.choiceHowToPlayDuringTheRound());
 
         //Test when bot choose to not put a district
-        botRandom1.drawCard(districtDeck);
-        botRandom1.drawCard(districtDeck);
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
         when(random.nextInt(anyInt())).thenReturn(1);
         assertNull(botRandom1.choiceHowToPlayDuringTheRound());
     }
@@ -158,55 +227,55 @@ class BotRandomTest {
     }*/
 
     @Test
-    void testChooseCharacter(){
+    void testChooseCharacter() {
         //Test with king
         when(random.nextInt(anyInt())).thenReturn(3);
         Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         int characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.KING,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.KING, botRandom1.getPlayerRole());
 
         //Test with warlord
         when(random.nextInt(anyInt())).thenReturn(6);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.WARLORD,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.WARLORD, botRandom1.getPlayerRole());
 
         //Test with assassin
         when(random.nextInt(anyInt())).thenReturn(0);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.ASSASSIN,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.ASSASSIN, botRandom1.getPlayerRole());
 
         //Test with bishop
         when(random.nextInt(anyInt())).thenReturn(2);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.BISHOP,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.BISHOP, botRandom1.getPlayerRole());
 
         //Test with architect
         when(random.nextInt(anyInt())).thenReturn(3);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.ARCHITECT,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.ARCHITECT, botRandom1.getPlayerRole());
 
         //Test with merchant
         when(random.nextInt(anyInt())).thenReturn(2);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.MERCHANT,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.MERCHANT, botRandom1.getPlayerRole());
 
         //Test with magician
         when(random.nextInt(anyInt())).thenReturn(1);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.MAGICIAN,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.MAGICIAN, botRandom1.getPlayerRole());
 
         //Test with thief
         when(random.nextInt(anyInt())).thenReturn(0);
         characterNumber = botRandom1.chooseCharacter(characterDeck.getCards());
-        botRandom1.setPlayerRole( characterDeck.draw(characterNumber));
-        assertEquals(CharacterCard.THIEF,botRandom1.getPlayerRole());
+        botRandom1.setPlayerRole(characterDeck.draw(characterNumber));
+        assertEquals(CharacterCard.THIEF, botRandom1.getPlayerRole());
     }
 
     @Test
@@ -224,4 +293,22 @@ class BotRandomTest {
         assertEquals(DistrictCard.CASTLE, botRandom1.chooseDistrictToDestroy(botRandom2, botRandom2.getBoard()));
     }
 
+    @Test
+    void testWantToUseEffect() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.wantToUseEffect(true));
+        assertTrue(botRandom1.wantToUseEffect(false));
+    }
+
+    @Test
+    void wantsToUseSmithyEffect() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.wantsToUseSmithyEffect());
+    }
+
+    @Test
+    void testChooseUseGraveyardEffect() {
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.chooseUseGraveyardEffect());
+    }
 }

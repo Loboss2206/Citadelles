@@ -9,6 +9,10 @@ import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 class PlayerTest {
@@ -17,8 +21,8 @@ class PlayerTest {
     BotRandom botRandom0;
 
     BotRandom botRandom2;
+    Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
     private Deck<DistrictCard> districtDeck;
-
 
     @BeforeEach
     void setUp() {
@@ -29,6 +33,8 @@ class PlayerTest {
         botRandom2 = new BotRandom();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
     }
 
     /**
@@ -52,11 +58,11 @@ class PlayerTest {
     void testDrawCard() {
         Deck<DistrictCard> copyDeck;
         copyDeck = DeckFactory.createDistrictDeck();
-        botRandom2.drawCard(districtDeck);
-
+        botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw(), districtDeck.draw());
+        districtDeck.add(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(0));
         //If the card is correctly removed
-        assertEquals(66, copyDeck.size());
-        assertEquals(65, districtDeck.size());
+        assertEquals(65, copyDeck.size());
+        assertEquals(64, districtDeck.size());
     }
 
     @Test
@@ -68,7 +74,19 @@ class PlayerTest {
 
         botRandom2.getBoard().clear();
         botRandom2.addCardToBoard(DistrictCard.TRADING_POST);
-        assertEquals(botRandom2.getBoard().size(), 1);
+        assertEquals(1, botRandom2.getBoard().size());
+    }
+
+    @Test
+    void testAddCardOnTheHand() {
+        assertTrue(botRandom2.getHands().isEmpty());
+        botRandom2.addCardToHand(DistrictCard.TRADING_POST);
+        assertNotNull(botRandom2.getHands().get(0));
+        assertEquals(DistrictCard.TRADING_POST, botRandom2.getHands().get(0));
+
+        botRandom2.getHands().clear();
+        botRandom2.addCardToHand(DistrictCard.CASTLE);
+        assertEquals(1, botRandom2.getHands().size());
     }
 
     @Test

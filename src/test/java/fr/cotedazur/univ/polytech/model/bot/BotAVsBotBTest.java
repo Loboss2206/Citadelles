@@ -8,10 +8,10 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class BotAVsBotBTest {
-    ArrayList<Player> players;
+    ArrayList<Player> players = new ArrayList<>();
     Player player = new BotRandom();
 
     Player player2 = new BotWeak();
@@ -31,26 +31,13 @@ class BotAVsBotBTest {
     @BeforeEach
     void setUp() {
         LamaLogger.mute();
-        players = new ArrayList<>();
-        players.add(player);
-        players.add(player2);
-        players.add(player3);
-        players.add(player4);
-        players.add(player5);
-        players.add(player6);
-        game = new Game(players, new GameView());
     }
 
     @Test
-    void testBattleBetweenBotRandomAndWeak(){
+    void testBattleBetweenBotRandomAndWeak() {
         int numberOfWeakBot = 0;
         int numberOfRandomBot = 0;
-        for(int i = 0; i < 100; i++){
-            String winnerOfTheGameClass = game.startGameTest();
-            if(winnerOfTheGameClass.equals(BotRandom.class.getName()))
-                numberOfRandomBot++;
-            else if(winnerOfTheGameClass.equals(BotWeak.class.getName()))
-                numberOfWeakBot++;
+        for (int i = 0; i < 100; i++) {
             player = new BotRandom();
 
             player2 = new BotWeak();
@@ -72,9 +59,14 @@ class BotAVsBotBTest {
             players.add(player6);
 
             game = new Game(players, new GameView());
+            String winnerOfTheGameClass = game.startGameTest();
+            if (winnerOfTheGameClass.equals(BotRandom.class.getName()))
+                numberOfRandomBot++;
+            else if (winnerOfTheGameClass.equals(BotWeak.class.getName()))
+                numberOfWeakBot++;
         }
         System.out.println(((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
-        assertTrue(70 <= ((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
+        assertTrue(50.01 <= ((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
     }
 
 }

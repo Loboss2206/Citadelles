@@ -4,13 +4,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.*;
-import java.util.logging.Logger;
 
 public class LamaLogger {
 
-    private final static java.util.logging.Logger LOGGER = Logger.getLogger("");
-
+    private static final java.util.logging.Logger LOGGER = Logger.getLogger("");
     private static final List<Handler> handlers = new ArrayList<>();
+
+    private LamaLogger() {
+        // This class should not be instantiated.
+    }
 
     private static void setHandler4Formatter() {
         for (Handler h : LOGGER.getHandlers()) {
@@ -30,7 +32,7 @@ public class LamaLogger {
                 handlers.add(fileHandler);
                 setHandler4Formatter();
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                throw new IllegalStateException("Cannot create log file at " + path, e);
             }
         }
     }

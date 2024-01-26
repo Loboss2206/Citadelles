@@ -4,6 +4,7 @@ import fr.cotedazur.univ.polytech.logger.LamaLogger;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /**
  * The Deck class represents a generic deck of cards.
@@ -12,9 +13,11 @@ import java.util.List;
  * @param <T> the type of cards in the deck
  */
 public class Deck<T extends Enum<T>> {
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
     private final List<T> cards;
+
+    private final Random random = new Random();
 
     /**
      * Constructs a deck with the given list of cards.
@@ -29,7 +32,7 @@ public class Deck<T extends Enum<T>> {
      * Constructs an empty deck.
      */
     public Deck() {
-        this.cards = new ArrayList<T>();
+        this.cards = new ArrayList<>();
     }
 
     /**
@@ -67,9 +70,9 @@ public class Deck<T extends Enum<T>> {
     /**
      * Shuffles the cards in the deck using the Fisher-Yates algorithm.
      */
-    public void shuffle(){
+    public void shuffle() {
         for (int i = getCards().size() - 1; i > 0; i--) {
-            int j = (int) (Math.random() * (i + 1));
+            int j = random.nextInt(i + 1);
             T temp = getCards().get(i);
             getCards().set(i, getCards().get(j));
             getCards().set(j, temp);
@@ -92,7 +95,7 @@ public class Deck<T extends Enum<T>> {
      * @param card the card to add to the deck
      */
     public void addRandom(T card) {
-        cards.add((int) (Math.random() * cards.size()), card);
+        cards.add(random.nextInt(cards.size()), card);
     }
 
     /**

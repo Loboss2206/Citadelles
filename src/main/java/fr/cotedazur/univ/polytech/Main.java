@@ -10,14 +10,13 @@ import fr.cotedazur.univ.polytech.view.GameView;
 import java.util.ArrayList;
 
 public class Main {
-    private final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
-
+    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
     public static void main(String... args) {
 
         // Logger setup
         LamaLogger.setupFileLog(true, "game.log");
-        LamaLogger.setupConsole(true,true);
+        LamaLogger.setupConsole(true, true);
         LOGGER.setLevel(java.util.logging.Level.INFO); // Change to Level.OFF to disable the logger or Level.INFO to enable it
 
         // View setup
@@ -34,7 +33,7 @@ public class Main {
         }
 
         // Game setup
-        Game game = new Game(players,view);
+        Game game = new Game(players, view);
 
         // Start the game
         game.startGame();

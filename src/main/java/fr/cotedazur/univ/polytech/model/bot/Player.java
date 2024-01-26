@@ -1,59 +1,44 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
-import fr.cotedazur.univ.polytech.model.card.Color;
-import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.deck.Deck;
+import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public abstract class Player implements GameActions {
-    protected final static java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
-
+    protected static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    // Increment for each player created
+    private static int count = 0;
     //All players have a unique id
     private final int id;
-
+    //cards in the hand of the player which he can buy during his turn
+    protected ArrayList<DistrictCard> validCards;
+    //to find out if the player is the first to add 8 district on his board
+    boolean isFirstToAdd8district = false;
     //All players have a unique name
     private String name;
-
     //The amount of gold for a player
     private int golds;
-
     //Districts in the player's hand
     private List<DistrictCard> hands;
-
     //the player's role
     private CharacterCard playerRole;
     //Districts on the player's board
     private List<DistrictCard> board;
-
     //the player's number of points
     private int points;
-
     //the player's current status
     private boolean isDead = false;
-
     private boolean hasBeenStolen = false;
-
     //to find out if the player is the king
     private boolean isCrowned = false;
-
-    //cards in the hand of the player which he can buy during his turn
-    protected ArrayList<DistrictCard> validCards;
-
     //The character effect that the player has used during his turn
     private String usedEffect;
-
-    //to find out if the player is the first to add 8 district on his board
-    boolean isFirstToAdd8district = false;
-
     private int nbCardsInHand = 0;
-
-    // Increment for each player created
-    private static int count = 0;
+    private int whatIsTheRoundWhereThePlayerPutHisHauntedCity = 0;
 
     protected Player() {
         id = count++;
@@ -65,18 +50,22 @@ public abstract class Player implements GameActions {
         this.validCards = new ArrayList<>();
     }
 
-    public int getGolds() {
-        return golds;
+    public static void setCount(int count) {
+        Player.count = count;
     }
 
-    public void removeGold(int golds) {
-        this.golds -= golds;
-        LOGGER.info("Le joueur " + name + " a perdu " + golds + " pièces d'or, il lui reste " + this.golds + " pièces d'or");
+    public int getGolds() {
+        return golds;
     }
 
     public void setGolds(int golds) {
         this.golds = golds;
         LOGGER.info("Le joueur " + name + " a maintenant " + golds + " pièces d'or");
+    }
+
+    public void removeGold(int golds) {
+        this.golds -= golds;
+        LOGGER.info("Le joueur " + name + " a perdu " + golds + " pièces d'or, il lui reste " + this.golds + " pièces d'or");
     }
 
     public String getUsedEffect() {
@@ -91,6 +80,10 @@ public abstract class Player implements GameActions {
         return hands;
     }
 
+    public void setHands(List<DistrictCard> hands) {
+        this.hands = hands;
+    }
+
     public CharacterCard getPlayerRole() {
         return playerRole;
     }
@@ -103,8 +96,16 @@ public abstract class Player implements GameActions {
         return board;
     }
 
+    public void setBoard(List<DistrictCard> board) {
+        this.board = board;
+    }
+
     public String getName() {
         return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getPoints() {
@@ -115,39 +116,18 @@ public abstract class Player implements GameActions {
         this.points = points;
     }
 
-    public static void setCount(int count) {
-        Player.count = count;
-    }
-
-    public void setHands(List<DistrictCard> hands){this.hands = hands;}
-
-    /**
-     * function that draw a card from the district deck if its possible, else the player take 2 golds
-     * @param districtDeck the district deck
-     * @return the name of the card drawn
-     */
-    public String drawCard(Deck<DistrictCard> districtDeck) {
-        if(districtDeck.isEmpty()) {
-            return collectTwoGolds();
-        }else {
-            hands.add(districtDeck.draw());
-            nbCardsInHand++;
-            LOGGER.info("Le joueur " + name + " a pioché la carte " + hands.get(hands.size() - 1).getDistrictName()+" ("+hands.get(hands.size() - 1).getDistrictValue()+" pièces d'or, il a maintenant "+nbCardsInHand+" cartes en main)");
-            return "drawCard";
-        }
-    }
-
     /**
      * function that take 2 golds, if the player has chosen this option instead of draw a card
      */
     public String collectTwoGolds() {
         this.golds += 2;
         LOGGER.info("Le joueur " + name + " a pioché 2 pièces d'or, il a maintenant " + golds + " pièces d'or");
-        return "2golds";
+        return DispatchState.TWOGOLDS.toString();
     }
 
     /**
      * add a card to the board
+     *
      * @param card the card to add
      */
     public void addCardToBoard(DistrictCard card) {
@@ -156,7 +136,18 @@ public abstract class Player implements GameActions {
         nbCardsInHand--;
         LOGGER.info("Le joueur " + name + " a posé le quartier " + card.getDistrictName() + "(" + card.getDistrictValue() + " pièces d'or) (couleur " + card.getDistrictColor() + ")");
         LOGGER.info(" sur son plateau, il a maintenant " + board.size() + " quartiers sur son plateau, il lui reste " + nbCardsInHand + " cartes en main");
-        removeGold(card.getDistrictValue());
+    }
+
+    /**
+     * add a card to the hand
+     *
+     * @param card the card to add
+     */
+    public void addCardToHand(DistrictCard card) {
+        hands.add(card);
+        nbCardsInHand++;
+        LOGGER.info("Le joueur " + name + " a pioché le quartier " + card.getDistrictName() + "(" + card.getDistrictValue() + " pièces d'or) (couleur " + card.getDistrictColor() + ")");
+        LOGGER.info(" il a maintenant " + board.size() + " quartiers sur son plateau, il lui reste " + nbCardsInHand + " cartes en main");
     }
 
     /**
@@ -174,6 +165,7 @@ public abstract class Player implements GameActions {
 
     /**
      * check if a card is on the board of a player
+     *
      * @param card the card to check
      * @return true if the card is on the board, else false
      */
@@ -191,6 +183,7 @@ public abstract class Player implements GameActions {
 
     /**
      * check if the player has a playable card
+     *
      * @return true if the player has a playable card, else false
      */
     public boolean hasPlayableCard() {
@@ -204,17 +197,18 @@ public abstract class Player implements GameActions {
         return false;
     }
 
+    public boolean isCrowned() {
+        return isCrowned;
+    }
+
     public void setCrowned(boolean isCrowned) {
         LOGGER.info("Le joueur " + name + (isCrowned ? " est" : " n'est plus") + " le roi");
         this.isCrowned = isCrowned;
     }
 
-    public boolean isCrowned() {
-        return isCrowned;
-    }
-
     /**
      * function that check if 2 object are equals
+     *
      * @return true if the obj is equals to this, else false
      */
     @Override
@@ -235,12 +229,8 @@ public abstract class Player implements GameActions {
         } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
         if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
             addCardToBoard(districtToPut);
-            if (view != null) view.printPlayerAction("putDistrict", this);
+            if (view != null) view.printPlayerAction(DispatchState.PLACEDISTRICT, this);
         }
-    }
-
-    public boolean wantToUseEffect(boolean beforePuttingADistrict){
-        return beforePuttingADistrict;
     }
 
     @Override
@@ -248,17 +238,18 @@ public abstract class Player implements GameActions {
         return 0;
     }
 
+    public boolean isFirstToAdd8district() {
+        return isFirstToAdd8district;
+    }
+
     public void setFirstToAdd8district(boolean firstToAdd8district) {
         LOGGER.info("Le joueur " + name + (firstToAdd8district ? " est" : " n'est plus") + " le premier à avoir 8 quartiers sur son plateau");
         isFirstToAdd8district = firstToAdd8district;
     }
 
-    public boolean isFirstToAdd8district() {
-        return isFirstToAdd8district;
-    }
-
     /**
      * function that copy a player without his hand
+     *
      * @return the copy of the player
      */
     public Player copy() {
@@ -274,6 +265,7 @@ public abstract class Player implements GameActions {
 
     /**
      * Check if a player has a district that can be destroyed
+     *
      * @param warlord the warlord
      * @return true if the player has a district that can be destroyed, else false
      */
@@ -300,21 +292,13 @@ public abstract class Player implements GameActions {
         this.nbCardsInHand = nbCardsInHand;
     }
 
-    public void setBoard(List<DistrictCard> board) {
-        this.board = board;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public boolean isDead(){
+    public boolean isDead() {
         return isDead;
     }
 
     public void setDead(boolean isDead) {
         LOGGER.info("Le joueur " + name + (isDead ? " est" : " n'est plus") + " mort");
-    	this.isDead = isDead;
+        this.isDead = isDead;
     }
 
     public boolean isStolen() {
@@ -325,7 +309,20 @@ public abstract class Player implements GameActions {
         this.hasBeenStolen = hasBeenStolen;
     }
 
-    public abstract Color chooseColorForDistrictCard();
+    @Override
+    public String toString() {
+        return getName();
+    }
+
+    public int getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() {
+        return whatIsTheRoundWhereThePlayerPutHisHauntedCity;
+    }
+
+    public void setWhatIsTheRoundWhereThePlayerPutHisHauntedCity(int whatIsTheRoundWhereThePlayerPutHisHauntedCity) {
+        this.whatIsTheRoundWhereThePlayerPutHisHauntedCity = whatIsTheRoundWhereThePlayerPutHisHauntedCity;
+    }
+
+    public abstract DistrictCard chooseHandCardToDiscard();
 }
 
 
