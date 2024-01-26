@@ -45,6 +45,8 @@ class PlayerTest {
         assertEquals("BOT0", botRandom0.getName());
         assertEquals("BOT1", botRandom1.getName());
         assertEquals("BOT2", botRandom2.getName());
+
+        assertNotEquals(botRandom0.getName(), botRandom1.getName());
     }
 
     @Test
@@ -158,7 +160,7 @@ class PlayerTest {
         assertEquals(botRandom2.getName(), copy.getName());
         assertEquals(botRandom2.getHands().size(), copy.getNbCardsInHand());
         assertEquals(botRandom2.isCrowned(), copy.isCrowned());
-        assertEquals(botRandom2, copy);
+        assertNotEquals(botRandom2, botRandom1);
         assertNotSame(botRandom2, copy);
     }
 
@@ -188,5 +190,12 @@ class PlayerTest {
 
         // Enough golds to destroy but botRandom2 is a bishop
         assertFalse(botRandom2.playerHasADestroyableDistrict(botRandom1));
+    }
+
+    @Test
+    void testHashCode(){
+        assertEquals(botRandom0.hashCode(), botRandom0.hashCode());
+        assertNotEquals(botRandom0.hashCode(), botRandom1.hashCode());
+        assertNotEquals(botRandom0.hashCode(), botRandom2.hashCode());
     }
 }
