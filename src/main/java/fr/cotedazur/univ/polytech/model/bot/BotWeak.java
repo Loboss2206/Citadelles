@@ -190,7 +190,7 @@ public class BotWeak extends Player implements GameActions {
      * @param color      The color associated with the character card to find.
      * @return The index of the character card associated with the specified color, or an exception if not found.
      */
-    private int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
+    int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
         return switch (color) {
             case YELLOW -> characters.indexOf(CharacterCard.KING);
             case GREEN -> characters.indexOf(CharacterCard.MERCHANT);

@@ -70,8 +70,8 @@ class BotRandomTest {
     void testBotRandomActionIfDistrictDeckIsEmpty() {
         districtDeck.clear();
         //If the deck is empty the bot should collect 2 golds
-        assertEquals(Communication.TWOGOLDS.getString(), botRandom1.startChoice());
-        assertEquals(Communication.TWOGOLDS.getString(), botRandom2.startChoice());
+        assertEquals(Communication.TWOGOLDS, botRandom1.startChoice());
+        assertEquals(Communication.TWOGOLDS, botRandom2.startChoice());
     }*/
 
     @Test
