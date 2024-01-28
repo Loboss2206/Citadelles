@@ -231,7 +231,7 @@ public class Round {
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
 
         // If the player has a laboratory, he can discard a card to earn 1 gold
-        if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)) {
+        if (player.hasCardOnTheBoard(DistrictCard.LABORATORY) && !player.getHands().isEmpty() && player.wantToUseLaboratoryEffect()) {
             player.getHands().remove(player.chooseHandCardToDiscard());
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
         }

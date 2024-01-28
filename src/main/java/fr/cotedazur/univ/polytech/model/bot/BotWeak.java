@@ -117,16 +117,26 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public DistrictCard chooseHandCardToDiscard() {
-        if (!getHands().isEmpty()) {
-            for (DistrictCard districtCard : getHands()) {
-                if (districtCard.getDistrictValue() >= 3) {
-                    return districtCard;
-                }
+    public boolean wantToUseLaboratoryEffect(){
+        for (DistrictCard card : this.getHands()) {
+            if (card.getDistrictValue() >= 3) {
+                return true;
             }
         }
-        return null;
+        return false;
     }
+
+    @Override
+    public DistrictCard chooseHandCardToDiscard() {
+        DistrictCard maxPrice = getHands().get(0);
+        for (DistrictCard districtCard : getHands()) {
+            if (districtCard.getDistrictValue() >= maxPrice.getDistrictValue()) {
+                maxPrice = districtCard;
+            }
+        }
+        return maxPrice;
+    }
+
 
     @Override
     public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
@@ -262,7 +272,7 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public boolean chooseUseGraveyardEffect() {
+    public boolean wantToUseGraveyardEffect() {
         return true;
     }
 
@@ -279,4 +289,6 @@ public class BotWeak extends Player implements GameActions {
     public int hashCode() {
         return Objects.hash(super.hashCode(), random);
     }
+
+
 }
