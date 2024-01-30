@@ -252,9 +252,9 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public List<DistrictCard> chooseCardsToChange() {
         List<DistrictCard> districtCards = new ArrayList<>();
-        for (DistrictCard d : this.getHands()) {
-            if (d.getDistrictValue() >= 3) {
-                districtCards.add(d);
+        for (DistrictCard districtCard : this.getHands()) {
+            if (districtCard.getDistrictValue() >= 3) {
+                districtCards.add(districtCard);
             }
         }
         return districtCards;
