@@ -102,7 +102,12 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public Color chooseColorForDistrictCard() {
+    public Color chooseColorForSchoolOfMagic() {
+        return Color.values()[random.nextInt(Color.values().length)];
+    }
+
+    @Override
+    public Color chooseColorForHauntedCity() {
         return Color.values()[random.nextInt(Color.values().length)];
     }
 

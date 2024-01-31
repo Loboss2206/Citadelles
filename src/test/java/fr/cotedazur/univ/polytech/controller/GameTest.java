@@ -103,6 +103,8 @@ class GameTest {
         assertEquals(24, player.getPoints());
         assertEquals(18, player2.getPoints());
 
+        player.getBoard().remove(DistrictCard.HAUNTED_CITY);
+
         //Test the case when the player not putted the card laboratory this turn
         assertFalse(player.getBoard().contains(DistrictCard.LABORATORY));
 
@@ -113,7 +115,7 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(29, player.getPoints());
+        assertEquals(27, player.getPoints());
         assertEquals(18, player2.getPoints());
 
         //Test the case when the player has putted the card laboratory the previous turn
@@ -121,7 +123,7 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(29, player.getPoints());
+        assertEquals(27, player.getPoints());
         assertEquals(18, player2.getPoints());
 
         //Test the case when the player has putted the card laboratory the previous previous turn
@@ -129,9 +131,8 @@ class GameTest {
         player.setPoints(0);
         player2.setPoints(0);
         game.calculatePoints();
-        assertEquals(29, player.getPoints());
+        assertEquals(27, player.getPoints());
         assertEquals(18, player2.getPoints());
-
     }
 
     @Test

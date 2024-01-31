@@ -100,7 +100,14 @@ public interface GameActions {
      *
      * @return the color chosen
      */
-    Color chooseColorForDistrictCard();
+    Color chooseColorForSchoolOfMagic();
+
+    /**
+     * function where the player choose the color of the district he wants to replace the purple district ("Haunted City")
+     *
+     * @return the color chosen
+     */
+    Color chooseColorForHauntedCity();
 
     /**
      * function where the player choose the card he wants from the cards he draws
