@@ -119,7 +119,7 @@ public class BotWeak extends Player implements GameActions {
                 return color;
             }
         }
-        return null;
+        return Color.PURPLE;
     }
 
 
