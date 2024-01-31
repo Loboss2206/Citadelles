@@ -81,7 +81,7 @@ public enum CharacterCard {
     public void useEffect(Player player, StackOfGolds stackOfGolds) {
         LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") utilise son pouvoir");
         Color colorDistrictCard = null;
-        if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC) && (player.getPlayerRole() == CharacterCard.KING || player.getPlayerRole() == CharacterCard.BISHOP || player.getPlayerRole() == CharacterCard.MERCHANT || player.getPlayerRole() == CharacterCard.WARLORD)){
+        if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
             colorDistrictCard = player.chooseColorForSchoolOfMagic();
         }
         switch (this) {
@@ -93,7 +93,7 @@ public enum CharacterCard {
                 // No default action
             }
         }
-        if (colorDistrictCard == player.getPlayerRole().getCharacterColor())
+        if (colorDistrictCard == player.getPlayerRole().getCharacterColor() && (player.getPlayerRole() == CharacterCard.KING || player.getPlayerRole() == CharacterCard.BISHOP || player.getPlayerRole() == CharacterCard.MERCHANT || player.getPlayerRole() == CharacterCard.WARLORD))
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
     }
 
