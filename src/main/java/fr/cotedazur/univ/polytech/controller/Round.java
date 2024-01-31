@@ -214,7 +214,9 @@ public class Round {
      * @param player the player who will play his district cards
      */
     private void playDistrictCards(Player player) {
+        //TODO verify SMITHY effect when 2 cards in deck
         if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3 && (player.wantsToUseSmithyEffect())) {
+            view.printPurpleEffect(player);
             player.setGolds(player.getGolds() - 3);
             stackOfGolds.addGoldsToStack(3);
             player.addCardToHand(districtDeck.draw());
@@ -234,6 +236,7 @@ public class Round {
         if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)) {
             player.getHands().remove(player.chooseHandCardToDiscard());
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
+            view.printPurpleEffectLaboratory(player,DistrictCard.LABORATORY);
         }
 
         // If the player has the haunted city, we set the round where he put the haunted city
@@ -293,6 +296,7 @@ public class Round {
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
 
         int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
+        if(nbCardToDraw == 3) LOGGER.info(player.getName() + " choisis entre 3 cartes grâce à l'effet de l'observatoire");
         for (int i = 0; i < nbCardToDraw; i++) {
             if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
         }
@@ -311,6 +315,7 @@ public class Round {
         }
 
         if (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
+            if(player.getBoard().contains(DistrictCard.LIBRARY)) LOGGER.info(player.getName() + " récupère 2 cartes dans sa main grâce à l'effet de la bibliothèque");
             player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
         }
 

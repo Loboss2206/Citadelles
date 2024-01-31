@@ -83,6 +83,7 @@ public enum CharacterCard {
         Color colorDistrictCard = null;
         if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
             colorDistrictCard = player.chooseColorForDistrictCard();
+            LOGGER.info(player.getName() + "change la couleur de l'école de magie en " + colorDistrictCard.getColorName());
         }
         switch (this) {
             case KING -> earnGoldsFromDistricts(player, Color.YELLOW, stackOfGolds);

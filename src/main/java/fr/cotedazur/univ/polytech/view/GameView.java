@@ -69,6 +69,21 @@ public class GameView {
         }
     }
 
+    public void printPurpleEffect(Player player, DistrictCard districtCard) {
+        String playerNameAndRole = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
+        displayMessage(playerNameAndRole + " utilise l'effet du cimetière pour récupérer " + districtCard.getDistrictName() + " venant d'être détruit ");
+    }
+
+    public void printPurpleEffectLaboratory(Player player, DistrictCard districtCard) {
+        String playerNameAndRole = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
+        displayMessage(playerNameAndRole + " utilise l'effet du laboratoire pour récupérer 1 pièces en défaussant 1 carte ");
+    }
+
+    public void printPurpleEffect(Player player) {
+        String playerNameAndRole = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
+        displayMessage(playerNameAndRole + " utilise l'effet de la manufacture pour récupérer 3 cartes du deck en dépensant 2 pièces");
+    }
+
     /**
      * Print a message when a player end his turn
      *

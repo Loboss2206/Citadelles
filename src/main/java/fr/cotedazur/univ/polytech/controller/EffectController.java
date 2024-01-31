@@ -277,6 +277,7 @@ public class EffectController {
     private void useGraveYard(List<Player> players, DistrictCard districtToDestroy) {
         Player playerHasGraveyard = someoneHasGraveyard(players);
         if (playerHasGraveyard != null && playerHasGraveyard.chooseUseGraveyardEffect() && playerHasGraveyard.getGolds() >= 1) {
+            view.printPurpleEffect(playerHasGraveyard, districtToDestroy);
             playerHasGraveyard.setGolds(playerHasGraveyard.getGolds() - 1);
             stackOfGolds.addGoldsToStack(1);
             playerHasGraveyard.addCardToHand(districtToDestroy);

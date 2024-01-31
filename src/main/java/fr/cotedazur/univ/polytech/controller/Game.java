@@ -136,7 +136,7 @@ public class Game {
             for (DistrictCard card : player.getBoard()) {
                 int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
                 player.setPoints(player.getPoints() + card.getDistrictValue() + i);
-                LOGGER.info("Le joueur " + player.getName() + " a gagné " + card.getDistrictValue() + " points grâce à son quartier " + card.getDistrictName());
+                LOGGER.info("Le joueur " + player.getName() + " a gagné " + (card.getDistrictValue() + i) + " points grâce à son quartier " + card.getDistrictName());
             }
 
             //If the player has 5 different colors
@@ -166,6 +166,7 @@ public class Game {
         if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() != roundNumber) {
             Color hauntedColor = player.chooseColorForDistrictCard();
             colors.put(hauntedColor, true);
+            LOGGER.info(player.getName() + " a choisi la couleur " + hauntedColor.getColorName() + " pour la 'cours des miracles' ");
         }
 
         for (DistrictCard card : player.getBoard()) {
