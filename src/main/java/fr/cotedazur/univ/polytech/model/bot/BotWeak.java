@@ -109,12 +109,19 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public Color chooseColorForDistrictCard() {
-        if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
-            return getPlayerRole().getCharacterColor();
-        }
-        return null;
+    public Color chooseColorForSchoolOfMagic() {
+        return getPlayerRole().getCharacterColor();
     }
+
+    public Color chooseColorForHauntedCity() {
+        for (Color color : Color.values()) {
+            if (countNumberOfSpecifiedColorCard(color) == 0) {
+                return color;
+            }
+        }
+        return Color.PURPLE;
+    }
+
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
