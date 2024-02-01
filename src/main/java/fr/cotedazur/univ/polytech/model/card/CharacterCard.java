@@ -82,7 +82,7 @@ public enum CharacterCard {
         LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") utilise son pouvoir");
         Color colorDistrictCard = null;
         if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
-            colorDistrictCard = player.chooseColorForDistrictCard();
+            colorDistrictCard = player.chooseColorForSchoolOfMagic();
             LOGGER.info(player.getName() + "change la couleur de l'école de magie en " + colorDistrictCard.getColorName());
         }
         switch (this) {
@@ -94,7 +94,7 @@ public enum CharacterCard {
                 // No default action
             }
         }
-        if (colorDistrictCard == player.getPlayerRole().getCharacterColor())
+        if (colorDistrictCard == player.getPlayerRole().getCharacterColor() && (player.getPlayerRole() == CharacterCard.KING || player.getPlayerRole() == CharacterCard.BISHOP || player.getPlayerRole() == CharacterCard.MERCHANT || player.getPlayerRole() == CharacterCard.WARLORD))
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
     }
 

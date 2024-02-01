@@ -164,7 +164,7 @@ public class Game {
         }
 
         if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() != roundNumber) {
-            Color hauntedColor = player.chooseColorForDistrictCard();
+            Color hauntedColor = player.chooseColorForHauntedCity();
             colors.put(hauntedColor, true);
             LOGGER.info(player.getName() + " a choisi la couleur " + hauntedColor.getColorName() + " pour la 'cours des miracles' ");
         }
