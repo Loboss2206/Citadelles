@@ -30,12 +30,12 @@ public class BotWeak extends Player implements GameActions {
     public DispatchState startChoice() {
         discoverValidCard();
         if (getGolds() == 0) {
-            return DispatchState.TWOGOLDS;
+            return DispatchState.TWO_GOLDS;
         }
         if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 15) {
-            return DispatchState.DRAWCARD;
+            return DispatchState.DRAW_CARD;
         }
-        return DispatchState.TWOGOLDS;
+        return DispatchState.TWO_GOLDS;
     }
 
     @Override
@@ -143,12 +143,12 @@ public class BotWeak extends Player implements GameActions {
         listOfCardsForSort.sort(districtCardComparator);
         for (int i = 0; i < listOfCardsForSort.size(); i++) {
             if (i == 0 || (this.getBoard().contains(DistrictCard.LIBRARY) && i == 1)) {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).add(listOfCardsForSort.get(i));
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).add(listOfCardsForSort.get(i));
             } else {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).add(listOfCardsForSort.get(i));
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).add(listOfCardsForSort.get(i));
             }
         }
-        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED));
+        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED));
     }
 
     @Override
@@ -222,10 +222,10 @@ public class BotWeak extends Player implements GameActions {
         for (Player p : players) {
             int nbCardOther = p.getHands().size();
             if (nbCardOther > nbCardPlayer) {
-                return DispatchState.EXCHANGEPLAYER;
+                return DispatchState.EXCHANGE_PLAYER;
             }
         }
-        return DispatchState.EXCHANGEDECK;
+        return DispatchState.EXCHANGE_DECK;
     }
 
     @Override

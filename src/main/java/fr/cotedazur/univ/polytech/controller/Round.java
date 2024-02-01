@@ -5,6 +5,7 @@ import fr.cotedazur.univ.polytech.model.bot.DispatchState;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
@@ -216,7 +217,7 @@ public class Round {
     private void playDistrictCards(Player player) {
         //TODO verify SMITHY effect when 2 cards in deck
         if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3 && (player.wantsToUseSmithyEffect())) {
-            view.printPurpleEffect(player);
+            view.printPurpleEffect(player, PurpleEffectState.SMITHY_EFFECT);
             player.setGolds(player.getGolds() - 3);
             stackOfGolds.addGoldsToStack(3);
             player.addCardToHand(districtDeck.draw());
@@ -236,7 +237,7 @@ public class Round {
         if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)) {
             player.getHands().remove(player.chooseHandCardToDiscard());
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
-            view.printPurpleEffectLaboratory(player,DistrictCard.LABORATORY);
+            view.printPurpleEffect(player, PurpleEffectState.LABORATORY_EFFECT);
         }
 
         // If the player has the haunted city, we set the round where he put the haunted city
@@ -278,15 +279,15 @@ public class Round {
         //Take the choice
         while (choice == null) {
             choice = player.startChoice();
-            if (choice.equals(DispatchState.DRAWCARD) && districtDeck.isEmpty()) choice = DispatchState.TWOGOLDS;
-            if (choice.equals(DispatchState.TWOGOLDS) && stackOfGolds.getNbGolds() == 0)
-                choice = DispatchState.CANTPLAY;
+            if (choice.equals(DispatchState.DRAW_CARD) && districtDeck.isEmpty()) choice = DispatchState.TWO_GOLDS;
+            if (choice.equals(DispatchState.TWO_GOLDS) && stackOfGolds.getNbGolds() == 0)
+                choice = DispatchState.CANT_PLAY;
         }
 
         //Process the choice
-        if (choice.equals(DispatchState.TWOGOLDS)) {
+        if (choice.equals(DispatchState.TWO_GOLDS)) {
             this.collectTwoGoldsForPlayer(player);
-        } else if (choice.equals(DispatchState.DRAWCARD)) {
+        } else if (choice.equals(DispatchState.DRAW_CARD)) {
             playerWantToDrawCard(player);
         }
         view.printPlayerAction(choice, player);
@@ -296,14 +297,14 @@ public class Round {
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
 
         int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
-        if(nbCardToDraw == 3) LOGGER.info(player.getName() + " choisis entre 3 cartes grâce à l'effet de l'observatoire");
+        if(nbCardToDraw == 3) view.printPurpleEffect(player, PurpleEffectState.OBSERVATORY_EFFECT);
         for (int i = 0; i < nbCardToDraw; i++) {
             if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
         }
 
         Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
 
         //If maybe there is only one card in the deck so the bot just take one card
         if (cardsThatPlayerDraw.size() == 3) {
@@ -314,14 +315,14 @@ public class Round {
             player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
         }
 
-        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
-            if(player.getBoard().contains(DistrictCard.LIBRARY)) LOGGER.info(player.getName() + " récupère 2 cartes dans sa main grâce à l'effet de la bibliothèque");
-            player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
+            if(player.getBoard().contains(DistrictCard.LIBRARY) && cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1) view.printPurpleEffect(player, PurpleEffectState.LIBRARY_EFFECT);
+            player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
         }
 
         //Return the cards that the bot did not choose to the hand
-        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).isEmpty()) {
-            for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED)) {
+        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).isEmpty()) {
+            for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED)) {
                 districtDeck.add(card);
             }
         }
@@ -373,7 +374,7 @@ public class Round {
             player.addCardToBoard(districtToPut);
             player.removeGold(districtToPut.getDistrictValue());
             this.stackOfGolds.addGoldsToStack(districtToPut.getDistrictValue());
-            if (view != null) view.printPlayerAction(DispatchState.PLACEDISTRICT, player);
+            if (view != null) view.printPlayerAction(DispatchState.PLACE_DISTRICT, player);
         }
     }
 

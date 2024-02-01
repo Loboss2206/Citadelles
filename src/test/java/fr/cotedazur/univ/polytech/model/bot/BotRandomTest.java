@@ -37,8 +37,8 @@ class BotRandomTest {
         botRandom3 = new BotRandom();
         botRandom1.setRandom(random);
         botRandom3.setRandom(random);
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
     }
@@ -86,7 +86,7 @@ class BotRandomTest {
 
         //Store the card that will be drawn from the hand
         when(random.nextInt(anyInt())).thenReturn(2);
-        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
         DistrictCard districtCard = botRandom1.getHands().get(2);
         botRandom1.addCardToBoard(botRandom1.putADistrict());
         assertEquals(districtCard, botRandom1.getBoard().get(0));
@@ -99,7 +99,7 @@ class BotRandomTest {
 
 
         //the bot should have 2 golds added
-        assertEquals(DispatchState.TWOGOLDS, botRandom1.startChoice());
+        assertEquals(DispatchState.TWO_GOLDS, botRandom1.startChoice());
     }
 
     @Test
@@ -111,14 +111,14 @@ class BotRandomTest {
 
 
         botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE);
-        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
         assertEquals(DistrictCard.PALACE, botRandom1.getHands().get(0));
 
         //Verify that the hand size is correct
         assertEquals(oldHandSize + 1, botRandom1.getHands().size());
 
         //Verify that the cards the players don't want are correct
-        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(0));
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).get(0));
     }
 
     @Test
@@ -129,15 +129,15 @@ class BotRandomTest {
         botRandom1.startChoice();
 
         botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
-        botRandom1.getHands().add(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).get(0));
+        botRandom1.getHands().add(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).get(0));
         assertEquals(DistrictCard.PALACE, botRandom1.getHands().get(0));
 
         //Verify that the hand size is correct
         assertEquals(oldHandSize + 1, botRandom1.getHands().size());
 
         //Verify that the cards the players don't want are correct
-        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(0));
-        assertEquals(DistrictCard.CASTLE, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(1));
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).get(0));
+        assertEquals(DistrictCard.CASTLE, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).get(1));
     }
 
     @Test
@@ -146,7 +146,7 @@ class BotRandomTest {
         int oldHandSize = botRandom2.getHands().size();
 
         botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE);
-        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
 
         //Verify that the hand size is correct
         assertEquals(oldHandSize + 2, botRandom2.getHands().size());
@@ -162,7 +162,7 @@ class BotRandomTest {
         int oldHandSize = botRandom2.getHands().size();
 
         botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET);
-        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
 
         //Verify that the hand size is correct
         assertEquals(oldHandSize + 1, botRandom2.getHands().size());
@@ -178,14 +178,14 @@ class BotRandomTest {
         int oldHandSize = botRandom2.getHands().size();
 
         botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard.MARKET, DistrictCard.PALACE, DistrictCard.CASTLE);
-        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        botRandom2.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
 
         //Verify that the hand size is correct
         assertEquals(oldHandSize + 2, botRandom2.getHands().size());
 
         //Verify that there is 2 cards claimed and 1 card leaved
-        assertEquals(2, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).size());
-        assertEquals(1, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).size());
+        assertEquals(2, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size());
+        assertEquals(1, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).size());
     }
 
     @Test
@@ -197,7 +197,7 @@ class BotRandomTest {
 
         botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
         botRandom1.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw());
-        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED));
+        botRandom1.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
         botRandom1.setPlayerRole(CharacterCard.ASSASSIN);
 
         when(random.nextInt(anyInt())).thenReturn(0).thenReturn(1);

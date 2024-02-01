@@ -4,7 +4,9 @@ import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.DispatchState;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 import fr.cotedazur.univ.polytech.view.GameView;
@@ -92,6 +94,7 @@ public class EffectController {
         ArrayList<DistrictCard> newList = new ArrayList<>();
         for (DistrictCard districtCard : playerToDestroy.getBoard()) {
             if (districtCard.isDestroyableDistrict(playerThatUseEffect.getGolds())) newList.add(districtCard);
+            if(districtCard == DistrictCard.KEEP) view.printPurpleEffect(playerToDestroy, PurpleEffectState.KEEP_EFFECT);
         }
         LOGGER.info("La liste des quartiers qui peuvent être détruits par le joueur " + playerThatUseEffect.getName() + " est: " + newList);
         return newList;
@@ -177,13 +180,13 @@ public class EffectController {
     private void playerWantToUseEffectMagician(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDeck) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EXCHANGE))) {
             DispatchState action = playerThatWantToUseEffect.whichMagicianEffect(players);
-            if (action.equals(DispatchState.EXCHANGEDECK)) {
+            if (action.equals(DispatchState.EXCHANGE_DECK)) {
                 List<DistrictCard> cardToRemove = playerThatWantToUseEffect.chooseCardsToChange();
                 view.exchangeDeckCard(playerThatWantToUseEffect, cardToRemove);
                 if (!cardToRemove.isEmpty()) {
                     playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithDeck(playerThatWantToUseEffect, cardToRemove, districtDeck);
                 }
-            } else if (action.equals(DispatchState.EXCHANGEPLAYER)) {
+            } else if (action.equals(DispatchState.EXCHANGE_PLAYER)) {
                 Player playerTargeted = playerThatWantToUseEffect.selectMagicianTarget(players);
                 playerThatWantToUseEffect.getPlayerRole().useEffectMagicianWithPlayer(playerThatWantToUseEffect, playerTargeted);
                 view.exchangePlayerCard(playerThatWantToUseEffect, playerTargeted);
@@ -196,7 +199,7 @@ public class EffectController {
     public void playerWantToUseEffectKing(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_KING))) {
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds, verifyPresenceOfSchoolOfMagicCard(playerThatWantToUseEffect));
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_KING, true);
         } else {
@@ -207,7 +210,7 @@ public class EffectController {
     public void playerWantToUseEffectBishop(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_BISHOP))) {
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds, verifyPresenceOfSchoolOfMagicCard(playerThatWantToUseEffect));
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_BISHOP, true);
         } else {
@@ -218,12 +221,22 @@ public class EffectController {
     public void playerWantToUseEffectMerchant(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_MERCHANT))) {
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
+            Color colorDistrictCard = null;
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds, verifyPresenceOfSchoolOfMagicCard(playerThatWantToUseEffect));
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_MERCHANT, true);
         } else {
             LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " ne peut pas utiliser l'effet du marchand");
         }
+    }
+
+    public Color verifyPresenceOfSchoolOfMagicCard(Player player){
+        Color colorDistrictCard = null;
+        if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
+            colorDistrictCard = player.chooseColorForSchoolOfMagic();
+            view.printPurpleEffect(player, colorDistrictCard, PurpleEffectState.SCHOOL_OF_MAGIC_EFFECT);
+        }
+        return colorDistrictCard;
     }
 
     public void playerWantToUseEffectWarlord(Player player, List<Player> players, Deck<DistrictCard> deck) {
@@ -238,7 +251,7 @@ public class EffectController {
         if (effect.equals(DispatchState.EARNDISTRICT_WARLORD)) {
             // Case where the warlord earn golds for each red district he has
             int golds = player.getGolds();
-            player.getPlayerRole().useEffect(player, stackOfGolds);
+            player.getPlayerRole().useEffect(player, stackOfGolds, verifyPresenceOfSchoolOfMagicCard(player));
             view.printCharacterGetGolds(player, player.getPlayerRole().getCharacterColor(), player.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_WARLORD, true);
         } else {
@@ -277,7 +290,7 @@ public class EffectController {
     private void useGraveYard(List<Player> players, DistrictCard districtToDestroy) {
         Player playerHasGraveyard = someoneHasGraveyard(players);
         if (playerHasGraveyard != null && playerHasGraveyard.chooseUseGraveyardEffect() && playerHasGraveyard.getGolds() >= 1) {
-            view.printPurpleEffect(playerHasGraveyard, districtToDestroy);
+            view.printPurpleEffect(playerHasGraveyard, districtToDestroy, PurpleEffectState.GRAVEYARD_EFFECT);
             playerHasGraveyard.setGolds(playerHasGraveyard.getGolds() - 1);
             stackOfGolds.addGoldsToStack(1);
             playerHasGraveyard.addCardToHand(districtToDestroy);
