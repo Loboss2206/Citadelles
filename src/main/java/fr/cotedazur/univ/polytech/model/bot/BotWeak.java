@@ -32,7 +32,7 @@ public class BotWeak extends Player implements GameActions {
         if (getGolds() == 0) {
             return DispatchState.TWOGOLDS;
         }
-        if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 15) {
+        if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 6) {
             return DispatchState.DRAWCARD;
         }
         return DispatchState.TWOGOLDS;
