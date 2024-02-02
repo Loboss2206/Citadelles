@@ -136,5 +136,12 @@ public interface GameActions {
      *
      * @return true if he wants to use the effect, false otherwise
      */
-    boolean chooseUseGraveyardEffect();
+    boolean wantToUseGraveyardEffect();
+
+    /**
+     * function where the player choose to use the effect of the laboratory or not
+     *
+     * @return true if he wants to use the effect, false otherwise
+     */
+    boolean wantToUseLaboratoryEffect();
 }

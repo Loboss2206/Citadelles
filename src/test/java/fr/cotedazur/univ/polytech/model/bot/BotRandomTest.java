@@ -309,6 +309,6 @@ class BotRandomTest {
     @Test
     void testChooseUseGraveyardEffect() {
         when(random.nextInt(anyInt())).thenReturn(0);
-        assertTrue(botRandom1.chooseUseGraveyardEffect());
+        assertTrue(botRandom1.wantToUseGraveyardEffect());
     }
 }

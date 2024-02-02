@@ -276,7 +276,7 @@ public class EffectController {
 
     private void useGraveYard(List<Player> players, DistrictCard districtToDestroy) {
         Player playerHasGraveyard = someoneHasGraveyard(players);
-        if (playerHasGraveyard != null && playerHasGraveyard.chooseUseGraveyardEffect() && playerHasGraveyard.getGolds() >= 1) {
+        if (playerHasGraveyard != null && playerHasGraveyard.wantToUseGraveyardEffect() && playerHasGraveyard.getGolds() >= 1) {
             playerHasGraveyard.setGolds(playerHasGraveyard.getGolds() - 1);
             stackOfGolds.addGoldsToStack(1);
             playerHasGraveyard.addCardToHand(districtToDestroy);
@@ -294,7 +294,7 @@ public class EffectController {
                 warlordEffect = playerThatWantToUseEffect.whichWarlordEffect(players);
             else
                 // Case where the warlord can't earn a district
-                warlordEffect = DispatchState.KILL;
+                warlordEffect = DispatchState.DESTROY;
         } else {
             // Case where the warlord can't destroy a district
             if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_WARLORD)))
