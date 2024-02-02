@@ -49,14 +49,14 @@ public class EffectController {
     }
 
     /**
-     * @param players             the list of the players
+     * @param players the list of the players
      * @param playerThatUseEffect the warlord
      * @return the list of the players that can be destroyed by the warlord
      */
     public List<Player> playerNeededForWarlordEffect(List<Player> players, Player playerThatUseEffect) {
         ArrayList<Player> newList = new ArrayList<>();
         for (Player player : players) {
-            if (player != playerThatUseEffect && player.playerHasADestroyableDistrict(playerThatUseEffect)) {
+            if (player.playerHasADestroyableDistrict(playerThatUseEffect)) {
                 newList.add(this.playerCopy(player, playerThatUseEffect));
             }
         }
@@ -278,6 +278,7 @@ public class EffectController {
         Player playerHasGraveyard = someoneHasGraveyard(players);
         if (playerHasGraveyard != null && playerHasGraveyard.wantToUseGraveyardEffect() && playerHasGraveyard.getGolds() >= 1) {
             playerHasGraveyard.setGolds(playerHasGraveyard.getGolds() - 1);
+            stackOfGolds.addGoldsToStack(1);
             playerHasGraveyard.addCardToHand(districtToDestroy);
             view.printGraveyardEffect(playerHasGraveyard, districtToDestroy);
         }
