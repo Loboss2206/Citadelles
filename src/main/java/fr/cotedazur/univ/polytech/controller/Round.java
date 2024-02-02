@@ -234,10 +234,13 @@ public class Round {
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
 
         // If the player has a laboratory, he can discard a card to earn 1 gold
-        if (player.hasCardOnTheBoard(DistrictCard.LABORATORY)) {
-            player.getHands().remove(player.chooseHandCardToDiscard());
-            player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
-            view.printPurpleEffect(player, PurpleEffectState.LABORATORY_EFFECT);
+        if (player.hasCardOnTheBoard(DistrictCard.LABORATORY) && !player.getHands().isEmpty() && player.wantToUseLaboratoryEffect()) {
+            DistrictCard cardToRemove = player.chooseHandCardToDiscard();
+            if(cardToRemove != null){
+                player.getHands().remove(cardToRemove);
+                player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
+                view.printPurpleEffect(player, PurpleEffectState.LABORATORY_EFFECT);
+            }
         }
 
         // If the player has the haunted city, we set the round where he put the haunted city
