@@ -6,6 +6,7 @@ import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Represents a role card in the game.
@@ -78,12 +79,8 @@ public enum CharacterCard {
      *
      * @param player the player who use the effect
      */
-    public void useEffect(Player player, StackOfGolds stackOfGolds) {
+    public void useEffect(Player player, StackOfGolds stackOfGolds, Color colorOfSchoolOfMagic) {
         LOGGER.info("Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ") utilise son pouvoir");
-        Color colorDistrictCard = null;
-        if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
-            colorDistrictCard = player.chooseColorForSchoolOfMagic();
-        }
         switch (this) {
             case KING -> earnGoldsFromDistricts(player, Color.YELLOW, stackOfGolds);
             case BISHOP -> earnGoldsFromDistricts(player, Color.BLUE, stackOfGolds);
@@ -93,7 +90,7 @@ public enum CharacterCard {
                 // No default action
             }
         }
-        if (colorDistrictCard == player.getPlayerRole().getCharacterColor() && (player.getPlayerRole() == CharacterCard.KING || player.getPlayerRole() == CharacterCard.BISHOP || player.getPlayerRole() == CharacterCard.MERCHANT || player.getPlayerRole() == CharacterCard.WARLORD))
+        if (colorOfSchoolOfMagic == player.getPlayerRole().getCharacterColor() && (player.getPlayerRole() == CharacterCard.KING || player.getPlayerRole() == CharacterCard.BISHOP || player.getPlayerRole() == CharacterCard.MERCHANT || player.getPlayerRole() == CharacterCard.WARLORD))
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
     }
 

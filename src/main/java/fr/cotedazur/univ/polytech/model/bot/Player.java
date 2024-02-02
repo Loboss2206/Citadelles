@@ -122,7 +122,7 @@ public abstract class Player implements GameActions {
     public String collectTwoGolds() {
         this.golds += 2;
         LOGGER.info("Le joueur " + name + " a pioché 2 pièces d'or, il a maintenant " + golds + " pièces d'or");
-        return DispatchState.TWOGOLDS.toString();
+        return DispatchState.TWO_GOLDS.toString();
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class Player implements GameActions {
         } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
         if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
             addCardToBoard(districtToPut);
-            if (view != null) view.printPlayerAction(DispatchState.PLACEDISTRICT, this);
+            if (view != null) view.printPlayerAction(DispatchState.PLACE_DISTRICT, this);
         }
     }
 

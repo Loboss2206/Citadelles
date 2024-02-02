@@ -32,8 +32,8 @@ class BotStrongTest {
         botStrong = new BotStrong();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
     }
 
     @Test
@@ -79,21 +79,21 @@ class BotStrongTest {
         botStrong.getHands().add(DistrictCard.SMITHY);
         botStrong.setGolds(0);
         botStrong.setPlayerRole(CharacterCard.ASSASSIN);
-        assertEquals(DispatchState.TWOGOLDS, botStrong.startChoice());
+        assertEquals(DispatchState.TWO_GOLDS, botStrong.startChoice());
 
         //Test when we can put a district
         botStrong.setGolds(20);
-        assertEquals(DispatchState.TWOGOLDS, botStrong.startChoice());
+        assertEquals(DispatchState.TWO_GOLDS, botStrong.startChoice());
 
         //when there is already the color on the board
         botStrong.setGolds(20);
         botStrong.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
-        assertEquals(DispatchState.DRAWCARD, botStrong.startChoice());
+        assertEquals(DispatchState.DRAW_CARD, botStrong.startChoice());
 
         //when hand is empty
         botStrong.setGolds(20);
         botStrong.getHands().clear();
-        assertEquals(DispatchState.DRAWCARD, botStrong.startChoice());
+        assertEquals(DispatchState.DRAW_CARD, botStrong.startChoice());
     }
 
     @Test

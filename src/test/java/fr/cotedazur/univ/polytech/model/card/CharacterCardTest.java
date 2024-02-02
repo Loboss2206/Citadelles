@@ -43,7 +43,7 @@ class CharacterCardTest {
         player.addCardToBoard(DistrictCard.PALACE);
         player.setGolds(0);
 
-        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds(), null);
         assertEquals(3, player.getGolds());
     }
 
@@ -89,18 +89,18 @@ class CharacterCardTest {
         player.addCardToBoard(DistrictCard.MARKET);
         player.addCardToBoard(DistrictCard.TAVERN);
         player.addCardToBoard(DistrictCard.PALACE);
-        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds(), null);
         //The golds don't change because it's the game that manages the golds
         assertEquals(52, player.getGolds());
 
         player.addCardToBoard(DistrictCard.DOCKS);
-        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds(), null);
         // Adding a green district (1 gold) and the passive effect of the merchant (1 gold) minus the cost of the district (3 golds)
         // 41 + 1 + 1 + 1 + 1 - 3 = 42 golds
         assertEquals(55, player.getGolds());
 
         player.addCardToBoard(DistrictCard.CATHEDRAL);
-        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds(), null);
         // Adding a blue district (0 golds) and the passive effect of the merchant (1 gold) minus the cost of the district (5 golds)
         // 42 + 1 + 1 + 1 + 1 + 0 - 5 = 41 golds
         assertEquals(58, player.getGolds());
@@ -114,12 +114,12 @@ class CharacterCardTest {
         player.addCardToBoard(DistrictCard.MARKET);
         player.addCardToBoard(DistrictCard.MONASTERY);
         player.addCardToBoard(DistrictCard.TEMPLE);
-        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds(), null);
         //Should be 20 because when we add a district on the board we withdraw from his golds
         assertEquals(30, player.getGolds());
 
         player.addCardToBoard(DistrictCard.CATHEDRAL);
-        player.getPlayerRole().useEffect(player, new StackOfGolds());
+        player.getPlayerRole().useEffect(player, new StackOfGolds(), null);
 
         //Should be 18 because when we add a district on the board we withdraw from his golds, and now we have 3 blue district, so we add 3 in the number of golds instead of 2
         assertEquals(33, player.getGolds());
