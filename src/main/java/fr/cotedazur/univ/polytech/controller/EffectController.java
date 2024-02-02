@@ -294,7 +294,7 @@ public class EffectController {
                 warlordEffect = playerThatWantToUseEffect.whichWarlordEffect(players);
             else
                 // Case where the warlord can't earn a district
-                warlordEffect = DispatchState.KILL;
+                warlordEffect = DispatchState.DESTROY;
         } else {
             // Case where the warlord can't destroy a district
             if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_WARLORD)))

@@ -18,6 +18,12 @@ public class BotStrong extends Player implements GameActions {
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
+        if(!getHands().isEmpty()) {
+            ArrayList<DistrictCard> listOfCardsForSort = (ArrayList<DistrictCard>) getHands();
+            DistrictCardComparator districtCardComparator = new DistrictCardComparator();
+            listOfCardsForSort.sort(districtCardComparator);
+            return listOfCardsForSort.get(0);
+        }
         return null;
     }
 
@@ -26,9 +32,11 @@ public class BotStrong extends Player implements GameActions {
         discoverValidCard();
         //List des différentes couleurs sur le Terrain
         Set<Color> colorsOnBoard = colorInList(getBoard());
+        Set<Color> colorsInHand = colorInList(getHands());
         if (!validCards.isEmpty()) {
             List<DistrictCard> purpleCard = new ArrayList<>();
             List<DistrictCard> colorNotOnBoard = new ArrayList<>();
+            List<DistrictCard> cardsThatMatchWithRoleColor = new ArrayList<>();
             for (DistrictCard districtCard : validCards) {
                 if (districtCard.getDistrictColor() == Color.PURPLE) {
                     purpleCard.add(districtCard);
@@ -36,12 +44,15 @@ public class BotStrong extends Player implements GameActions {
                 if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
                     colorNotOnBoard.add(districtCard);
                 }
+                if(districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()){
+                    cardsThatMatchWithRoleColor.add(districtCard);
+                }
             }
-            if (!purpleCard.isEmpty() && !colorsOnBoard.contains(Color.PURPLE)) return maxPrice(purpleCard);
+            if (!purpleCard.isEmpty()) return maxPrice(purpleCard);
+
+            if (!cardsThatMatchWithRoleColor.isEmpty()) return maxPrice(cardsThatMatchWithRoleColor);
 
             if (!colorNotOnBoard.isEmpty()) return maxPrice(colorNotOnBoard);
-
-            if (!purpleCard.isEmpty()) return maxPrice(purpleCard);
 
             return maxPrice(validCards);
         }
@@ -75,6 +86,13 @@ public class BotStrong extends Player implements GameActions {
     @Override
     public DispatchState startChoice() {
         discoverValidCard();
+        Set<Color> colorsOnBoard = colorInList(getBoard());
+        for (DistrictCard districtCard : validCards){
+            if (!colorsOnBoard.contains(districtCard.getDistrictColor())){
+                return DispatchState.TWOGOLDS;
+
+            }
+        }
         if (getGolds() == 0) {
             return DispatchState.TWOGOLDS;
         }
@@ -92,6 +110,7 @@ public class BotStrong extends Player implements GameActions {
     @Override
     public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (getPlayerRole() == CharacterCard.THIEF) {
+            System.out.println("Volllllll:" + characterCards.get(3));
             return characterCards.get(3);
         }
         return null;
@@ -112,6 +131,14 @@ public class BotStrong extends Player implements GameActions {
     @Override
     public int chooseCharacter(List<CharacterCard> characters) {
         discoverValidCard();
+        if (getGolds() == 0 && characters.contains(CharacterCard.MERCHANT)) {
+            LOGGER.info("Le joueur " + getName() + " prend le marchant");
+            return characters.indexOf(CharacterCard.MERCHANT);
+        }
+        if (getGolds() == 0 && !characters.contains(CharacterCard.MERCHANT) && characters.contains(CharacterCard.THIEF)) {
+            LOGGER.info("Le joueur " + getName() + " prend le marchant");
+            return characters.indexOf(CharacterCard.THIEF);
+        }
         if (validCards.isEmpty() && characters.contains(CharacterCard.MAGICIAN)) {
             LOGGER.info("Le joueur " + getName() + " prend le magicien");
             return characters.indexOf(CharacterCard.MAGICIAN);
@@ -209,7 +236,7 @@ public class BotStrong extends Player implements GameActions {
     public DispatchState whichWarlordEffect(List<Player> players) {
         for (Player player : players) {
             for (DistrictCard districtCard : player.getBoard()) {
-                if (districtCard.getDistrictValue() <= 1) return DispatchState.KILL;
+                if (districtCard.getDistrictValue() <= 1) return DispatchState.DESTROY;
             }
         }
         return DispatchState.EARNDISTRICT_WARLORD;
@@ -249,19 +276,25 @@ public class BotStrong extends Player implements GameActions {
         return highNbCards;
     }
 
+
+
     @Override
-    public Color chooseColorForDistrictCard() {
-        //List des différentes couleurs sur le Terrain
-        Set<Color> colorsOnBoard = colorInList(getBoard());
+    public Color chooseColorForSchoolOfMagic() {
         if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
             return getPlayerRole().getCharacterColor();
         }
+        return Color.PURPLE;
+    }
+
+    @Override
+    public Color chooseColorForHauntedCity() {
+        Set<Color> colorsOnBoard = colorInList(getBoard());
         for (Color color : Color.values()) {
             if (!colorsOnBoard.contains(color)) {
                 return color;
             }
         }
-        return Color.RED;
+        return Color.PURPLE;
     }
 
     @Override
@@ -285,7 +318,7 @@ public class BotStrong extends Player implements GameActions {
         discoverValidCard();
         for(DistrictCard districtCard : validCards){
             if(districtCard.getDistrictColor() == this.getPlayerRole().getCharacterColor() && beforePuttingADistrict){
-                return false;
+                return getPlayerRole() == CharacterCard.WARLORD;
             }
         }
         return true;
@@ -293,13 +326,14 @@ public class BotStrong extends Player implements GameActions {
 
     @Override
     public boolean wantsToUseSmithyEffect() {
-        return getGolds() >= 7 && validCards.isEmpty();
+        return getGolds() >= 3 && validCards.isEmpty();
     }
 
     @Override
     public boolean wantToUseGraveyardEffect() {
         return true;
     }
+
 
     @Override
     public boolean wantToUseLaboratoryEffect() {

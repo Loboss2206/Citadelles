@@ -53,7 +53,7 @@ class BotStrongTest {
 
         //Should be Palace because its value are now the highest of the botStrong hand
         botStrong.addCardToBoard(botStrong.choiceHowToPlayDuringTheRound());
-        assertEquals(DistrictCard.PALACE, botStrong.getBoard().get(1));
+        assertEquals(DistrictCard.GRAVEYARD, botStrong.getBoard().get(1));
 
 
         botStrong.addCardToBoard(DistrictCard.MARKET);
@@ -62,7 +62,7 @@ class BotStrongTest {
 
         //Should be Graveyard because its value are now the highest of the botStrong hand and its purple
         botStrong.addCardToBoard(botStrong.choiceHowToPlayDuringTheRound());
-        assertEquals(DistrictCard.GRAVEYARD, botStrong.getBoard().get(5));
+        assertEquals(DistrictCard.PALACE, botStrong.getBoard().get(5));
 
         //Should be Manor because its value are now the highest of the botStrong hand
         botStrong.addCardToBoard(botStrong.choiceHowToPlayDuringTheRound());
@@ -102,11 +102,11 @@ class BotStrongTest {
         botStrong.getHands().add(DistrictCard.SMITHY);
         botStrong.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
         botStrong.setGolds(0);
-        assertEquals(CharacterCard.THIEF, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
+        assertEquals(CharacterCard.MERCHANT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
 
         //Test when merchant is not in list of characters
         characterDeck.getCards().remove(CharacterCard.THIEF);
-        assertEquals(CharacterCard.MAGICIAN, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
+        assertEquals(CharacterCard.MERCHANT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
 
         //Test with architect
         botStrong.getHands().add(DistrictCard.PALACE);

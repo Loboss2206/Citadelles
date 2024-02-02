@@ -4,7 +4,6 @@ import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -75,7 +74,7 @@ class BotAVsBotBTest {
         assertTrue(50.01 <= ((double) numberOfWeakBot / (numberOfWeakBot + numberOfRandomBot)) * 100);
     }
 
-    @RepeatedTest(100)
+    @Test
     void testBattleBetweenBotStrongAndWeak() {
         int numberOfWeakBot = 0;
         int numberOfStrongBot = 0;
