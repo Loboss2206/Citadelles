@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.view;
 
+import fr.cotedazur.univ.polytech.logger.LamaLevel;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.DispatchState;
 import fr.cotedazur.univ.polytech.model.bot.Player;
@@ -10,14 +11,12 @@ import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.StringJoiner;
 import java.util.logging.Logger;
 
 public class GameView {
     private static final Logger LOGGER = Logger.getLogger(LamaLogger.class.getName());
-
-    private boolean display = true;
 
 
     /**
@@ -160,9 +159,7 @@ public class GameView {
      * @param message the message to display
      */
     private void displayMessage(String message) {
-        LOGGER.info(message);
-        if (display)
-            System.out.println(message);
+        LOGGER.log(LamaLevel.VIEW,message);
     }
 
     /**
@@ -318,9 +315,6 @@ public class GameView {
         displayMessage("-----------------------------------------------------------------------\n");
     }
 
-    public void noDisplay(boolean b) {
-        display = !b;
-    }
 
     public void printCharacterGetGolds(Player playerThatWantToUseEffect, Color characterColor, int golds) {
         if (golds > 0)
@@ -329,5 +323,20 @@ public class GameView {
 
     public void printGraveyardEffect(Player playerHasGraveyard, DistrictCard districtToDestroy) {
         displayMessage("Le joueur " + playerHasGraveyard.getName() + " recupère le quartier " + districtToDestroy.getDistrictName() + " grace au cimetière");
+    }
+
+    public void diplayBotComparaison(Map<String,Integer> winnerPerPlayer, Map<String, Integer> scoringPerPlayer) {
+        for (Map.Entry<String, Integer> entry : winnerPerPlayer.entrySet()) {
+            if (entry.getKey().equals("Draw")) continue;
+            LOGGER.log(LamaLevel.DEMO,entry.getKey() + " : " + entry.getValue() + " wins");
+        }
+
+        LOGGER.log(LamaLevel.DEMO,"Draw " + winnerPerPlayer.get("Draw") + " times");
+        for (Map.Entry<String, Integer> entry : winnerPerPlayer.entrySet()) {
+            if (entry.getKey().equals("Draw")) continue;
+            LOGGER.log(LamaLevel.DEMO,entry.getKey() + " : " + (entry.getValue() * 100 / 1000) + "%");
+        }
+        LOGGER.log(LamaLevel.DEMO,"Draw rate : " + (winnerPerPlayer.get("Draw") * 100 / 1000) + "%");
+        LOGGER.log(LamaLevel.DEMO,"Scoring avg per player : " + scoringPerPlayer);
     }
 }
