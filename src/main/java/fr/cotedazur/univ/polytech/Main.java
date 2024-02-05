@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Main {
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
@@ -26,6 +27,7 @@ public class Main {
 
         // CSV setup
         Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
+        List<String> line = new ArrayList<>();
         CSVWriter writer = null;
 
         try {
@@ -53,8 +55,15 @@ public class Main {
         // Start the game
         game.startGame();
 
+        for (Player player : players) {
+            line.add(player.getClass().getSimpleName());
+            line.add(player.getName());
+            line.add(String.valueOf(player.getPoints()));
+        }
+
         try {
             assert writer != null;
+            writer.writeNext(line.toArray(String[]::new));
             writer.close();
         } catch (NullPointerException | IOException e) {
             e.printStackTrace();
