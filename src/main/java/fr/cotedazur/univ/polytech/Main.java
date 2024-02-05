@@ -31,6 +31,8 @@ public class Main {
         CSVWriter writer = null;
 
         try {
+            // create directory stats
+            path.getParent().toFile().mkdirs();
             path.toFile().createNewFile();
             writer = new CSVWriter(new FileWriter(path.toFile(), true));
         } catch (IOException ignored) {
