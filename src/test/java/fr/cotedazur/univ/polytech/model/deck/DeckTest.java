@@ -55,6 +55,7 @@ class DeckTest {
         assertEquals(card2, drawnCard);
         assertFalse(deck.contains(card2));
         assertEquals(1, deck.size());
+        assertNull(deck.draw(5));
     }
 
     // Test case for shuffling the deck

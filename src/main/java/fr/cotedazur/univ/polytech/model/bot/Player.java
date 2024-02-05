@@ -3,10 +3,10 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Player implements GameActions {
     protected static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
@@ -212,30 +212,15 @@ public abstract class Player implements GameActions {
      * @return true if the obj is equals to this, else false
      */
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Player player) {
-            return player.name.equals(this.name);
-        }
-        return false;
-    }
-
-    /**
-     * function that add to the board the district he chose to put and announced it
-     */
-    public void drawAndPlaceADistrict(GameView view) {
-        DistrictCard districtToPut;
-        do {
-            districtToPut = choiceHowToPlayDuringTheRound();
-        } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
-        if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
-            addCardToBoard(districtToPut);
-            if (view != null) view.printPlayerAction(DispatchState.PLACE_DISTRICT, this);
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Player)) return false;
+        return Objects.equals(name, ((Player) o).name);
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return super.hashCode();
     }
 
     public boolean isFirstToAdd8district() {
