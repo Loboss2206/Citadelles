@@ -39,7 +39,6 @@ public class Main {
 
         // CSV setup
         Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
-        List<String> line = new ArrayList<>();
         CSVWriter writer = null;
 
         try {
@@ -48,20 +47,6 @@ public class Main {
             path.toFile().createNewFile();
             writer = new CSVWriter(new FileWriter(path.toFile(), true));
         } catch (IOException ignored) {
-        }
-
-        for (Player player : players) {
-            line.add(player.getClass().getSimpleName());
-            line.add(player.getName());
-            line.add(String.valueOf(player.getPoints()));
-        }
-
-        try {
-            assert writer != null;
-            writer.writeNext(line.toArray(String[]::new));
-            writer.close();
-        } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
         }
 
         Player bot1;
@@ -78,11 +63,11 @@ public class Main {
             bot3 = new BotStrong();
             bot4 = new BotWeak();
 
-            players.clear();
             players.addAll(List.of(bot1, bot2, bot3, bot4));
 
             game = new Game(players, view);
             game.startGame();
+            writePlayersStats(writer, players);
         } else if (jCommanderSpoke.twoThousands) {
             LOGGER.setLevel(LamaLevel.DEMO);
             LamaLogger.setupFileLog(false, "game.log");
@@ -97,6 +82,7 @@ public class Main {
                 bot3 = new BotStrong();
                 bot4 = new BotWeak();
                 launchCustomGame(players, view, winnerPerPlayer, scoringPerPlayer, bot1, bot2, bot3, bot4);
+                writePlayersStats(writer, players);
             }
 
             //Making the average of the score of each player
@@ -117,6 +103,7 @@ public class Main {
                 bot3 = new BotStrong();
                 bot4 = new BotStrong();
                 launchCustomGame(players, view, winnerPerPlayer, scoringPerPlayer, bot1, bot2, bot3, bot4);
+                writePlayersStats(writer, players);
             }
             for (Player player : players) {
                 scoringPerPlayer.put(player.getName(), scoringPerPlayer.get(player.getName()) / 1000);
@@ -136,6 +123,14 @@ public class Main {
             // Game setup
             game = new Game(players, view);
             game.startGame();
+            writePlayersStats(writer, players);
+        }
+
+        assert writer != null;
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -169,6 +164,21 @@ public class Main {
         }
         for (Player player : players) {
             scoringPerPlayer.put(player.getName(), scoringPerPlayer.getOrDefault(player.getName(), 0) + player.getPoints());
+        }
+    }
+
+    public static void writePlayersStats(CSVWriter writer, List<Player> players) {
+        List<String> line = new ArrayList<>();
+        for (Player player : players) {
+            line.add(player.getClass().getSimpleName());
+            line.add(player.getName());
+            line.add(String.valueOf(player.getPoints()));
+        }
+
+        try {
+            writer.writeNext(line.toArray(String[]::new));
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         }
     }
 }
