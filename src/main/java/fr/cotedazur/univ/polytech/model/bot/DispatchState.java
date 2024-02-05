@@ -24,19 +24,6 @@ public enum DispatchState {
         this.s = s;
     }
 
-    public static DispatchState valueOfLabel(String label) {
-        for (DispatchState e : values()) {
-            if (e.s.equals(label)) {
-                return e;
-            }
-        }
-        return null;
-    }
-
-    public String getString() {
-        return s;
-    }
-
     @Override
     public String toString() {
         return s;
