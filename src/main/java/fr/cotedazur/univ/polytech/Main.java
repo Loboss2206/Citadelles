@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech;
 
+import com.opencsv.CSVWriter;
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.bot.BotRandom;
@@ -7,6 +8,10 @@ import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.view.GameView;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 
 public class Main {
@@ -18,6 +23,16 @@ public class Main {
         LamaLogger.setupFileLog(true, "game.log");
         LamaLogger.setupConsole(true, true);
         LOGGER.setLevel(java.util.logging.Level.INFO); // Change to Level.OFF to disable the logger or Level.INFO to enable it
+
+        // CSV setup
+        Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
+        CSVWriter writer = null;
+
+        try {
+            path.toFile().createNewFile();
+            writer = new CSVWriter(new FileWriter(path.toFile(), true));
+        } catch (IOException ignored) {
+        }
 
         // View setup
         GameView view = new GameView();
@@ -37,6 +52,14 @@ public class Main {
 
         // Start the game
         game.startGame();
+
+        try {
+            assert writer != null;
+            writer.close();
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
