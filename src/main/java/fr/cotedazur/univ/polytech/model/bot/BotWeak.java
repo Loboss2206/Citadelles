@@ -136,13 +136,14 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
-        DistrictCard maxPrice = getHands().get(0);
-        for (DistrictCard districtCard : getHands()) {
-            if (districtCard.getDistrictValue() >= maxPrice.getDistrictValue()) {
-                maxPrice = districtCard;
+        if (!getHands().isEmpty()) {
+            for (DistrictCard districtCard : getHands()) {
+                if (districtCard.getDistrictValue() >= 3) {
+                    return districtCard;
+                }
             }
         }
-        return maxPrice;
+        return null;
     }
 
 

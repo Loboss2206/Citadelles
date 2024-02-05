@@ -156,8 +156,7 @@ class BotWeakTest {
 
     @Test
     void testUseEffectForSchoolOfMagic() {
-        EffectController effectController = new EffectController();
-        effectController.setView(new GameView());
+        EffectController effectController = new EffectController(new GameView(), new StackOfGolds());
         botWeak.setPlayerRole(CharacterCard.MERCHANT);
         botWeak.getHands().add(DistrictCard.PALACE);
         botWeak.getHands().add(DistrictCard.TOWN_HALL);
@@ -371,19 +370,25 @@ class BotWeakTest {
     @Test
     void selectWhoWillBeAffectedByThiefEffect() {
         ArrayList<Player> players = new ArrayList<>();
+
+        botWeak.setPlayerRole(CharacterCard.THIEF);
         Player player = new BotWeak();
         player.setGolds(31);
         player.setPlayerRole(CharacterCard.BISHOP);
         players.add(player);
         Player player2 = new BotWeak();
         player2.setGolds(32);
-        player2.setPlayerRole(CharacterCard.ASSASSIN);
+        player2.setPlayerRole(CharacterCard.MERCHANT);
         players.add(player2);
-        ArrayList<CharacterCard> characterCards = new ArrayList<>();
-        characterCards.add(CharacterCard.ASSASSIN);
-        characterCards.add(CharacterCard.BISHOP);
-        assertEquals(player2, botWeak.selectWhoWillBeAffectedByThiefEffect(players, characterCards));
 
+        ArrayList<CharacterCard> characterCards = new ArrayList<>();
+        characterCards.add(CharacterCard.MAGICIAN);
+        characterCards.add(CharacterCard.KING);
+        characterCards.add(CharacterCard.BISHOP);
+        characterCards.add(CharacterCard.MERCHANT);
+        characterCards.add(CharacterCard.ARCHITECT);
+        characterCards.add(CharacterCard.WARLORD);
+        assertEquals(player2.getPlayerRole(), botWeak.selectWhoWillBeAffectedByThiefEffect(players, characterCards));
     }
 
     @Test

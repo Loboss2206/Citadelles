@@ -316,7 +316,7 @@ public class EffectController {
         if (effect.equals(DispatchState.EARNDISTRICT_WARLORD)) {
             // Case where the warlord earn golds for each red district he has
             int golds = playerThatWantToUseEffect.getGolds();
-            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds);
+            playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds, verifyPresenceOfSchoolOfMagicCard(playerThatWantToUseEffect));
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_WARLORD, true);
         } else {
