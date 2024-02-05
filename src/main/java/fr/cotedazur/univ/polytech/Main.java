@@ -2,6 +2,7 @@ package fr.cotedazur.univ.polytech;
 
 
 import com.beust.jcommander.JCommander;
+import com.opencsv.CSVWriter;
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.logger.LamaLevel;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
@@ -11,6 +12,10 @@ import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.view.GameView;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,6 +32,19 @@ public class Main {
         LamaLogger.setupFileLog(true, "game.log");
         LamaLogger.setupConsole(true, true);
         LOGGER.setLevel(LamaLevel.VIEW); // Change to OFF to disable the logger or INFO to enable all, VIEW to just the view and DEMO to disable all but the demo
+
+        // CSV setup
+        Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
+        List<String> line = new ArrayList<>();
+        CSVWriter writer = null;
+
+        try {
+            // create directory stats
+            path.getParent().toFile().mkdirs();
+            path.toFile().createNewFile();
+            writer = new CSVWriter(new FileWriter(path.toFile(), true));
+        } catch (IOException ignored) {
+        }
 
         // View setup
         GameView view = new GameView();
@@ -121,6 +139,22 @@ public class Main {
 
         Game game = new Game(players, view);
         game.startGame();
+
+        for (Player player : players) {
+            line.add(player.getClass().getSimpleName());
+            line.add(player.getName());
+            line.add(String.valueOf(player.getPoints()));
+        }
+
+        try {
+            assert writer != null;
+            writer.writeNext(line.toArray(String[]::new));
+            writer.close();
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+        }
+
+    }
 
         Player winner = game.getWinner();
 

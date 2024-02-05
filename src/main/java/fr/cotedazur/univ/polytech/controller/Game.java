@@ -18,6 +18,12 @@ public class Game {
     // Logger
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
+    // Increment for each game created
+    private static int count = 0;
+
+    //All players have a unique id
+    private final int id;
+
     // All the players that play in the game
     private final List<Player> players;
 
@@ -39,6 +45,9 @@ public class Game {
 
 
     public Game(List<Player> players, GameView view) {
+        this.id = count;
+        count++;
+
         this.view = view;
         this.playerComparator = new PlayerComparator();
 
@@ -227,5 +236,9 @@ public class Game {
 
     public Player getWinner() {
         return players.get(0);
+
+  
+    public int getId() {
+        return id;
     }
 }
