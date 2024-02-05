@@ -224,4 +224,8 @@ public class Game {
         startGame();
         return players.get(0).getClass().getName();
     }
+
+    public Player getWinner() {
+        return players.get(0);
+    }
 }
