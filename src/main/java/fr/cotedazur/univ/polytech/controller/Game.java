@@ -236,7 +236,7 @@ public class Game {
 
     public Player getWinner() {
         return players.get(0);
-
+    }
   
     public int getId() {
         return id;

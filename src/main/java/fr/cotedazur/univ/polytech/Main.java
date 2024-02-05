@@ -32,6 +32,10 @@ public class Main {
         LamaLogger.setupFileLog(true, "game.log");
         LamaLogger.setupConsole(true, true);
         LOGGER.setLevel(LamaLevel.VIEW); // Change to OFF to disable the logger or INFO to enable all, VIEW to just the view and DEMO to disable all but the demo
+        // View setup
+        GameView view = new GameView();
+        Game game;
+        List<Player> players = new ArrayList<>();
 
         // CSV setup
         Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
@@ -46,10 +50,20 @@ public class Main {
         } catch (IOException ignored) {
         }
 
-        // View setup
-        GameView view = new GameView();
-        Game game;
-        List<Player> players = new ArrayList<>();
+        for (Player player : players) {
+            line.add(player.getClass().getSimpleName());
+            line.add(player.getName());
+            line.add(String.valueOf(player.getPoints()));
+        }
+
+        try {
+            assert writer != null;
+            writer.writeNext(line.toArray(String[]::new));
+            writer.close();
+        } catch (NullPointerException | IOException e) {
+            e.printStackTrace();
+        }
+
         Player bot1;
         Player bot2;
         Player bot3;
@@ -139,22 +153,6 @@ public class Main {
 
         Game game = new Game(players, view);
         game.startGame();
-
-        for (Player player : players) {
-            line.add(player.getClass().getSimpleName());
-            line.add(player.getName());
-            line.add(String.valueOf(player.getPoints()));
-        }
-
-        try {
-            assert writer != null;
-            writer.writeNext(line.toArray(String[]::new));
-            writer.close();
-        } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
-        }
-
-    }
 
         Player winner = game.getWinner();
 
