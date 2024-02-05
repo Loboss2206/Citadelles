@@ -53,12 +53,10 @@ public class Round {
             player.setHasBeenStolen(false);
         }
 
-        effectController = new EffectController();
-        effectController.setView(view);
-        effectController.setStackOfCoins(stackOfGolds);
+        effectController = new EffectController(view, stackOfGolds);
     }
 
-    public Round() {
+    public Round(GameView view, StackOfGolds stackOfGolds) {
         effectController = new EffectController(view, stackOfGolds);
     }
 
