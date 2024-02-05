@@ -1,11 +1,11 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
 public enum DispatchState {
-    TWOGOLDS("2golds"),
-    DRAWCARD("drawCard"),
+    TWO_GOLDS("2golds"),
+    DRAW_CARD("drawCard"),
 
-    CANTPLAY("cantPlay"),
-    PLACEDISTRICT("putDistrict"),
+    CANT_PLAY("cantPlay"),
+    PLACE_DISTRICT("putDistrict"),
     EARNDISTRICT_BISHOP("EarnDistrictBishop"),
     EARNDISTRICT_WARLORD("EarnDistrictWarlord"),
     EARNDISTRICT_KING("EarnDistrictKing"),
@@ -14,10 +14,10 @@ public enum DispatchState {
     DESTROY("Destroy"),
     KILL("Kill"),
     EXCHANGE("Exchange"),
-    EXCHANGEDECK("ExchangeDeck"),
-    EXCHANGEPLAYER("ExchangePlayer"),
-    CARDSNOTWANTED("cardsNotWanted"),
-    CARDSWANTED("cardsWanted");
+    EXCHANGE_DECK("ExchangeDeck"),
+    EXCHANGE_PLAYER("ExchangePlayer"),
+    CARDS_NOT_WANTED("cardsNotWanted"),
+    CARDS_WANTED("cardsWanted");
     private String s;
 
     DispatchState(String s) {

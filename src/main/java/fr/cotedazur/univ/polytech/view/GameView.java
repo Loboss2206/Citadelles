@@ -6,13 +6,16 @@ import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.StringJoiner;
+import java.util.logging.Logger;
 
 public class GameView {
-    private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
+    private static final Logger LOGGER = Logger.getLogger(LamaLogger.class.getName());
 
     private boolean display = true;
 
@@ -52,22 +55,68 @@ public class GameView {
     public void printPlayerAction(DispatchState action, Player player) {
         String playerNameAndRole = "Le joueur " + player.getName() + " (" + player.getPlayerRole().getCharacterName() + ")";
         switch (action) {
-            case TWOGOLDS ->
+            case TWO_GOLDS ->
                     displayMessage(playerNameAndRole + " a choisi de prendre 2 pièces d'or, il possède maintenant " + player.getGolds() + " pièces d'or.");
-            case DRAWCARD -> {
+            case DRAW_CARD -> {
                 if (player.getBoard().contains(DistrictCard.LIBRARY)) {
                     displayMessage(playerNameAndRole + " a choisi de piocher deux carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
                 } else {
                     displayMessage(playerNameAndRole + " a choisi de piocher une carte, il possède maintenant " + player.getHands().size() + " cartes dans sa main");
                 }
             }
-            case PLACEDISTRICT ->
+            case PLACE_DISTRICT ->
                     displayMessage(playerNameAndRole + " a choisi de placer le quartier : " + player.getBoard().get(player.getBoard().size() - 1).getDistrictName());
-            case CANTPLAY ->
+            case CANT_PLAY ->
                     displayMessage(playerNameAndRole + " ne peut rien faire car il n'y a plus de pieces ni de cartes :");
             default -> throw new IllegalStateException("Unexpected action: " + action);
         }
     }
+
+    public void printPurpleEffect(Player player, PurpleEffectState purpleEffectUsed) {
+        printPurpleEffect(player, null, null, purpleEffectUsed);
+    }
+
+    public void printPurpleEffect(Player player, DistrictCard districtCard, PurpleEffectState purpleEffectUsed) {
+        printPurpleEffect(player, districtCard, null, purpleEffectUsed);
+    }
+
+    public void printPurpleEffect(Player player, Color color, PurpleEffectState purpleEffectUsed) {
+        printPurpleEffect(player, null, color, purpleEffectUsed);
+    }
+
+    public void printPurpleEffect(Player player, DistrictCard districtCard, Color color, PurpleEffectState purpleEffectUsed) {
+        String playerNameAndRole = "Le joueur " + player.getName() + " (" + (player.getPlayerRole() != null ? player.getPlayerRole().getCharacterName() : "") + ")";
+        switch (purpleEffectUsed) {
+            case LABORATORY_EFFECT ->
+                    displayMessage(playerNameAndRole + " utilise l'effet du laboratoire pour récupérer 1 pièces en défaussant 1 carte ");
+            case GRAVEYARD_EFFECT -> {
+                if (districtCard != null)
+                    displayMessage(playerNameAndRole + " utilise l'effet du cimetière pour récupérer " + districtCard.getDistrictName() + " venant d'être détruit ");
+            }
+            case KEEP_EFFECT ->
+                    displayMessage(playerNameAndRole + " possèede un donjon qui ne peut pas être détruit par le warlord");
+            case HAUNTED_CITY -> {
+                if (color != null)
+                    displayMessage(playerNameAndRole + " utilise l'effet de la cours des miracles et choisis la couleur " + color.getColorName() + " pour sa carte");
+            }
+            case DRAGON_GATE_EFFECT ->
+                    displayMessage(playerNameAndRole + " possède la carte 'Dracoport' qui vaut maintenant 8");
+            case LIBRARY_EFFECT ->
+                    displayMessage(playerNameAndRole + " peut piocher 2 cartes grâce à l'effet de la carte 'Bibliothèque'");
+            case UNIVERSITY_EFFECT ->
+                    displayMessage(playerNameAndRole + " possède la carte 'Université' qui vaut maintenant 8");
+            case OBSERVATORY_EFFECT ->
+                    displayMessage(playerNameAndRole + " peut choisir entre 3 cartes lors de la pioches grâce à l'effet de la carte 'Observatoire'");
+            case SCHOOL_OF_MAGIC_EFFECT -> {
+                if (color != null)
+                    displayMessage(playerNameAndRole + " utilise l'effet de l'école de magie et choisis la couleur " + color.getColorName() + " pour sa carte");
+            }
+            case SMITHY_EFFECT ->
+                    displayMessage(playerNameAndRole + " utilise l'effet de la manufacture pour récupérer 3 cartes du deck en dépensant 2 pièces");
+            default -> displayMessage("Effet violet non connu");
+        }
+    }
+
 
     /**
      * Print a message when a player end his turn
@@ -91,7 +140,7 @@ public class GameView {
             //For adding all the districts placed by the player
             StringJoiner joiner = new StringJoiner(", ");
             if (!player.getBoard().isEmpty())
-                player.getBoard().forEach(element -> joiner.add(element.getDistrictName() + " " + element.getDistrictValue() + " pts"));
+                player.getBoard().forEach(element -> joiner.add(element.getDistrictName() + " " + ((element == DistrictCard.DRAGON_GATE || element == DistrictCard.UNIVERSITY) ? element.getDistrictValue() + 2 : element.getDistrictValue()) + " pts"));
 
             //Print the player's ranking and his state at the end of the game
             displayMessage(++i + " : " + player.getName() + " " + player.getPoints() + "pts, Golds = " + player.getGolds() + ", Quartiers placés = { " + joiner + " }, Personnage avant fin de la partie = " + player.getPlayerRole());
