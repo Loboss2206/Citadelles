@@ -100,7 +100,14 @@ public interface GameActions {
      *
      * @return the color chosen
      */
-    Color chooseColorForDistrictCard();
+    Color chooseColorForSchoolOfMagic();
+
+    /**
+     * function where the player choose the color of the district he wants to replace the purple district ("Haunted City")
+     *
+     * @return the color chosen
+     */
+    Color chooseColorForHauntedCity();
 
     /**
      * function where the player choose the card he wants from the cards he draws
@@ -129,5 +136,12 @@ public interface GameActions {
      *
      * @return true if he wants to use the effect, false otherwise
      */
-    boolean chooseUseGraveyardEffect();
+    boolean wantToUseGraveyardEffect();
+
+    /**
+     * function where the player choose to use the effect of the laboratory or not
+     *
+     * @return true if he wants to use the effect, false otherwise
+     */
+    boolean wantToUseLaboratoryEffect();
 }

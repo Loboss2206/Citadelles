@@ -33,8 +33,8 @@ class PlayerTest {
         botRandom2 = new BotRandom();
         this.districtDeck = DeckFactory.createDistrictDeck();
         this.districtDeck.shuffle();
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSWANTED, new ArrayList<>());
-        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDSNOTWANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
     }
 
     /**
@@ -59,7 +59,7 @@ class PlayerTest {
         Deck<DistrictCard> copyDeck;
         copyDeck = DeckFactory.createDistrictDeck();
         botRandom2.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtDeck.draw(), districtDeck.draw());
-        districtDeck.add(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).get(0));
+        districtDeck.add(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).get(0));
         //If the card is correctly removed
         assertEquals(65, copyDeck.size());
         assertEquals(64, districtDeck.size());

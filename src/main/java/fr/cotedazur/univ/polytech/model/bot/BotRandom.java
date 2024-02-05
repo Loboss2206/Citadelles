@@ -20,10 +20,10 @@ public class BotRandom extends Player implements GameActions {
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
-                return DispatchState.TWOGOLDS;
+                return DispatchState.TWO_GOLDS;
             }
             case 1 -> {
-                return DispatchState.DRAWCARD;
+                return DispatchState.DRAW_CARD;
             }
             default -> {
                 return null;
@@ -102,13 +102,20 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public Color chooseColorForDistrictCard() {
-        if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
-            return Color.values()[random.nextInt(Color.values().length)];
-        }
-        return null;
+    public Color chooseColorForSchoolOfMagic() {
+        return Color.values()[random.nextInt(Color.values().length)];
     }
 
+    @Override
+    public Color chooseColorForHauntedCity() {
+        return Color.values()[random.nextInt(Color.values().length)];
+    }
+
+
+    @Override
+    public boolean wantToUseLaboratoryEffect(){
+        return random.nextInt(2) == 0;
+    }
     @Override
     public DistrictCard chooseHandCardToDiscard() {
         boolean wantToUseDistrictCard = random.nextBoolean();
@@ -132,12 +139,12 @@ public class BotRandom extends Player implements GameActions {
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         for (int i = 0; i < cards.length; i++) {
             if (i == randomCard || i == randomSecondCard) {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSWANTED).add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).add(cards[i]);
             } else {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED).add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).add(cards[i]);
             }
         }
-        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDSNOTWANTED));
+        LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED));
     }
 
 
@@ -162,10 +169,10 @@ public class BotRandom extends Player implements GameActions {
         int randomIndex = random.nextInt(2);
         switch (randomIndex) {
             case 0 -> {
-                return DispatchState.EXCHANGEPLAYER;
+                return DispatchState.EXCHANGE_PLAYER;
             }
             case 1 -> {
-                return DispatchState.EXCHANGEDECK;
+                return DispatchState.EXCHANGE_DECK;
             }
             default -> {
                 return null;
@@ -203,8 +210,9 @@ public class BotRandom extends Player implements GameActions {
     }
 
     @Override
-    public boolean chooseUseGraveyardEffect() {
+    public boolean wantToUseGraveyardEffect() {
         int choice = random.nextInt(2);
         return choice == 0;
     }
+
 }

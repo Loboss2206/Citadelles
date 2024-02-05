@@ -5,6 +5,7 @@ import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.model.bot.PlayerComparator;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
@@ -136,7 +137,8 @@ public class Game {
             for (DistrictCard card : player.getBoard()) {
                 int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
                 player.setPoints(player.getPoints() + card.getDistrictValue() + i);
-                LOGGER.info("Le joueur " + player.getName() + " a gagné " + card.getDistrictValue() + " points grâce à son quartier " + card.getDistrictName());
+                if(card == DistrictCard.DRAGON_GATE) view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
+                if(card == DistrictCard.UNIVERSITY) view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
             }
 
             //If the player has 5 different colors
@@ -164,8 +166,9 @@ public class Game {
         }
 
         if (player.hasCardOnTheBoard(DistrictCard.HAUNTED_CITY) && player.getWhatIsTheRoundWhereThePlayerPutHisHauntedCity() != roundNumber) {
-            Color hauntedColor = player.chooseColorForDistrictCard();
+            Color hauntedColor = player.chooseColorForHauntedCity();
             colors.put(hauntedColor, true);
+            view.printPurpleEffect(player, hauntedColor, PurpleEffectState.HAUNTED_CITY);
         }
 
         for (DistrictCard card : player.getBoard()) {

@@ -122,7 +122,7 @@ public abstract class Player implements GameActions {
     public String collectTwoGolds() {
         this.golds += 2;
         LOGGER.info("Le joueur " + name + " a pioché 2 pièces d'or, il a maintenant " + golds + " pièces d'or");
-        return DispatchState.TWOGOLDS.toString();
+        return DispatchState.TWO_GOLDS.toString();
     }
 
     /**
@@ -160,7 +160,7 @@ public abstract class Player implements GameActions {
                 validCards.add(card);
             }
         }
-        LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards.toString());
+        LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards);
     }
 
     /**
@@ -229,7 +229,7 @@ public abstract class Player implements GameActions {
         } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
         if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
             addCardToBoard(districtToPut);
-            if (view != null) view.printPlayerAction(DispatchState.PLACEDISTRICT, this);
+            if (view != null) view.printPlayerAction(DispatchState.PLACE_DISTRICT, this);
         }
     }
 
@@ -270,7 +270,7 @@ public abstract class Player implements GameActions {
      * @return true if the player has a district that can be destroyed, else false
      */
     public boolean playerHasADestroyableDistrict(Player warlord) {
-        if (this.getBoard().isEmpty() || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead())) {
+        if (this.getBoard().isEmpty() || this.getBoard().size() >= 8 || (this.getPlayerRole().equals(CharacterCard.BISHOP) && !this.isDead())) {
             LOGGER.info("Le joueur " + name + " n'a pas de quartier détruisable");
             return false;
         }
