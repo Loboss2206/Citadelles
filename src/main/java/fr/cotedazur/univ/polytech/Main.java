@@ -135,10 +135,10 @@ public class Main {
     }
 
     private static void launchCustomGame(List<Player> players, GameView view, Map<String, Integer> winnerPerPlayer, Map<String, Integer> scoringPerPlayer, Player bot1, Player bot2, Player bot3, Player bot4) {
-        bot1.setName("BotStrong1");
-        bot2.setName("BotStrong2");
-        bot3.setName("BotStrong3");
-        bot4.setName("BotStrong4");
+        bot1.setName(bot1.getClass().getName().contains("BotStrong") ? "BotStrong1" : (bot1.getClass().getName().contains("BotWeak") ? "BotWeak1" : "BotRandom1"));
+        bot2.setName(bot2.getClass().getName().contains("BotStrong") ? "BotStrong2" : (bot2.getClass().getName().contains("BotWeak") ? "BotWeak2" : "BotRandom2"));
+        bot3.setName(bot3.getClass().getName().contains("BotStrong") ? "BotStrong3" : (bot3.getClass().getName().contains("BotWeak") ? "BotWeak3" : "BotRandom3"));
+        bot4.setName(bot4.getClass().getName().contains("BotStrong") ? "BotStrong4" : (bot4.getClass().getName().contains("BotWeak") ? "BotWeak4" : "BotRandom4"));
         players.clear();
         players.addAll(List.of(bot1, bot2, bot3, bot4));
         for (Player player : players) {
