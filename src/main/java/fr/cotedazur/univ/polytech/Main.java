@@ -33,7 +33,7 @@ public class Main {
         // Logger setup
         LamaLogger.setupFileLog(true, "game.log");
         LamaLogger.setupConsole(true, true);
-        LOGGER.setLevel(LamaLevel.VIEW); // Change to OFF to disable the logger or INFO to enable all, VIEW to just the view and DEMO to disable all but the demo
+        LOGGER.setLevel(LamaLevel.INFO); // Change to OFF to disable the logger or INFO to enable all, VIEW to just the view and DEMO to disable all but the demo
 
         // View setup
         GameView view = new GameView();
