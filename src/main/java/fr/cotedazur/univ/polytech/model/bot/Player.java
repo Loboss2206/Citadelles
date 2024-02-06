@@ -40,6 +40,13 @@ public abstract class Player implements GameActions {
     private int nbCardsInHand = 0;
     private int whatIsTheRoundWhereThePlayerPutHisHauntedCity = 0;
 
+    private List<CharacterCard> currentChoiceOfCharactersCardsDuringTheRound= new ArrayList<>();
+
+    private List<CharacterCard> discardedCardDuringTheRound = new ArrayList<>();
+
+    private CharacterCard roleKilledByAssassin = null;
+    private int currentNbRound = 0;
+
     protected Player() {
         id = count++;
         this.name = "BOT" + id;
@@ -307,7 +314,39 @@ public abstract class Player implements GameActions {
         this.whatIsTheRoundWhereThePlayerPutHisHauntedCity = whatIsTheRoundWhereThePlayerPutHisHauntedCity;
     }
 
+    public List<CharacterCard> getCurrentChoiceOfCharactersCardsDuringTheRound() {
+        return currentChoiceOfCharactersCardsDuringTheRound;
+    }
+
+    public List<CharacterCard> getDiscardedCardDuringTheRound() {
+        return discardedCardDuringTheRound;
+    }
+
     public abstract DistrictCard chooseHandCardToDiscard();
+
+    public void setCurrentChoiceOfCharactersCardsDuringTheRound(List<CharacterCard> currentChoiceOfCharactersCardsDuringTheRound) {
+        this.currentChoiceOfCharactersCardsDuringTheRound = currentChoiceOfCharactersCardsDuringTheRound;
+    }
+
+    public void setDiscardedCardDuringTheRound(List<CharacterCard> discardedCardDuringTheRound) {
+        this.discardedCardDuringTheRound = discardedCardDuringTheRound;
+    }
+
+    public int getCurrentNbRound() {
+        return currentNbRound;
+    }
+
+    public void setCurrentNbRound(int currentNbRound) {
+        this.currentNbRound = currentNbRound;
+    }
+
+    public CharacterCard getRoleKilledByAssassin() {
+        return roleKilledByAssassin;
+    }
+
+    public void setRoleKilledByAssassin(CharacterCard roleKilledByAssassin) {
+        this.roleKilledByAssassin = roleKilledByAssassin;
+    }
 }
 
 

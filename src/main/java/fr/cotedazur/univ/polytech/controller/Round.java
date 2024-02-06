@@ -89,6 +89,11 @@ public class Round {
         //Each player make a choice (draw a card or take 2 golds) and put a district
         choiceActionsForTheRound();
 
+        //Reset the RoleKilled for all the players
+        for(Player player : players){
+            player.setRoleKilledByAssassin(null);
+        }
+
         //Announce the end of the round
         view.printEndRound(nbRound);
     }
@@ -148,6 +153,11 @@ public class Round {
                     view.printCharacterCard(faceDownCharacterDiscarded.getCharacterNumber(), faceDownCharacterDiscarded.getCharacterName(), faceDownCharacterDiscarded.getCharacterEffect());
                     characterDeck.add(faceDownCharacterDiscarded);
                 }
+
+                //Store the information relative to the choice of the characters for the bot
+                player.setCurrentChoiceOfCharactersCardsDuringTheRound(characterDeck.getCards());
+                player.setDiscardedCardDuringTheRound(faceUpCharactersDiscarded.getCards());
+                player.setCurrentNbRound(nbRound);
 
                 int characterNumber = player.chooseCharacter(characterDeck.getCards());
                 CharacterCard drawn = characterDeck.draw(characterNumber);

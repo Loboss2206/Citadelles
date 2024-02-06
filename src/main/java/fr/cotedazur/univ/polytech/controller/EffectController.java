@@ -176,6 +176,10 @@ public class EffectController {
             LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le personnage " + roleKilled.getCharacterName() + " pour être éliminé");
             if (roleKilled != CharacterCard.ASSASSIN) {
                 for (Player playerAffected : players) {
+                    //Store the role that has been killed by the assassin for all the players
+                    playerAffected.setRoleKilledByAssassin(roleKilled);
+
+                    //Kill the player
                     if (playerAffected.getPlayerRole() == roleKilled) {
                         playerThatWantToUseEffect.getPlayerRole().useEffectAssassin(playerThatWantToUseEffect, playerAffected);
                     }
