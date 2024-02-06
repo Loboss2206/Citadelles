@@ -3,6 +3,7 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 
 import java.util.*;
 
@@ -14,6 +15,8 @@ public class Richard extends Player implements GameActions {
     public Richard() {
         super();
     }
+
+    private CharacterCard target;
 
     @Override
     public DispatchState startChoice() {
@@ -64,19 +67,112 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
-        if (getPlayerRole() == CharacterCard.ASSASSIN) {
-            return characterCards.get(random.nextInt(characterCards.size()));
+        if (target == CharacterCard.MAGICIAN)
+            return target;
+        if (isFirst(players) || whatCharacterGotTookByGoodPlayer(players, CharacterCard.WARLORD) || onlyOneWith1GoldDistrict(players)) {
+            return CharacterCard.WARLORD;
         }
-        return null;
+        if (someoneIsGoingToGetRich(players) || whatCharacterGotTookByGoodPlayer(players, CharacterCard.THIEF)){
+            return CharacterCard.THIEF;
+        }
+        return characterCards.get(random.nextInt(characterCards.size()));
     }
 
+    public boolean whatCharacterGotTookByGoodPlayer(List<Player> players, CharacterCard card) {
+        if (getDiscardedCardDuringTheRound().contains(card)){
+            return false;
+        }
+        List<Player> playersInOrder = getListCopyPlayers();
+        for (Player player : players){
+            if (player.equals(this)) continue;
+            if (player.getBoard().size() >= 6){
+                if (playersInOrder.indexOf(player) < playersInOrder.indexOf(this)){
+                    return !getCurrentChoiceOfCharactersCardsDuringTheRound().contains(card);
+                }
+                else {
+                    return getCurrentChoiceOfCharactersCardsDuringTheRound().contains(card);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean someoneIsGoingToGetRich(List<Player> players) {
+        int count = 0;
+        boolean someonePoor = false;
+        for (Player player : players){
+            if (player.getGolds() >= 4){
+                count++;
+            }
+            if (player.getGolds() <= 1){
+                if (player.equals(this)) continue;
+                someonePoor = true;
+            }
+        }
+        return someonePoor && count>=2;
+    }
+
+    public boolean onlyOneWith1GoldDistrict(List<Player> players) {
+        for (Player player : players){
+            if (player.equals(this)) continue;
+            for (DistrictCard districtCard : player.getBoard()){
+                if (districtCard.getDistrictValue() == 1){
+                    return false;
+                }
+            }
+        }
+        for (DistrictCard districtCard : getBoard()){
+            if (districtCard.getDistrictValue() == 1){
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    public boolean isFirst(List<Player> players){
+        Map<String, Integer> countPoints = new HashMap<>();
+        for (Player player : players){
+            countPoints.put(player.getName(), 0);
+        }
+        for (Player player : players) {
+            for (DistrictCard card : player.getBoard()) {
+                int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
+                countPoints.put(player.getName() ,countPoints.get(player.getName())+ card.getDistrictValue() + i);
+            }
+        }
+        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(countPoints.entrySet());
+        entryList.sort(Map.Entry.comparingByValue());
+        Collections.reverse(entryList);
+        return entryList.get(0).getKey().equals(this.getName());
+    }
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
+
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
-        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
+        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()) {
             return cards.indexOf(CharacterCard.THIEF);
         }
+        if (cards.contains(CharacterCard.ASSASSIN)){
+            if ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers()))){
+                target = CharacterCard.MAGICIAN;
+                return cards.indexOf(CharacterCard.ASSASSIN);
+
+            }
+            //TODO
+
+        }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    public boolean someoneHasNoCards(List<Player> players) {
+        for (Player player : players){
+            if (player.equals(this)) continue;
+            if (player.getHands().isEmpty()){
+                return true;
+            }
+        }
+        return false;
     }
 
     public boolean thereIsSomeoneWithALotOfGolds(){
@@ -231,5 +327,9 @@ public class Richard extends Player implements GameActions {
         return choice == 0;
     }
 
-
+    public CharacterCard getTarget(){
+        return target;
+    }
 }
+
+
