@@ -30,6 +30,12 @@ class BotAVsBotBTest {
 
     Player player9 = new BotStrong();
 
+    Player player10 = new BotStrong();
+
+    Player player11 = new BotStrong();
+
+    Player player12 = new BotStrong();
+
     Game game;
 
 
@@ -112,37 +118,37 @@ class BotAVsBotBTest {
 
     @Test
     void testBattleBetweenBotStrongAndRichard() {
-        int numberOfWeakBot = 0;
+        int numberOfRichard = 0;
         int numberOfStrongBot = 0;
         for (int i = 0; i < 100; i++) {
             player7 = new BotStrong();
 
-            player2 = new Richard();
+            player10 = new Richard();
 
             player8 = new BotStrong();
 
-            player4 = new Richard();
+            player11 = new Richard();
 
             player9 = new BotStrong();
 
-            player6 = new Richard();
+            player12 = new Richard();
 
             players.clear();
             players.add(player7);
-            players.add(player2);
+            players.add(player10);
             players.add(player8);
-            players.add(player4);
+            players.add(player11);
             players.add(player9);
-            players.add(player6);
+            players.add(player12);
 
             game = new Game(players, new GameView());
             String winnerOfTheGameClass = game.startGameTest();
             if (winnerOfTheGameClass.equals(BotStrong.class.getName()))
                 numberOfStrongBot++;
-            else if (winnerOfTheGameClass.equals(BotWeak.class.getName()))
-                numberOfWeakBot++;
+            else if (winnerOfTheGameClass.equals(Richard.class.getName()))
+                numberOfRichard++;
         }
-        System.out.println(((double) numberOfWeakBot / (numberOfWeakBot + numberOfStrongBot)) * 100);
-        assertTrue(50.01 <= ((double) numberOfStrongBot / (numberOfWeakBot + numberOfStrongBot)) * 100);
+        System.out.println(((double) numberOfRichard / (numberOfRichard + numberOfStrongBot)) * 100);
+        assertTrue(50.01 <= ((double) numberOfStrongBot / (numberOfRichard + numberOfStrongBot)) * 100);
     }
 }
