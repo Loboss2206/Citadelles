@@ -130,11 +130,11 @@ public class EffectController {
      */
     private Player playerCopy(Player playerCopy, Player playerThatUseEffect) {
         Player copyPlayer = playerCopy.copy();
-        if (playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead()) {
+        if (playerCopy.getPlayerRole() != null && playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead()) {
             copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
             LOGGER.info("Le role du joueur " + playerCopy.getName() + " (" + playerCopy.getPlayerRole().getCharacterName() + ") a été copié");
         }
-        LOGGER.info("Le joueur " + playerCopy.getName() + " (" + playerCopy.getPlayerRole().getCharacterName() + ") a été copié");
+        LOGGER.info("Le joueur " + playerCopy.getName() + " (" + (playerCopy.getPlayerRole() != null ? playerCopy.getPlayerRole().getCharacterName() : "non connus") + ") a été copié");
         return copyPlayer;
     }
 

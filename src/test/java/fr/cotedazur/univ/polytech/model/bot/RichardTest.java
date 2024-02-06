@@ -47,6 +47,33 @@ class RichardTest {
 
     @Test
     void testChooseCharacter() {
+        //Take Thief
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        for(int i = 0; i < 4; i++){
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+        }
+        botRichard.setListCopyPlayers(players);
+        assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
+        //try to take the thief when Richard has a lot of golds
+        when(random.nextInt(anyInt())).thenReturn(0);
+        botRichard.setGolds(4);
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //try to take the thief when Richard there is not someone with a lot of golds
+        when(random.nextInt(anyInt())).thenReturn(3);
+        botRichard.setGolds(0);
+        for(Player player : players){
+            player.setGolds(2);
+        }
+        assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //Try to take thief where is not in characters choice
+        characterCard.remove(CharacterCard.THIEF);
+        when(random.nextInt(anyInt())).thenReturn(1);
+        assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
     }
 }

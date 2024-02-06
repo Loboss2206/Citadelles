@@ -47,6 +47,8 @@ public abstract class Player implements GameActions {
     private CharacterCard roleKilledByAssassin = null;
     private int currentNbRound = 0;
 
+    private List<Player> listCopyPlayers = new ArrayList<>();
+
     protected Player() {
         id = count++;
         this.name = "BOT" + id;
@@ -346,6 +348,14 @@ public abstract class Player implements GameActions {
 
     public void setRoleKilledByAssassin(CharacterCard roleKilledByAssassin) {
         this.roleKilledByAssassin = roleKilledByAssassin;
+    }
+
+    public List<Player> getListCopyPlayers() {
+        return listCopyPlayers;
+    }
+
+    public void setListCopyPlayers(List<Player> listCopyPlayers) {
+        this.listCopyPlayers = listCopyPlayers;
     }
 }
 

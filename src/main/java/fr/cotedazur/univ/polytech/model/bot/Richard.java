@@ -73,10 +73,19 @@ public class Richard extends Player implements GameActions {
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
-        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3){
+        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
             return cards.indexOf(CharacterCard.THIEF);
         }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    public boolean thereIsSomeoneWithALotOfGolds(){
+        for(Player player : getListCopyPlayers()){
+            if(player.getGolds() >= 3){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override

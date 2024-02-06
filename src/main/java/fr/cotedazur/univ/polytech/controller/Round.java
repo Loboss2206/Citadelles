@@ -71,6 +71,10 @@ public class Round {
         //Discard cards
         discardCards();
 
+        for(Player player : players){
+            player.setListCopyPlayers(effectController.playerNeededWithoutSensibleInformation(players, player));
+        }
+
         //Each player choose a character
         choiceOfCharactersForEachPlayer();
 
