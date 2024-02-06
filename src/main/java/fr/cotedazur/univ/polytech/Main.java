@@ -57,11 +57,7 @@ public class Main {
 
             if (newFile) writeFirstLine(writer);
             else {
-                try {
-                    removeLastLine(path);
-                } catch (IOException | CsvValidationException e) {
-                    throw new RuntimeException(e);
-                }
+                removeLastLine(path);
             }
         }
 
@@ -206,6 +202,11 @@ public class Main {
         }
     }
 
+    /**
+     * Write the players stats in the csv file for a game
+     * @param writer the csv writer
+     * @param players the list of players
+     */
     public static void writePlayersStats(CSVWriter writer, List<Player> players) {
         List<String> line = new ArrayList<>();
         for (Player player : players) {
@@ -221,9 +222,13 @@ public class Main {
         }
     }
 
+    /**
+     * Write the header of the csv file
+     * @param writer the csv writer
+     */
     public static void writeFirstLine(CSVWriter writer) {
         List<String> line = new ArrayList<>();
-        for (int i = 0; i < 7; i++) {
+        for (int i = 0; i < 4; i++) {
             line.add("BotType");
             line.add("BotName");
             line.add("Points");
@@ -231,16 +236,27 @@ public class Main {
         writer.writeNext(line.toArray(String[]::new));
     }
 
-    public static void removeLastLine(Path path) throws IOException, CsvValidationException {
+    /**
+     * Remove the last line of the csv file
+     * @param path the path of the csv file
+     */
+    public static void removeLastLine(Path path) {
         List<String[]> lines = recoverAllLines(path);
 
         if (!lines.isEmpty()) lines.remove(lines.size() - 1);
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(path.toFile()))) {
             writer.writeAll(lines);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
     }
 
+    /**
+     * Recover all the lines of the csv file
+     * @param path the path of the csv file
+     * @return the list of all the lines
+     */
     public static List<String[]> recoverAllLines(Path path) {
         List<String[]> lines = new ArrayList<>();
 
@@ -256,6 +272,10 @@ public class Main {
         return lines;
     }
 
+    /**
+     * Compute the stats of the games and add the last line to the csv file
+     * @param path the path of the csv file
+     */
     public static void addLastLine(Path path) {
         CSVWriter writer;
         try {
@@ -341,6 +361,9 @@ public class Main {
         }
     }
 
+    /**
+     * Class to parse the command line arguments
+     */
     public static class JCommanderSpoke {
         @Parameter(names = {"--demo"})
         public boolean demoMode;
