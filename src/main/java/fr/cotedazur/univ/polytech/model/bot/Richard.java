@@ -70,11 +70,24 @@ public class Richard extends Player implements GameActions {
         return null;
     }
 
+    public boolean isBeforeLastRound(){
+        for(Player player : getListCopyPlayers()){
+            if(player != this && player.getBoard().size()==6){
+                return true;
+            }
+        }
+        return false;
+    }
+
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         discoverValidCard();
 
-        if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
+        //King
+        if(cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0 && !(this.isCrowned() && getListCopyPlayers().size() < 5)){
+            return cards.indexOf(CharacterCard.KING);
+        }
+        else if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
             return cards.indexOf(CharacterCard.MAGICIAN);
         }
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
@@ -82,6 +95,20 @@ public class Richard extends Player implements GameActions {
             return cards.indexOf(CharacterCard.THIEF);
         }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    private int countNumberOfSpecifiedColorCard(Color color) {
+        int count = 0;
+        for (DistrictCard card : getBoard()) {
+            if (card.getDistrictColor() == color) count++;
+        }
+        for (DistrictCard card : getHands()) {
+            if (card.getDistrictColor() == color){
+                count++;
+                break;
+            }
+        }
+        return count;
     }
 
     public boolean thereIsSomeoneWithALotOfGolds(){
