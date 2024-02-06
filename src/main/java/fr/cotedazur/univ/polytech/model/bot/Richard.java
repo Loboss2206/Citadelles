@@ -43,8 +43,7 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DistrictCard putADistrict() {
-        discoverValidCard();
-        if (!validCards.isEmpty()) {
+        if (hasValidCard()) {
             int randomIndex = random.nextInt(validCards.size());
             return validCards.get(randomIndex);
         }
@@ -70,9 +69,27 @@ public class Richard extends Player implements GameActions {
         return null;
     }
 
+    private int countNumberOfSpecifiedColorCard(Color color) {
+        int count = 0;
+        for (DistrictCard card : getBoard()) {
+            if (card.getDistrictColor().getColorName() .equals(color.getColorName())) count++;
+        }
+        for (DistrictCard card : getHands()) {
+            if (card.getDistrictColor().getColorName() .equals(color.getColorName())){
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         discoverValidCard();
+      
+        if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
+            return cards.indexOf(CharacterCard.BISHOP);
+        }
 
         if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
             return cards.indexOf(CharacterCard.MAGICIAN);
@@ -81,6 +98,7 @@ public class Richard extends Player implements GameActions {
         else if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
             return cards.indexOf(CharacterCard.THIEF);
         }
+
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 
@@ -219,8 +237,7 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public boolean wantsToUseSmithyEffect() {
-        int randomIndex = random.nextInt(2);
-        return randomIndex == 0;
+        return random.nextInt(2) == 0;
     }
 
     @Override
