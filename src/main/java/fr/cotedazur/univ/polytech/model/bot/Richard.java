@@ -137,23 +137,19 @@ public class Richard extends Player implements GameActions {
         return false;
     }
 
-
-
     public boolean isFirst(List<Player> players){
-        Map<String, Integer> countPoints = new HashMap<>();
-        for (Player player : players){
-            countPoints.put(player.getName(), 0);
-        }
+        int countThis = 0;
+        int countPlayer = 0;
+        int maxPlayer = 0;
         for (Player player : players) {
-            for (DistrictCard card : player.getBoard()) {
-                int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
-                countPoints.put(player.getName() ,countPoints.get(player.getName())+ card.getDistrictValue() + i);
+            if (player.equals(this)){
+                countThis = getBoard().size();
+            }else{
+                countPlayer = player.getBoard().size();
             }
+            if (countPlayer > maxPlayer) maxPlayer = countPlayer;
         }
-        List<Map.Entry<String, Integer>> entryList = new ArrayList<>(countPoints.entrySet());
-        entryList.sort(Map.Entry.comparingByValue());
-        Collections.reverse(entryList);
-        return entryList.get(0).getKey().equals(this.getName());
+        return maxPlayer <= countThis;
     }
    
 

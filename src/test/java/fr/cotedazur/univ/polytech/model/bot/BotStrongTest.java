@@ -83,7 +83,7 @@ class BotStrongTest {
 
         //when there is already the color on the board
         botStrong.setGolds(20);
-        botStrong.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        botStrong.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
         assertEquals(DispatchState.DRAW_CARD, botStrong.startChoice());
 
         //when hand is empty
@@ -96,7 +96,7 @@ class BotStrongTest {
     void testChooseCharacter() {
         Deck<CharacterCard> characterDeck = DeckFactory.createCharacterDeck();
         botStrong.getHands().add(DistrictCard.SMITHY);
-        botStrong.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        botStrong.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
         botStrong.setGolds(0);
         assertEquals(CharacterCard.MERCHANT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
 
