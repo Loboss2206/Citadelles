@@ -53,6 +53,6 @@ public class LamaLogger {
     }
 
     public static void mute() {
-        LOGGER.setLevel(Level.OFF);
+        LOGGER.setLevel(LamaLevel.OFF);
     }
 }
