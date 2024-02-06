@@ -30,6 +30,12 @@ class BotAVsBotBTest {
 
     Player player9 = new BotStrong();
 
+    Player player10 = new BotStrong();
+
+    Player player11 = new BotStrong();
+
+    Player player12 = new BotStrong();
+
     Game game;
 
 
@@ -108,5 +114,41 @@ class BotAVsBotBTest {
         }
         System.out.println(((double) numberOfWeakBot / (numberOfWeakBot + numberOfStrongBot)) * 100);
         assertTrue(50.01 <= ((double) numberOfStrongBot / (numberOfWeakBot + numberOfStrongBot)) * 100);
+    }
+
+    @Test
+    void testBattleBetweenBotStrongAndRichard() {
+        int numberOfRichard = 0;
+        int numberOfStrongBot = 0;
+        for (int i = 0; i < 100; i++) {
+            player7 = new BotStrong();
+
+            player10 = new Richard();
+
+            player8 = new BotStrong();
+
+            player11 = new Richard();
+
+            player9 = new BotStrong();
+
+            player12 = new Richard();
+
+            players.clear();
+            players.add(player7);
+            players.add(player10);
+            players.add(player8);
+            players.add(player11);
+            players.add(player9);
+            players.add(player12);
+
+            game = new Game(players, new GameView());
+            String winnerOfTheGameClass = game.startGameTest();
+            if (winnerOfTheGameClass.equals(BotStrong.class.getName()))
+                numberOfStrongBot++;
+            else if (winnerOfTheGameClass.equals(Richard.class.getName()))
+                numberOfRichard++;
+        }
+        System.out.println(((double) numberOfRichard / (numberOfRichard + numberOfStrongBot)) * 100);
+        assertTrue(50.01 <= ((double) numberOfStrongBot / (numberOfRichard + numberOfStrongBot)) * 100);
     }
 }

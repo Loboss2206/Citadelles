@@ -93,7 +93,7 @@ public class BotStrong extends Player implements GameActions {
 
             }
         }
-        if (getGolds() == 0) {
+        if (getGolds() <= 4) {
             return DispatchState.TWO_GOLDS;
         }
         if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 6) {
@@ -110,7 +110,6 @@ public class BotStrong extends Player implements GameActions {
     @Override
     public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (getPlayerRole() == CharacterCard.THIEF) {
-            System.out.println("Volllllll:" + characterCards.get(3));
             return characterCards.get(3);
         }
         return null;

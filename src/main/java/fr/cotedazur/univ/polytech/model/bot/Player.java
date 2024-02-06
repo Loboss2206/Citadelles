@@ -3,10 +3,10 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
-import fr.cotedazur.univ.polytech.view.GameView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public abstract class Player implements GameActions {
     protected static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
@@ -39,6 +39,15 @@ public abstract class Player implements GameActions {
     private String usedEffect;
     private int nbCardsInHand = 0;
     private int whatIsTheRoundWhereThePlayerPutHisHauntedCity = 0;
+
+    private List<CharacterCard> currentChoiceOfCharactersCardsDuringTheRound= new ArrayList<>();
+
+    private List<CharacterCard> discardedCardDuringTheRound = new ArrayList<>();
+
+    private CharacterCard roleKilledByAssassin = null;
+    private int currentNbRound = 0;
+
+    private List<Player> listCopyPlayers = new ArrayList<>();
 
     protected Player() {
         id = count++;
@@ -163,6 +172,11 @@ public abstract class Player implements GameActions {
         LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards);
     }
 
+    public boolean hasValidCard() {
+        discoverValidCard();
+        return !validCards.isEmpty();
+    }
+
     /**
      * check if a card is on the board of a player
      *
@@ -212,30 +226,15 @@ public abstract class Player implements GameActions {
      * @return true if the obj is equals to this, else false
      */
     @Override
-    public boolean equals(Object obj) {
-        if (obj instanceof Player player) {
-            return player.name.equals(this.name);
-        }
-        return false;
-    }
-
-    /**
-     * function that add to the board the district he chose to put and announced it
-     */
-    public void drawAndPlaceADistrict(GameView view) {
-        DistrictCard districtToPut;
-        do {
-            districtToPut = choiceHowToPlayDuringTheRound();
-        } while (hasCardOnTheBoard(districtToPut) && hasPlayableCard());
-        if (districtToPut != null && !hasCardOnTheBoard(districtToPut)) {
-            addCardToBoard(districtToPut);
-            if (view != null) view.printPlayerAction(DispatchState.PLACE_DISTRICT, this);
-        }
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Player)) return false;
+        return Objects.equals(name, ((Player) o).name);
     }
 
     @Override
     public int hashCode() {
-        return 0;
+        return super.hashCode();
     }
 
     public boolean isFirstToAdd8district() {
@@ -322,7 +321,47 @@ public abstract class Player implements GameActions {
         this.whatIsTheRoundWhereThePlayerPutHisHauntedCity = whatIsTheRoundWhereThePlayerPutHisHauntedCity;
     }
 
+    public List<CharacterCard> getCurrentChoiceOfCharactersCardsDuringTheRound() {
+        return currentChoiceOfCharactersCardsDuringTheRound;
+    }
+
+    public List<CharacterCard> getDiscardedCardDuringTheRound() {
+        return discardedCardDuringTheRound;
+    }
+
     public abstract DistrictCard chooseHandCardToDiscard();
+
+    public void setCurrentChoiceOfCharactersCardsDuringTheRound(List<CharacterCard> currentChoiceOfCharactersCardsDuringTheRound) {
+        this.currentChoiceOfCharactersCardsDuringTheRound = currentChoiceOfCharactersCardsDuringTheRound;
+    }
+
+    public void setDiscardedCardDuringTheRound(List<CharacterCard> discardedCardDuringTheRound) {
+        this.discardedCardDuringTheRound = discardedCardDuringTheRound;
+    }
+
+    public int getCurrentNbRound() {
+        return currentNbRound;
+    }
+
+    public void setCurrentNbRound(int currentNbRound) {
+        this.currentNbRound = currentNbRound;
+    }
+
+    public CharacterCard getRoleKilledByAssassin() {
+        return roleKilledByAssassin;
+    }
+
+    public void setRoleKilledByAssassin(CharacterCard roleKilledByAssassin) {
+        this.roleKilledByAssassin = roleKilledByAssassin;
+    }
+
+    public List<Player> getListCopyPlayers() {
+        return listCopyPlayers;
+    }
+
+    public void setListCopyPlayers(List<Player> listCopyPlayers) {
+        this.listCopyPlayers = listCopyPlayers;
+    }
 }
 
 

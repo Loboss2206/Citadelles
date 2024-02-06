@@ -17,8 +17,7 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public DistrictCard putADistrict() {
-        discoverValidCard();
-        if (!validCards.isEmpty()) {
+        if (hasValidCard()) {
             //Sort the hands from the smallest to the biggest
             validCards.sort(new DistrictCardComparator());
             return validCards.get(0);
@@ -136,13 +135,14 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
-        DistrictCard maxPrice = getHands().get(0);
-        for (DistrictCard districtCard : getHands()) {
-            if (districtCard.getDistrictValue() >= maxPrice.getDistrictValue()) {
-                maxPrice = districtCard;
+        if (!getHands().isEmpty()) {
+            for (DistrictCard districtCard : getHands()) {
+                if (districtCard.getDistrictValue() >= 3) {
+                    return districtCard;
+                }
             }
         }
-        return maxPrice;
+        return null;
     }
 
 
@@ -208,7 +208,7 @@ public class BotWeak extends Player implements GameActions {
      * @param color      The color associated with the character card to find.
      * @return The index of the character card associated with the specified color, or an exception if not found.
      */
-    private int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
+    int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
         return switch (color) {
             case YELLOW -> characters.indexOf(CharacterCard.KING);
             case GREEN -> characters.indexOf(CharacterCard.MERCHANT);

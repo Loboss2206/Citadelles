@@ -18,6 +18,12 @@ public class Game {
     // Logger
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
+    // Increment for each game created
+    private static int count = 0;
+
+    //All players have a unique id
+    private final int id;
+
     // All the players that play in the game
     private final List<Player> players;
 
@@ -27,6 +33,7 @@ public class Game {
     // The comparator of the players
     private final PlayerComparator playerComparator;
     private final StackOfGolds stackOfGolds;
+
     // Random Object
     private final Random random = new Random();
     // The round number
@@ -34,10 +41,13 @@ public class Game {
     // All the decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck;
-    private int maxRound = 100; //prevent an infinite game
+    private final int maxRound = 100; //prevent an infinite game
 
 
     public Game(List<Player> players, GameView view) {
+        this.id = count;
+        count++;
+
         this.view = view;
         this.playerComparator = new PlayerComparator();
 
@@ -149,8 +159,6 @@ public class Game {
 
             //If the player complete 8 quarters
             addBonusPointsForPlayerWhoAdd8Districts(player);
-
-            //Bonus off purple cards (will be implemented later)
         }
     }
 
@@ -226,7 +234,11 @@ public class Game {
         return players.get(0).getClass().getName();
     }
 
-    public StackOfGolds getStackOfCoins() {
-        return stackOfGolds;
+    public Player getWinner() {
+        return players.get(0);
+    }
+  
+    public int getId() {
+        return id;
     }
 }
