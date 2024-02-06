@@ -45,24 +45,24 @@ public class Main {
         CSVWriter writer = null;
 
         if (jCommanderSpoke.csvMode) {
-        boolean newFile = false;
+            boolean newFile = false;
 
-        try {
-            // create directory stats
-            path.getParent().toFile().mkdirs();
-            newFile = path.toFile().createNewFile();
-            writer = new CSVWriter(new FileWriter(path.toFile(), true));
-        } catch (IOException ignored) {
-        }
-
-        if (newFile) writeFirstLine(writer);
-        else {
             try {
-                removeLastLine(path);
-            } catch (IOException | CsvValidationException e) {
-                throw new RuntimeException(e);
+                // create directory stats
+                path.getParent().toFile().mkdirs();
+                newFile = path.toFile().createNewFile();
+                writer = new CSVWriter(new FileWriter(path.toFile(), true));
+            } catch (IOException ignored) {
             }
-        }
+
+            if (newFile) writeFirstLine(writer);
+            else {
+                try {
+                    removeLastLine(path);
+                } catch (IOException | CsvValidationException e) {
+                    throw new RuntimeException(e);
+                }
+            }
         }
 
         Player bot1;
@@ -127,6 +127,8 @@ public class Main {
             view.diplayBotComparaison(winnerPerPlayer, scoringPerPlayer);
 
         } else if (jCommanderSpoke.csvMode) {
+            LOGGER.setLevel(LamaLevel.DEMO);
+
             for (int i = 0; i < 20; i++) {
                 players.clear();
 
@@ -158,14 +160,16 @@ public class Main {
         }
 
         if (jCommanderSpoke.csvMode) {
-        assert writer != null;
-        try {
-            writer.close();
-            addLastLine(path);
-        } catch (
-                IOException e) {
-            throw new RuntimeException(e);
-        }
+            assert writer != null;
+            try {
+                writer.close();
+                addLastLine(path);
+            } catch (
+                    IOException e) {
+                throw new RuntimeException(e);
+            }
+            List<String[]> lines = recoverAllLines(path);
+            view.displayStats(lines);
         }
     }
 
