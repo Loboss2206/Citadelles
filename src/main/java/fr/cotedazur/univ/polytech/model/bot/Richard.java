@@ -46,8 +46,7 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DistrictCard putADistrict() {
-        discoverValidCard();
-        if (!validCards.isEmpty()) {
+        if (hasValidCard()) {
             int randomIndex = random.nextInt(validCards.size());
             return validCards.get(randomIndex);
         }
@@ -123,11 +122,21 @@ public class Richard extends Player implements GameActions {
         }
         for (DistrictCard districtCard : getBoard()){
             if (districtCard.getDistrictValue() == 1){
+              return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean isBeforeLastRound(){
+        for(Player player : getListCopyPlayers()){
+            if(player != this && player.getBoard().size()==6){
                 return true;
             }
         }
         return false;
     }
+
 
 
     public boolean isFirst(List<Player> players){
@@ -146,24 +155,7 @@ public class Richard extends Player implements GameActions {
         Collections.reverse(entryList);
         return entryList.get(0).getKey().equals(this.getName());
     }
-    @Override
-    public int chooseCharacter(List<CharacterCard> cards) {
-
-        //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
-        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()) {
-            return cards.indexOf(CharacterCard.THIEF);
-        }
-        if (cards.contains(CharacterCard.ASSASSIN)){
-            if ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers()))){
-                target = CharacterCard.MAGICIAN;
-                return cards.indexOf(CharacterCard.ASSASSIN);
-
-            }
-            //TODO
-
-        }
-        return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
-    }
+   
 
     public boolean someoneHasNoCards(List<Player> players) {
         for (Player player : players){
@@ -175,9 +167,66 @@ public class Richard extends Player implements GameActions {
         return false;
     }
 
+  
+    private int countNumberOfSpecifiedColorCard(Color color) {
+        int count = 0;
+        for (DistrictCard card : getBoard()) {
+            if (card.getDistrictColor().getColorName() .equals(color.getColorName())) count++;
+        }
+        for (DistrictCard card : getHands()) {
+            if (card.getDistrictColor().getColorName() .equals(color.getColorName())){
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
+    @Override
+    public int chooseCharacter(List<CharacterCard> cards) {
+        discoverValidCard();
+      
+        if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
+            return cards.indexOf(CharacterCard.BISHOP);
+        }
+
+        //King
+        if(cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0 && !(this.isCrowned() && getListCopyPlayers().size() < 5)){
+            return cards.indexOf(CharacterCard.KING);
+        }
+        else if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
+            return cards.indexOf(CharacterCard.MAGICIAN);
+        }
+        //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
+        else if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
+            return cards.indexOf(CharacterCard.THIEF);
+        }else if (cards.contains(CharacterCard.ASSASSIN)){
+            if ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers()))){
+                target = CharacterCard.MAGICIAN;
+                return cards.indexOf(CharacterCard.ASSASSIN);
+
+            }
+            //TODO
+
+        }
+
+        return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+ 
+
     public boolean thereIsSomeoneWithALotOfGolds(){
         for(Player player : getListCopyPlayers()){
-            if(player.getGolds() >= 3){
+            if(player.getGolds() >= 3 && player != this){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean thereIsSomeoneWithALotOfCards(){
+        for(Player player : getListCopyPlayers()){
+            if(player.getHands().size() > this.getHands().size() && player != this){
                 return true;
             }
         }
@@ -278,30 +327,30 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DispatchState whichMagicianEffect(List<Player> players) {
-        int randomIndex = random.nextInt(2);
-        switch (randomIndex) {
-            case 0 -> {
+        int nbCardPlayer = this.getHands().size();
+        for (Player p : players) {
+            int nbCardOther = p.getHands().size();
+            if (nbCardOther > nbCardPlayer) {
                 return DispatchState.EXCHANGE_PLAYER;
             }
-            case 1 -> {
-                return DispatchState.EXCHANGE_DECK;
-            }
-            default -> {
-                return null;
-            }
         }
+        return DispatchState.EXCHANGE_DECK;
     }
 
     @Override
     public boolean wantToUseEffect(boolean beforePuttingADistrict) {
-        int randomIndex = random.nextInt(2);
-        return randomIndex == 0;
+        discoverValidCard();
+        for(DistrictCard districtCard : validCards){
+            if(districtCard.getDistrictColor() == this.getPlayerRole().getCharacterColor() && beforePuttingADistrict){
+                return getPlayerRole() == CharacterCard.WARLORD;
+            }
+        }
+        return true;
     }
 
     @Override
     public boolean wantsToUseSmithyEffect() {
-        int randomIndex = random.nextInt(2);
-        return randomIndex == 0;
+        return random.nextInt(2) == 0;
     }
 
     @Override
@@ -318,8 +367,16 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public Player selectMagicianTarget(List<Player> players) {
-        return players.get(random.nextInt(players.size()));
-    }
+        Player highNbCards = players.get(0);
+        for (Player p : players) {
+                //if equals we trade with someone who has the most district
+                if(p.getHands().size() == highNbCards.getHands().size() && p.getBoard().size() > highNbCards.getBoard().size()) {
+                    highNbCards = p;
+                }else if (p.getHands().size() > highNbCards.getHands().size()) {
+                    highNbCards = p;
+                }
+        }
+        return highNbCards;    }
 
     @Override
     public boolean wantToUseGraveyardEffect() {
