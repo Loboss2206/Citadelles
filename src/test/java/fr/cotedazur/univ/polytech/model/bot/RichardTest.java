@@ -45,7 +45,7 @@ class RichardTest {
 
     @Test
     void testChooseCharacter() {
-        //Take the Magician
+        //Take the King
         List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
@@ -56,6 +56,11 @@ class RichardTest {
         }
 
         players.add(botRichard);
+        botRichard.addCardToHand(DistrictCard.PALACE);
+        assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //Take the Magician
+        botRichard.getHands().clear();
         botRichard.setListCopyPlayers(players);
         assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
