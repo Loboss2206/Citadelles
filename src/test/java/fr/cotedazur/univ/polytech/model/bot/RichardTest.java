@@ -137,10 +137,10 @@ class RichardTest {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Player player = new BotRandom();
-            player.addCardToBoard(DistrictCard.CHURCH);
+            player.getBoard().add(DistrictCard.CHURCH);
             players.add(player);
         }
-        botRichard.addCardToBoard(DistrictCard.TEMPLE);
+        botRichard.getBoard().add(DistrictCard.TEMPLE);
         players.add(botRichard);
         assertTrue(botRichard.onlyOneWith1GoldDistrict(players));
         //no-one has 1 gold district
@@ -148,9 +148,9 @@ class RichardTest {
         assertFalse(botRichard.onlyOneWith1GoldDistrict(players));
 
         //everyone has 1 gold district
-        botRichard.addCardToBoard(DistrictCard.TEMPLE);
+        botRichard.getBoard().add(DistrictCard.TEMPLE);
         for (Player player : players) {
-            player.addCardToBoard(DistrictCard.TAVERN);
+            player.getBoard().add(DistrictCard.TAVERN);
         }
         assertFalse(botRichard.onlyOneWith1GoldDistrict(players));
     }
@@ -160,18 +160,18 @@ class RichardTest {
         List<Player> players = new ArrayList<>();
         for (int i = 0; i < 4; i++) {
             Player player = new BotRandom();
-            player.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+            player.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
             players.add(player);
         }
         //Richard has the most points
-        botRichard.addCardToBoard(DistrictCard.DRAGON_GATE);
+        botRichard.getBoard().add(DistrictCard.DRAGON_GATE);
         players.add(botRichard);
         //Richard hasn't the most points
         assertTrue(botRichard.isFirst(players));
-        players.get(0).addCardToBoard(DistrictCard.CASTLE);
+        players.get(0).getBoard().add(DistrictCard.CASTLE);
         assertFalse(botRichard.isFirst(players));
         //Richard is tied on top
-        botRichard.addCardToBoard(DistrictCard.CHURCH);
+        botRichard.getBoard().add(DistrictCard.CHURCH);
         assertTrue(botRichard.isFirst(players));
     }
     @Test
@@ -318,7 +318,7 @@ class RichardTest {
             cards.add(DistrictCard.TEMPLE);
             if(i==2){
                 player.setGolds(20);
-                player.addCardToBoard(DistrictCard.MARKET);
+                player.getBoard().add(DistrictCard.MARKET);
             }
             if(i == 3){
                 cards.add(DistrictCard.TAVERN);
