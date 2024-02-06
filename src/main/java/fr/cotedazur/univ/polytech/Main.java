@@ -2,7 +2,9 @@ package fr.cotedazur.univ.polytech;
 
 
 import com.beust.jcommander.JCommander;
-import com.opencsv.CSVWriter;
+import com.beust.jcommander.Parameter;
+import com.opencsv.*;
+import com.opencsv.exceptions.CsvValidationException;
 import fr.cotedazur.univ.polytech.controller.Game;
 import fr.cotedazur.univ.polytech.logger.LamaLevel;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
@@ -12,8 +14,7 @@ import fr.cotedazur.univ.polytech.model.bot.BotWeak;
 import fr.cotedazur.univ.polytech.model.bot.Player;
 import fr.cotedazur.univ.polytech.view.GameView;
 
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
@@ -28,10 +29,12 @@ public class Main {
     public static void main(String... args) {
         JCommanderSpoke jCommanderSpoke = new JCommanderSpoke();
         JCommander.newBuilder().addObject(jCommanderSpoke).build().parse(args);
+
         // Logger setup
         LamaLogger.setupFileLog(true, "game.log");
         LamaLogger.setupConsole(true, true);
         LOGGER.setLevel(LamaLevel.VIEW); // Change to OFF to disable the logger or INFO to enable all, VIEW to just the view and DEMO to disable all but the demo
+
         // View setup
         GameView view = new GameView();
         Game game;
@@ -40,14 +43,25 @@ public class Main {
         // CSV setup
         Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
         CSVWriter writer = null;
+        boolean newFile = false;
 
         try {
             // create directory stats
             path.getParent().toFile().mkdirs();
-            path.toFile().createNewFile();
+            newFile = path.toFile().createNewFile();
             writer = new CSVWriter(new FileWriter(path.toFile(), true));
         } catch (IOException ignored) {
         }
+
+        if (newFile) writeFirstLine(writer);
+        else {
+            try {
+                removeLastLine(path);
+            } catch (IOException | CsvValidationException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
 
         Player bot1;
         Player bot2;
@@ -129,6 +143,7 @@ public class Main {
         assert writer != null;
         try {
             writer.close();
+            addLastLine(path);
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -181,4 +196,125 @@ public class Main {
             e.printStackTrace();
         }
     }
+
+    public static void writeFirstLine(CSVWriter writer) {
+        List<String> line = new ArrayList<>();
+        for (int i = 0; i < 7; i++) {
+            line.add("BotType");
+            line.add("BotName");
+            line.add("Points");
+        }
+        writer.writeNext(line.toArray(String[]::new));
+    }
+
+    public static void removeLastLine(Path path) throws IOException, CsvValidationException {
+        List<String[]> lines = recoverAllLines(path);
+
+        if (!lines.isEmpty()) lines.remove(lines.size() - 1);
+
+        try (CSVWriter writer = new CSVWriter(new FileWriter(path.toFile()))) {
+            writer.writeAll(lines);
+        }
+    }
+
+    public static List<String[]> recoverAllLines(Path path) {
+        List<String[]> lines = new ArrayList<>();
+
+        try (CSVReader reader = new CSVReader(new FileReader(path.toFile()))) {
+            String[] nextLine;
+            while ((nextLine = reader.readNext()) != null) {
+                lines.add(nextLine);
+            }
+        } catch (IOException | CsvValidationException e) {
+            throw new RuntimeException(e);
+        }
+
+        return lines;
+    }
+
+    public static void addLastLine(Path path) {
+        CSVWriter writer;
+        try {
+            writer = new CSVWriter(new FileWriter(path.toFile(), true));
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        List<String[]> lines = recoverAllLines(path);
+        Map<String, Integer> countWin = new HashMap<>();
+        Map<String, Integer> countPoints = new HashMap<>();
+        Map<String, Integer> countGamesBot = new HashMap<>();
+        Map<String, Integer> countLooseBot = new HashMap<>();
+        int max = 0;
+        int countGames = 0;
+
+        for (int i = 1; i < lines.size(); i++) {
+            String[] s = lines.get(i);
+            for (int j = 0; j < s.length; j += 3) {
+                String botType = s[j];
+                int botPoints = Integer.parseInt(s[j + 2]);
+                if (botPoints >= max) {
+                    max = botPoints;
+                    if (countWin.containsKey(botType)) countWin.put(botType, countWin.get(botType) + 1);
+                    else countWin.put(botType, 1);
+                }
+                else {
+                    if (countLooseBot.containsKey(botType)) countLooseBot.put(botType, countLooseBot.get(botType) + 1);
+                    else countLooseBot.put(botType, 1);
+                }
+                if (countPoints.containsKey(botType))
+                    countPoints.put(botType, countPoints.get(botType) + botPoints);
+                else countPoints.put(botType, botPoints);
+
+                if (countGamesBot.containsKey(botType))
+                    countGamesBot.put(botType, countGamesBot.get(botType) + 1);
+                else countGamesBot.put(botType, 1);
+            }
+            max = 0;
+            countGames++;
+        }
+
+        List<String> line = new ArrayList<>();
+        line.add("Nombre de parties");
+        line.add(String.valueOf(countGames));
+        for (String s : countPoints.keySet()) {
+            int countPointsBot;
+            if (countPoints.get(s) == null) countPointsBot = 0;
+            else countPointsBot = countPoints.get(s);
+
+            int countWinBot;
+            if (countWin.get(s) == null) countWinBot = 0;
+            else countWinBot = countWin.get(s);
+
+            float average = (float) countPointsBot / countGamesBot.get(s);
+            float winRate = (float) countWinBot / countLooseBot.get(s) * 100;
+
+            line.add(s);
+            line.add("Nombre bots");
+            line.add(String.valueOf(countGamesBot.get(s)));
+            line.add("Points");
+            line.add(String.valueOf(countPointsBot));
+            line.add("Nombre de victoires");
+            line.add(String.valueOf(countWinBot));
+            line.add("Moyenne de points");
+            line.add(String.valueOf(average));
+            line.add("Taux de victoire");
+            line.add(String.valueOf(winRate));
+        }
+
+        writer.writeNext(line.toArray(String[]::new));
+        try {
+            writer.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static class JCommanderSpoke {
+        @Parameter(names = {"--demo"})
+        public boolean demoMode;
+        @Parameter(names = {"--2thousands", "-2k"})
+        public boolean twoThousands;
+    }
 }
+
