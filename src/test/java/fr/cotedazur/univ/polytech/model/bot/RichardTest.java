@@ -107,18 +107,20 @@ class RichardTest {
 
 
         //take Assassin to kill magician
+        botRichard.getBoard().clear();
+        botRichard.getHands().clear();
         botRichard.setGolds(4);
         botRichard.getHands().add(DistrictCard.FORTRESS);
         botRichard.getHands().add(DistrictCard.DRAGON_GATE);
-        botRichard.getHands().add(DistrictCard.CASTLE);
+        botRichard.getHands().add(DistrictCard.PRISON);
         botRichard.getHands().add(DistrictCard.DOCKS);
         botRichard.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
         assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
         assertEquals(CharacterCard.MAGICIAN, botRichard.getTarget());
 
         //try to take assassin with not enough cards in hands
-        when(random.nextInt(anyInt())).thenReturn(2);
-        botRichard.getHands().remove(DistrictCard.DOCKS);
+        when(random.nextInt(anyInt())).thenReturn(3);
+        botRichard.getHands().remove(DistrictCard.PRISON);
         assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //try to take assassin but every player has at least 1 card
@@ -222,12 +224,12 @@ class RichardTest {
             players.add(player);
         }
         players.add(botRichard);
-        players.get(0).addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
-        players.get(0).addCardToBoard(DistrictCard.SMITHY);
-        players.get(0).addCardToBoard(DistrictCard.CASTLE);
-        players.get(0).addCardToBoard(DistrictCard.BATTLEFIELD);
-        players.get(0).addCardToBoard(DistrictCard.DRAGON_GATE);
-        players.get(0).addCardToBoard(DistrictCard.TAVERN);
+        players.get(0).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(0).getBoard().add(DistrictCard.SMITHY);
+        players.get(0).getBoard().add(DistrictCard.CASTLE);
+        players.get(0).getBoard().add(DistrictCard.BATTLEFIELD);
+        players.get(0).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(0).getBoard().add(DistrictCard.TAVERN);
         botRichard.setListCopyPlayers(players);
         discardedCard.add(CharacterCard.ASSASSIN);
         discardedCard.add(CharacterCard.MERCHANT);
@@ -242,12 +244,13 @@ class RichardTest {
         players.remove(0);
         Player player = new BotRandom();
         players.add(player);
-        players.get(4).addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
-        players.get(4).addCardToBoard(DistrictCard.SMITHY);
-        players.get(4).addCardToBoard(DistrictCard.CASTLE);
-        players.get(4).addCardToBoard(DistrictCard.BATTLEFIELD);
-        players.get(4).addCardToBoard(DistrictCard.DRAGON_GATE);
-        players.get(4).addCardToBoard(DistrictCard.TAVERN);
+        players.get(4).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(4).getBoard().add(DistrictCard.SMITHY);
+        players.get(4).getBoard().add(DistrictCard.CASTLE);
+        players.get(4).getBoard().add(DistrictCard.BATTLEFIELD);
+        players.get(4).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(4).getBoard().add(DistrictCard.TAVERN);
+        characterCard.add(CharacterCard.MERCHANT);
         botRichard.setListCopyPlayers(players);
         botRichard.setListCopyPlayers(players);
         discardedCard.add(CharacterCard.MERCHANT);
@@ -255,12 +258,11 @@ class RichardTest {
         botRichard.setCurrentChoiceOfCharactersCardsDuringTheRound(characterCard);
         assertFalse(botRichard.whatCharacterGotTookByGoodPlayer(players, CharacterCard.MERCHANT));
         discardedCard.remove(CharacterCard.MERCHANT);
-        assertFalse(botRichard.whatCharacterGotTookByGoodPlayer(players, CharacterCard.MERCHANT));
-        characterCard.remove(CharacterCard.MERCHANT);
         botRichard.setCurrentChoiceOfCharactersCardsDuringTheRound(characterCard);
         assertTrue(botRichard.whatCharacterGotTookByGoodPlayer(players, CharacterCard.MERCHANT));
-
-        
+        characterCard.remove(CharacterCard.MERCHANT);
+        botRichard.setCurrentChoiceOfCharactersCardsDuringTheRound(characterCard);
+        assertFalse(botRichard.whatCharacterGotTookByGoodPlayer(players, CharacterCard.MERCHANT));
     }
 
     @Test

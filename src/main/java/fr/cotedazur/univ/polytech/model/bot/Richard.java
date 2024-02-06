@@ -185,14 +185,13 @@ public class Richard extends Player implements GameActions {
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
         discoverValidCard();
-      
-        if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
-            return cards.indexOf(CharacterCard.BISHOP);
-        }
 
         //King
         if(cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0 && !(this.isCrowned() && getListCopyPlayers().size() < 5)){
             return cards.indexOf(CharacterCard.KING);
+        }
+        else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
+            return cards.indexOf(CharacterCard.BISHOP);
         }
         else if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
             return cards.indexOf(CharacterCard.MAGICIAN);
