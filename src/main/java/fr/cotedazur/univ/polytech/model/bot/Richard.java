@@ -72,8 +72,13 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
+        discoverValidCard();
+
+        if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
+            return cards.indexOf(CharacterCard.MAGICIAN);
+        }
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
-        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
+        else if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
             return cards.indexOf(CharacterCard.THIEF);
         }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
@@ -81,7 +86,16 @@ public class Richard extends Player implements GameActions {
 
     public boolean thereIsSomeoneWithALotOfGolds(){
         for(Player player : getListCopyPlayers()){
-            if(player.getGolds() >= 3){
+            if(player.getGolds() >= 3 && player != this){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public boolean thereIsSomeoneWithALotOfCards(){
+        for(Player player : getListCopyPlayers()){
+            if(player.getHands().size() > this.getHands().size() && player != this){
                 return true;
             }
         }
@@ -182,24 +196,25 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DispatchState whichMagicianEffect(List<Player> players) {
-        int randomIndex = random.nextInt(2);
-        switch (randomIndex) {
-            case 0 -> {
+        int nbCardPlayer = this.getHands().size();
+        for (Player p : players) {
+            int nbCardOther = p.getHands().size();
+            if (nbCardOther > nbCardPlayer) {
                 return DispatchState.EXCHANGE_PLAYER;
             }
-            case 1 -> {
-                return DispatchState.EXCHANGE_DECK;
-            }
-            default -> {
-                return null;
-            }
         }
+        return DispatchState.EXCHANGE_DECK;
     }
 
     @Override
     public boolean wantToUseEffect(boolean beforePuttingADistrict) {
-        int randomIndex = random.nextInt(2);
-        return randomIndex == 0;
+        discoverValidCard();
+        for(DistrictCard districtCard : validCards){
+            if(districtCard.getDistrictColor() == this.getPlayerRole().getCharacterColor() && beforePuttingADistrict){
+                return getPlayerRole() == CharacterCard.WARLORD;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -222,8 +237,16 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public Player selectMagicianTarget(List<Player> players) {
-        return players.get(random.nextInt(players.size()));
-    }
+        Player highNbCards = players.get(0);
+        for (Player p : players) {
+                //if equals we trade with someone who has the most district
+                if(p.getHands().size() == highNbCards.getHands().size() && p.getBoard().size() > highNbCards.getBoard().size()) {
+                    highNbCards = p;
+                }else if (p.getHands().size() > highNbCards.getHands().size()) {
+                    highNbCards = p;
+                }
+        }
+        return highNbCards;    }
 
     @Override
     public boolean wantToUseGraveyardEffect() {
