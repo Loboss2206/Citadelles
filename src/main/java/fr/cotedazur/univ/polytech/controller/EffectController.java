@@ -130,11 +130,11 @@ public class EffectController {
      */
     private Player playerCopy(Player playerCopy, Player playerThatUseEffect) {
         Player copyPlayer = playerCopy.copy();
-        if (playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead()) {
+        if (playerCopy.getPlayerRole() != null && playerCopy.getPlayerRole().getCharacterNumber() < playerThatUseEffect.getPlayerRole().getCharacterNumber() && !playerCopy.isDead()) {
             copyPlayer.setPlayerRole(playerCopy.getPlayerRole());
             LOGGER.info("Le role du joueur " + playerCopy.getName() + " (" + playerCopy.getPlayerRole().getCharacterName() + ") a été copié");
         }
-        LOGGER.info("Le joueur " + playerCopy.getName() + " (" + playerCopy.getPlayerRole().getCharacterName() + ") a été copié");
+        LOGGER.info("Le joueur " + playerCopy.getName() + " (" + (playerCopy.getPlayerRole() != null ? playerCopy.getPlayerRole().getCharacterName() : "non connus") + ") a été copié");
         return copyPlayer;
     }
 
@@ -176,6 +176,10 @@ public class EffectController {
             LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") a choisi le personnage " + roleKilled.getCharacterName() + " pour être éliminé");
             if (roleKilled != CharacterCard.ASSASSIN) {
                 for (Player playerAffected : players) {
+                    //Store the role that has been killed by the assassin for all the players
+                    playerAffected.setRoleKilledByAssassin(roleKilled);
+
+                    //Kill the player
                     if (playerAffected.getPlayerRole() == roleKilled) {
                         playerThatWantToUseEffect.getPlayerRole().useEffectAssassin(playerThatWantToUseEffect, playerAffected);
                     }
