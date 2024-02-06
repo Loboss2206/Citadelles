@@ -47,15 +47,28 @@ class RichardTest {
 
     @Test
     void testChooseCharacter() {
-        //Take Thief
+        //Take the Magician
         List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
         List<Player> players = new ArrayList<>();
         for(int i = 0; i < 4; i++){
             Player player = new BotRandom();
             player.setGolds(4);
             players.add(player);
+            player.addCardToHand(DistrictCard.PALACE);
         }
+        players.add(botRichard);
         botRichard.setListCopyPlayers(players);
+        assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //Don't take the magician when all have empty hands
+        for(Player player : players){
+            player.getHands().clear();
+        }
+        botRichard.getHands().clear();
+        assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //Take Thief
+        botRichard.addCardToHand(DistrictCard.MARKET);
         assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //try to take the thief when Richard has a lot of golds
@@ -75,5 +88,60 @@ class RichardTest {
         characterCard.remove(CharacterCard.THIEF);
         when(random.nextInt(anyInt())).thenReturn(1);
         assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void testWhichMagicianEffect() {
+        List<Player> players = new ArrayList<>();
+        for(int i = 0; i < 4; i++){
+            Player player = new BotRandom();
+            List<DistrictCard> cards = new ArrayList<>();
+            cards.add(DistrictCard.DRAGON_GATE);
+            cards.add(DistrictCard.TEMPLE);
+            cards.add(DistrictCard.TAVERN);
+            player.setHands(cards);
+            players.add(player);
+        }
+        assertEquals(DispatchState.EXCHANGE_PLAYER, botRichard.whichMagicianEffect(players));
+
+
+        //Test when the bot richard has the same number of cards as the other
+        for(Player player : players){
+            player.getHands().clear();
+        }
+        assertEquals(DispatchState.EXCHANGE_DECK, botRichard.whichMagicianEffect(players));
+    }
+
+    @Test
+    void testSelectMagicianTarget() {
+        List<Player> players = new ArrayList<>();
+        for(int i = 0; i < 4; i++){
+            Player player = new BotRandom();
+            List<DistrictCard> cards = new ArrayList<>();
+            cards.add(DistrictCard.DRAGON_GATE);
+            cards.add(DistrictCard.TEMPLE);
+            if(i==2){
+                player.setGolds(20);
+                player.addCardToBoard(DistrictCard.MARKET);
+            }
+            if(i == 3){
+                cards.add(DistrictCard.TAVERN);
+            }
+            player.setHands(cards);
+            players.add(player);
+        }
+        Player playerThatShouldBeTargeted = players.get(3);
+
+        assertEquals(playerThatShouldBeTargeted, botRichard.selectMagicianTarget(players));
+
+        //Test when 2 players as the same number of cards but one as one card on the board
+        for(Player player : players){
+            if(player.getBoard().isEmpty()){
+                player.getHands().add(DistrictCard.TRADING_POST);
+            }
+        }
+        playerThatShouldBeTargeted = players.get(3);
+        assertEquals(playerThatShouldBeTargeted, botRichard.selectMagicianTarget(players));
+
     }
 }
