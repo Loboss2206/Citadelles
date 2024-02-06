@@ -43,8 +43,7 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DistrictCard putADistrict() {
-        discoverValidCard();
-        if (!validCards.isEmpty()) {
+        if (hasValidCard()) {
             int randomIndex = random.nextInt(validCards.size());
             return validCards.get(randomIndex);
         }
@@ -70,12 +69,31 @@ public class Richard extends Player implements GameActions {
         return null;
     }
 
+    private int countNumberOfSpecifiedColorCard(Color color) {
+        int count = 0;
+        for (DistrictCard card : getBoard()) {
+            if (card.getDistrictColor().getColorName() .equals(color.getColorName())) count++;
+        }
+        for (DistrictCard card : getHands()) {
+            if (card.getDistrictColor().getColorName() .equals(color.getColorName())){
+                count++;
+                break;
+            }
+        }
+        return count;
+    }
+
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
+        if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
+            return cards.indexOf(CharacterCard.BISHOP);
+        }
+
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
         if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
             return cards.indexOf(CharacterCard.THIEF);
         }
+
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 
@@ -198,14 +216,17 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public boolean wantToUseEffect(boolean beforePuttingADistrict) {
-        int randomIndex = random.nextInt(2);
-        return randomIndex == 0;
+        for(DistrictCard districtCard : validCards){
+            if (getPlayerRole() == CharacterCard.BISHOP && districtCard.getDistrictColor() == this.getPlayerRole().getCharacterColor() && beforePuttingADistrict){
+                return getPlayerRole() == CharacterCard.BISHOP;
+            }
+        }
+        return random.nextInt(2) == 0;
     }
 
     @Override
     public boolean wantsToUseSmithyEffect() {
-        int randomIndex = random.nextInt(2);
-        return randomIndex == 0;
+        return random.nextInt(2) == 0;
     }
 
     @Override

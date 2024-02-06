@@ -17,8 +17,7 @@ public class BotWeak extends Player implements GameActions {
 
     @Override
     public DistrictCard putADistrict() {
-        discoverValidCard();
-        if (!validCards.isEmpty()) {
+        if (hasValidCard()) {
             //Sort the hands from the smallest to the biggest
             validCards.sort(new DistrictCardComparator());
             return validCards.get(0);
