@@ -53,10 +53,13 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
-        if (getPlayerRole() == CharacterCard.THIEF) {
-            return characterCards.get(random.nextInt(characterCards.size()));
+        //Avoid aggressive characters and opportunist characaters (warlord, thief, assassin, magician, bishop) and remove the visible discarded cards and the character that has been killed
+        List<CharacterCard> characterCardsCopy = new ArrayList<>(characterCards);
+        characterCardsCopy.removeIf(element -> (element != CharacterCard.ARCHITECT && element != CharacterCard.KING && element != CharacterCard.MERCHANT) || (getDiscardedCardDuringTheRound().contains(element)) || element == getRoleKilledByAssassin());
+        if(!characterCardsCopy.isEmpty()){
+            return characterCardsCopy.get(random.nextInt(characterCardsCopy.size()));
         }
-        return null;
+        return characterCards.get(random.nextInt(characterCards.size()));
     }
 
     @Override
@@ -69,7 +72,20 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public int chooseCharacter(List<CharacterCard> cards) {
+        //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
+        if(cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()){
+            return cards.indexOf(CharacterCard.THIEF);
+        }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    public boolean thereIsSomeoneWithALotOfGolds(){
+        for(Player player : getListCopyPlayers()){
+            if(player.getGolds() >= 3){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
@@ -214,5 +230,6 @@ public class Richard extends Player implements GameActions {
         int choice = random.nextInt(2);
         return choice == 0;
     }
+
 
 }
