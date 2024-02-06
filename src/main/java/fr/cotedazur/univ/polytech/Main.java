@@ -43,6 +43,8 @@ public class Main {
         // CSV setup
         Path path = FileSystems.getDefault().getPath("stats", "gamestats.csv");
         CSVWriter writer = null;
+
+        if (jCommanderSpoke.csvMode) {
         boolean newFile = false;
 
         try {
@@ -61,7 +63,7 @@ public class Main {
                 throw new RuntimeException(e);
             }
         }
-
+        }
 
         Player bot1;
         Player bot2;
@@ -81,7 +83,7 @@ public class Main {
 
             game = new Game(players, view);
             game.startGame();
-            writePlayersStats(writer, players);
+            if (jCommanderSpoke.csvMode) writePlayersStats(writer, players);
         } else if (jCommanderSpoke.twoThousands) {
             LOGGER.setLevel(LamaLevel.DEMO);
             LamaLogger.setupFileLog(false, "game.log");
@@ -96,7 +98,7 @@ public class Main {
                 bot3 = new BotStrong();
                 bot4 = new BotWeak();
                 launchCustomGame(players, view, winnerPerPlayer, scoringPerPlayer, bot1, bot2, bot3, bot4);
-                writePlayersStats(writer, players);
+                if (jCommanderSpoke.csvMode) writePlayersStats(writer, players);
             }
 
             //Making the average of the score of each player
@@ -117,13 +119,28 @@ public class Main {
                 bot3 = new BotStrong();
                 bot4 = new BotStrong();
                 launchCustomGame(players, view, winnerPerPlayer, scoringPerPlayer, bot1, bot2, bot3, bot4);
-                writePlayersStats(writer, players);
+                if (jCommanderSpoke.csvMode) writePlayersStats(writer, players);
             }
             for (Player player : players) {
                 scoringPerPlayer.put(player.getName(), scoringPerPlayer.get(player.getName()) / 1000);
             }
             view.diplayBotComparaison(winnerPerPlayer, scoringPerPlayer);
 
+        } else if (jCommanderSpoke.csvMode) {
+            for (int i = 0; i < 20; i++) {
+                players.clear();
+
+                bot1 = new BotStrong();
+                bot2 = new BotWeak();
+                bot3 = new BotStrong();
+                bot4 = new BotWeak();
+
+                players.addAll(List.of(bot1, bot2, bot3, bot4));
+
+                game = new Game(players, view);
+                game.startGame();
+                writePlayersStats(writer, players);
+            }
         } else {
             // Normal game
 
@@ -137,15 +154,18 @@ public class Main {
             // Game setup
             game = new Game(players, view);
             game.startGame();
-            writePlayersStats(writer, players);
+            if (jCommanderSpoke.csvMode) writePlayersStats(writer, players);
         }
 
+        if (jCommanderSpoke.csvMode) {
         assert writer != null;
         try {
             writer.close();
             addLastLine(path);
-        } catch (IOException e) {
+        } catch (
+                IOException e) {
             throw new RuntimeException(e);
+        }
         }
     }
 
@@ -241,34 +261,41 @@ public class Main {
         }
 
         List<String[]> lines = recoverAllLines(path);
-        Map<String, Integer> countWin = new HashMap<>();
         Map<String, Integer> countPoints = new HashMap<>();
         Map<String, Integer> countGamesBot = new HashMap<>();
-        Map<String, Integer> countLooseBot = new HashMap<>();
+        Map<String, Integer> countGamesBotUnit = new HashMap<>();
+        Map<String, Integer> countWin = new HashMap<>();
         int max = 0;
         int countGames = 0;
 
         for (int i = 1; i < lines.size(); i++) {
+            Map<String, Integer> countBotInGame = new HashMap<>();
+
             String[] s = lines.get(i);
             for (int j = 0; j < s.length; j += 3) {
                 String botType = s[j];
                 int botPoints = Integer.parseInt(s[j + 2]);
-                if (botPoints >= max) {
+
+                if (countBotInGame.containsKey(botType)) countBotInGame.put(botType, countBotInGame.get(botType) + 1);
+                else countBotInGame.put(botType, 1);
+
+                if (botPoints > max) {
                     max = botPoints;
                     if (countWin.containsKey(botType)) countWin.put(botType, countWin.get(botType) + 1);
                     else countWin.put(botType, 1);
                 }
-                else {
-                    if (countLooseBot.containsKey(botType)) countLooseBot.put(botType, countLooseBot.get(botType) + 1);
-                    else countLooseBot.put(botType, 1);
-                }
+                if (countGamesBotUnit.containsKey(botType))
+                    countGamesBotUnit.put(botType, countGamesBotUnit.get(botType) + 1);
+                else countGamesBotUnit.put(botType, 1);
+
                 if (countPoints.containsKey(botType))
                     countPoints.put(botType, countPoints.get(botType) + botPoints);
                 else countPoints.put(botType, botPoints);
+            }
 
-                if (countGamesBot.containsKey(botType))
-                    countGamesBot.put(botType, countGamesBot.get(botType) + 1);
-                else countGamesBot.put(botType, 1);
+            for (String s1 : countBotInGame.keySet()) {
+                if (countGamesBot.containsKey(s1)) countGamesBot.put(s1, countGamesBot.get(s1) + 1);
+                else countGamesBot.put(s1, 1);
             }
             max = 0;
             countGames++;
@@ -277,7 +304,7 @@ public class Main {
         List<String> line = new ArrayList<>();
         line.add("Nombre de parties");
         line.add(String.valueOf(countGames));
-        for (String s : countPoints.keySet()) {
+        for (String s : countGamesBotUnit.keySet()) {
             int countPointsBot;
             if (countPoints.get(s) == null) countPointsBot = 0;
             else countPointsBot = countPoints.get(s);
@@ -286,12 +313,12 @@ public class Main {
             if (countWin.get(s) == null) countWinBot = 0;
             else countWinBot = countWin.get(s);
 
-            float average = (float) countPointsBot / countGamesBot.get(s);
-            float winRate = (float) countWinBot / countLooseBot.get(s) * 100;
+            float average = (float) countPointsBot / countGamesBotUnit.get(s);
+            float winRate = (float) countWinBot / countGamesBot.get(s) * 100;
 
             line.add(s);
             line.add("Nombre bots");
-            line.add(String.valueOf(countGamesBot.get(s)));
+            line.add(String.valueOf(countGamesBotUnit.get(s)));
             line.add("Points");
             line.add(String.valueOf(countPointsBot));
             line.add("Nombre de victoires");
@@ -313,8 +340,12 @@ public class Main {
     public static class JCommanderSpoke {
         @Parameter(names = {"--demo"})
         public boolean demoMode;
+
         @Parameter(names = {"--2thousands", "-2k"})
         public boolean twoThousands;
+
+        @Parameter(names = {"--csv"})
+        public boolean csvMode;
     }
 }
 

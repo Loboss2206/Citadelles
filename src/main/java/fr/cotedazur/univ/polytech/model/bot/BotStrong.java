@@ -93,7 +93,7 @@ public class BotStrong extends Player implements GameActions {
 
             }
         }
-        if (getGolds() == 0) {
+        if (getGolds() <= 4) {
             return DispatchState.TWO_GOLDS;
         }
         if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 6) {
