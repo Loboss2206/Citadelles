@@ -158,19 +158,17 @@ class RichardTest {
     @Test
     void testIsFirst() {
         List<Player> players = new ArrayList<>();
-        for (int i = 0; i < 4; i++) {
-            Player player = new BotRandom();
-            player.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
-            players.add(player);
-        }
-        //Richard has the most points
-        botRichard.getBoard().add(DistrictCard.DRAGON_GATE);
+        Player player = new BotRandom();
+        player.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.add(player);
+
+        //Richard has fewer districts than the bot
         players.add(botRichard);
-        //Richard hasn't the most points
-        assertTrue(botRichard.isFirst(players));
-        players.get(0).getBoard().add(DistrictCard.CASTLE);
         assertFalse(botRichard.isFirst(players));
-        //Richard is tied on top
+        //Richard has the same amount of district than the bot
+        botRichard.getBoard().add(DistrictCard.FORTRESS);
+        assertTrue(botRichard.isFirst(players));
+        //Richard has more districts than the bot
         botRichard.getBoard().add(DistrictCard.CHURCH);
         assertTrue(botRichard.isFirst(players));
     }

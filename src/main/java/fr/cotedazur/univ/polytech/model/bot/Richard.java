@@ -137,19 +137,15 @@ public class Richard extends Player implements GameActions {
         return false;
     }
 
-
-
     public boolean isFirst(List<Player> players){
         int countThis = 0;
+        int countPlayer = 0;
         int maxPlayer = 0;
         for (Player player : players) {
-            int countPlayer = 0;
-            for (DistrictCard card : player.getBoard()) {
-                int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
-                if (player.equals(this)){
-                    countThis += i + card.getDistrictValue();
-                }
-                else countPlayer += i + card.getDistrictValue();
+            if (player.equals(this)){
+                countThis = getBoard().size();
+            }else{
+                countPlayer = player.getBoard().size();
             }
             if (countPlayer > maxPlayer) maxPlayer = countPlayer;
         }
