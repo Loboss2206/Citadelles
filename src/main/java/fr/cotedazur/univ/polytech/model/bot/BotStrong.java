@@ -110,7 +110,6 @@ public class BotStrong extends Player implements GameActions {
     @Override
     public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (getPlayerRole() == CharacterCard.THIEF) {
-            System.out.println("Volllllll:" + characterCards.get(3));
             return characterCards.get(3);
         }
         return null;
