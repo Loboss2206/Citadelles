@@ -111,7 +111,7 @@ public class GameView {
                     displayMessage(playerNameAndRole + " utilise l'effet de l'école de magie et choisis la couleur " + color.getColorName() + " pour sa carte");
             }
             case SMITHY_EFFECT ->
-                    displayMessage(playerNameAndRole + " utilise l'effet de la manufacture pour récupérer 3 cartes du deck en dépensant 2 pièces");
+                    displayMessage(playerNameAndRole + " utilise l'effet de la manufacture pour récupérer au mieux 3 cartes du deck en dépensant 3 pièces d'or");
             default -> displayMessage("Effet violet non connu");
         }
     }
