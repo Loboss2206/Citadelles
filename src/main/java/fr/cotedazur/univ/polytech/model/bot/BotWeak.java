@@ -88,6 +88,7 @@ public class BotWeak extends PlayerAssassinStrategy implements GameActions {
         return getPlayerRole().getCharacterColor();
     }
 
+    @Override
     public Color chooseColorForHauntedCity() {
         for (Color color : Color.values()) {
             if (countNumberOfSpecifiedColorCard(color) == 0) {
@@ -99,7 +100,7 @@ public class BotWeak extends PlayerAssassinStrategy implements GameActions {
 
 
     @Override
-    public boolean wantToUseLaboratoryEffect(){
+    public boolean wantToUseLaboratoryEffect() {
         for (DistrictCard card : this.getHands()) {
             if (card.getDistrictValue() >= 3) {
                 return true;
@@ -227,6 +228,4 @@ public class BotWeak extends PlayerAssassinStrategy implements GameActions {
     public int hashCode() {
         return Objects.hash(super.hashCode(), random);
     }
-
-
 }

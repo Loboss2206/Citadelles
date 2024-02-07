@@ -93,6 +93,12 @@ public enum CharacterCard {
             player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
     }
 
+    /**
+     * Use the effect of the thief
+     * @param playerThatUseEffect the player that use the effect
+     * @param stolenPlayer the player that will be affected by the effect
+     * @param hasBeenStolen if the player has been stolen
+     */
     public void useEffectThief(Player playerThatUseEffect, Player stolenPlayer, boolean hasBeenStolen) {
         if (hasBeenStolen) {
             if (stolenPlayer.getPlayerRole() != CharacterCard.ASSASSIN && (playerThatUseEffect.getPlayerRole() == THIEF)) {
@@ -109,6 +115,12 @@ public enum CharacterCard {
         }
     }
 
+    /**
+     * Use the effect of the magician with the deck
+     * @param playerThatUseEffect the player that use the effect
+     * @param cardsToRemove the cards that will be removed from the player's hand
+     * @param districtDeck the deck where the cards will be added
+     */
     public void useEffectMagicianWithDeck(Player playerThatUseEffect, List<DistrictCard> cardsToRemove, Deck<DistrictCard> districtDeck) {
         int nbCards = cardsToRemove.size();
         while (!cardsToRemove.isEmpty()) {
@@ -123,12 +135,25 @@ public enum CharacterCard {
         }
     }
 
+    /**
+     * Use the effect of the magician with another player
+     * @param playerThatUseEffect the player that use the effect
+     * @param playerTargeted the player that will be affected by the effect
+     */
     public void useEffectMagicianWithPlayer(Player playerThatUseEffect, Player playerTargeted) {
         List<DistrictCard> temp = playerTargeted.getHands();
         playerTargeted.setHands(playerThatUseEffect.getHands());
         playerThatUseEffect.setHands(temp);
     }
 
+    /**
+     * Use the effect of the warlord
+     * @param playerThatUseEffect the player that use the effect
+     * @param playerToDestroy the player that will be affected by the effect
+     * @param districtToDestroy the district that will be destroyed
+     * @param districtDiscardedDeck the deck where the district will be discarded
+     * @param stackOfGolds the stack of golds
+     */
     public void useEffectWarlord(Player playerThatUseEffect, Player playerToDestroy, DistrictCard districtToDestroy, Deck<DistrictCard> districtDiscardedDeck, StackOfGolds stackOfGolds) {
         if (playerThatUseEffect.getPlayerRole() == WARLORD) {
             playerToDestroy.getBoard().remove(districtToDestroy);
@@ -172,6 +197,11 @@ public enum CharacterCard {
         LOGGER.info("Le joueur " + player.getName() + " a maintenant " + player.getGolds() + " pièces d'or");
     }
 
+    /**
+     * Use the effect of the assassin
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param targetPlayer the player that will be affected by the effect
+     */
     public void useEffectAssassin(Player playerThatWantToUseEffect, Player targetPlayer) {
         if (playerThatWantToUseEffect.getPlayerRole() == ASSASSIN && !targetPlayer.isDead()) {
             targetPlayer.setDead(true);

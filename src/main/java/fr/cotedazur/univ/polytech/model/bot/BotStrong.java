@@ -25,7 +25,6 @@ public class BotStrong extends PlayerAssassinStrategy implements GameActions {
         discoverValidCard();
 
         Set<Color> colorsOnBoard = colorInList(getBoard());
-
         if (validCards.isEmpty()) return null;
 
         List<DistrictCard> purpleCard = new ArrayList<>();
@@ -52,6 +51,12 @@ public class BotStrong extends PlayerAssassinStrategy implements GameActions {
         return maxPrice(prioritizedCards.isEmpty() ? validCards : prioritizedCards);
     }
 
+    /**
+     * function that returns the list of colors present in the list of district cards
+     *
+     * @param districtCards list of district cards
+     * @return the list of colors present in the list of district cards
+     */
     public Set<Color> colorInList(List<DistrictCard> districtCards) {
         Set<Color> listeUnique = new HashSet<>();
         for (DistrictCard districtCard : districtCards) {
@@ -60,6 +65,12 @@ public class BotStrong extends PlayerAssassinStrategy implements GameActions {
         return listeUnique;
     }
 
+    /**
+     * function that returns the district card with the highest value
+     *
+     * @param districtCards list of district cards
+     * @return the district card with the highest value
+     */
     public DistrictCard maxPrice(List<DistrictCard> districtCards) {
         if (!districtCards.isEmpty()) {
             DistrictCard maxValue = districtCards.get(0);

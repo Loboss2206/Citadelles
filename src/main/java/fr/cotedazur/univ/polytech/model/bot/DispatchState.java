@@ -3,7 +3,6 @@ package fr.cotedazur.univ.polytech.model.bot;
 public enum DispatchState {
     TWO_GOLDS("2golds"),
     DRAW_CARD("drawCard"),
-
     CANT_PLAY("cantPlay"),
     PLACE_DISTRICT("putDistrict"),
     EARNDISTRICT_BISHOP("EarnDistrictBishop"),
@@ -18,6 +17,7 @@ public enum DispatchState {
     EXCHANGE_PLAYER("ExchangePlayer"),
     CARDS_NOT_WANTED("cardsNotWanted"),
     CARDS_WANTED("cardsWanted");
+
     private String s;
 
     DispatchState(String s) {
