@@ -32,7 +32,6 @@ public class BotStrong extends Player implements GameActions {
         discoverValidCard();
         //List des différentes couleurs sur le Terrain
         Set<Color> colorsOnBoard = colorInList(getBoard());
-        Set<Color> colorsInHand = colorInList(getHands());
         if (!validCards.isEmpty()) {
             List<DistrictCard> purpleCard = new ArrayList<>();
             List<DistrictCard> colorNotOnBoard = new ArrayList<>();
