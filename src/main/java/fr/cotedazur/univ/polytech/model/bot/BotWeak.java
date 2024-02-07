@@ -7,7 +7,7 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
 
 import java.util.*;
 
-public class BotWeak extends Player implements GameActions {
+public class BotWeak extends PlayerAssassinStrategy implements GameActions {
 
     private final Random random = new Random();
 
@@ -52,18 +52,6 @@ public class BotWeak extends Player implements GameActions {
     }
 
     @Override
-    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
-        if (getPlayerRole() == CharacterCard.ASSASSIN) {
-            LOGGER.info("Le joueur " + getName() + " utilise l'effet de l'assassin");
-            if (players.size() < 4) return characterCards.get(3);
-            if (players.size() < 6) return characterCards.get(5);
-            else return characterCards.get(6);
-        }
-        LOGGER.info("Le joueur " + getName() + " ne peut pas utiliser l'effet de l'assassin");
-        return null;
-    }
-
-    @Override
     public int chooseCharacter(List<CharacterCard> characters) {
         discoverValidCard();
         // we sort to know if we can put 2 times a district or more by comparing the first two value
@@ -73,15 +61,11 @@ public class BotWeak extends Player implements GameActions {
             LOGGER.info("Le joueur " + getName() + " prend l'architecte, car il est désigné comme optimal");
             return characters.indexOf(CharacterCard.ARCHITECT);
         } else if (hasColoredCards()) {
-            Map<Color, Integer> colorMap = createColorMap(characters);
-            List<Map.Entry<Color, Integer>> entryList = new ArrayList<>(colorMap.entrySet());
-            entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
-
-            if (!entryList.isEmpty()) {
-                LOGGER.info("Le joueur " + getName() + " prend le personnage " + entryList.get(0).getKey() + " car il a le plus de quartiers de cette couleur");
-                return getCharacterIndexByColor(characters, entryList.get(0).getKey());
+            int characterIndex = getCharacterAccordingToColor(characters);
+            if (characterIndex != -1) {
+                LOGGER.info("Le joueur " + getName() + " prend un personnage en fonction de la couleur de ses cartes");
+                return characterIndex;
             }
-
         }
 
         return random.nextInt(characters.size());
@@ -99,20 +83,12 @@ public class BotWeak extends Player implements GameActions {
                 (getHands().isEmpty() && characters.contains(CharacterCard.ARCHITECT));
     }
 
-    /**
-     * function that checks whether there is at least one color on the player's board that can be improved by a character
-     */
-    private boolean hasColoredCards() {
-        return countNumberOfSpecifiedColorCard(Color.YELLOW) >= 1 ||
-                countNumberOfSpecifiedColorCard(Color.GREEN) >= 1 ||
-                countNumberOfSpecifiedColorCard(Color.BLUE) >= 1;
-    }
-
     @Override
     public Color chooseColorForSchoolOfMagic() {
         return getPlayerRole().getCharacterColor();
     }
 
+    @Override
     public Color chooseColorForHauntedCity() {
         for (Color color : Color.values()) {
             if (countNumberOfSpecifiedColorCard(color) == 0) {
@@ -124,7 +100,7 @@ public class BotWeak extends Player implements GameActions {
 
 
     @Override
-    public boolean wantToUseLaboratoryEffect(){
+    public boolean wantToUseLaboratoryEffect() {
         for (DistrictCard card : this.getHands()) {
             if (card.getDistrictValue() >= 3) {
                 return true;
@@ -170,51 +146,6 @@ public class BotWeak extends Player implements GameActions {
     @Override
     public boolean wantsToUseSmithyEffect() {
         return getGolds() >= 7;
-    }
-
-    /**
-     * function that count the number of district card on the board for a specific color
-     */
-    public int countNumberOfSpecifiedColorCard(Color color) {
-        int count = 0;
-        for (DistrictCard card : getBoard()) {
-            if (card.getDistrictColor() == color) count++;
-        }
-        return count;
-    }
-
-    /**
-     * Creates a HashMap that maps each specified character card to its corresponding color count.
-     *
-     * @param characters the characters available
-     * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
-     * and the values are the counts of cards of that color in the given list.
-     */
-    private Map<Color, Integer> createColorMap(List<CharacterCard> characters) {
-        Map<Color, Integer> hashMap = new EnumMap<>(Color.class);
-        if (characters.contains(CharacterCard.KING))
-            hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
-        if (characters.contains(CharacterCard.BISHOP))
-            hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
-        if (characters.contains(CharacterCard.MERCHANT))
-            hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
-        return hashMap;
-    }
-
-    /**
-     * Retrieves the index of a specific character card in the given list based on its associated color.
-     *
-     * @param characters the characters available
-     * @param color      The color associated with the character card to find.
-     * @return The index of the character card associated with the specified color, or an exception if not found.
-     */
-    int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
-        return switch (color) {
-            case YELLOW -> characters.indexOf(CharacterCard.KING);
-            case GREEN -> characters.indexOf(CharacterCard.MERCHANT);
-            case BLUE -> characters.indexOf(CharacterCard.BISHOP);
-            default -> throw new UnsupportedOperationException("la valeur de color est : " + color);
-        };
     }
 
     @Override
@@ -297,6 +228,4 @@ public class BotWeak extends Player implements GameActions {
     public int hashCode() {
         return Objects.hash(super.hashCode(), random);
     }
-
-
 }

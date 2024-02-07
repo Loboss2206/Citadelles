@@ -172,6 +172,11 @@ public abstract class Player implements GameActions {
         LOGGER.info("Le joueur " + name + " a " + validCards.size() + " cartes achetables dont " + validCards);
     }
 
+    /**
+     * check if a player has at least a valid card
+     *
+     * @return true if the player has a valid card, else false
+     */
     public boolean hasValidCard() {
         discoverValidCard();
         return !validCards.isEmpty();

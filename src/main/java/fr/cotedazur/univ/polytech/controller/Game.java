@@ -18,6 +18,12 @@ public class Game {
     // Logger
     private static final java.util.logging.Logger LOGGER = java.util.logging.Logger.getLogger(LamaLogger.class.getName());
 
+    // Increment for each game created
+    private static int count = 0;
+
+    //All players have a unique id
+    private final int id;
+
     // All the players that play in the game
     private final List<Player> players;
 
@@ -35,10 +41,12 @@ public class Game {
     // All the decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck;
-    private final int maxRound = 100; //prevent an infinite game
 
 
     public Game(List<Player> players, GameView view) {
+        this.id = count;
+        count++;
+
         this.view = view;
         this.playerComparator = new PlayerComparator();
 
@@ -99,6 +107,8 @@ public class Game {
         }
 
         //Start the rounds until a player has won
+        //prevent an infinite game
+        int maxRound = 100;
         do {
             //Set the crowned player as the first player of the list
             setCrownedPlayerToFirstPlace();
@@ -138,8 +148,10 @@ public class Game {
             for (DistrictCard card : player.getBoard()) {
                 int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
                 player.setPoints(player.getPoints() + card.getDistrictValue() + i);
-                if(card == DistrictCard.DRAGON_GATE) view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
-                if(card == DistrictCard.UNIVERSITY) view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
+                if (card == DistrictCard.DRAGON_GATE)
+                    view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
+                if (card == DistrictCard.UNIVERSITY)
+                    view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
             }
 
             //If the player has 5 different colors
@@ -216,12 +228,25 @@ public class Game {
         LOGGER.info("Les joueurs ont été triés par ordre de points");
     }
 
+    /**
+     * Start the game and return the name of the winner
+     *
+     * @return the winner
+     */
+    public String startGameTest() {
+        startGame();
+        return players.get(0).getClass().getName();
+    }
+
     public List<Player> getPlayers() {
         return players;
     }
 
-    public String startGameTest() {
-        startGame();
-        return players.get(0).getClass().getName();
+    public Player getWinner() {
+        return players.get(0);
+    }
+
+    public int getId() {
+        return id;
     }
 }
