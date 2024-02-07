@@ -13,7 +13,6 @@ public class PlayerComparator implements Comparator<Player> {
 
         // If points are equals
         if (pointsComparison == 0) {
-            //IMPORTANT : Assassin can kill the player don't reveal his character
             return Integer.compare(player1.getPoints() + player1.getPlayerRole().getCharacterNumber(), player2.getPoints() + player2.getPlayerRole().getCharacterNumber());
         }
 
