@@ -152,7 +152,7 @@ public class BotRandom extends Player implements GameActions {
         int randomIndex = random.nextInt(3);
         switch (randomIndex) {
             case 0 -> {
-                return DispatchState.KILL;
+                return DispatchState.DESTROY;
             }
             case 1 -> {
                 return DispatchState.EARNDISTRICT_WARLORD;

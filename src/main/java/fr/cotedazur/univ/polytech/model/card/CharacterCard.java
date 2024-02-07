@@ -6,7 +6,6 @@ import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.golds.StackOfGolds;
 
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Represents a role card in the game.
@@ -31,7 +30,7 @@ public enum CharacterCard {
      * @param color           the color of the character
      * @param characterEffect the description of the character's ability
      */
-    private CharacterCard(String characterName, int characterNumber, Color color, String characterEffect) {
+    CharacterCard(String characterName, int characterNumber, Color color, String characterEffect) {
         this.characterName = characterName;
         this.characterNumber = characterNumber;
         this.color = color;
