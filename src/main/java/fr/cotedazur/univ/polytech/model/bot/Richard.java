@@ -208,8 +208,7 @@ public class Richard extends Player implements GameActions {
             }
         } else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE) > 0 || (hasValidCard() && getCurrentNbRound() > 3))) {
             return cards.indexOf(CharacterCard.BISHOP);
-        } else if (cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()) {
-        }//To have 3 golds directly
+        }
         else if((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)){
             return cards.indexOf(CharacterCard.MERCHANT);
         }

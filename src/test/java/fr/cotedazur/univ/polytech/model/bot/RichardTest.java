@@ -68,15 +68,18 @@ class RichardTest {
         } else {
             assertEquals(CharacterCard.ARCHITECT, characterCard.get(botRichard.chooseCharacter(characterCard)));
         }
-        botRichard.setDiscardedCardDuringTheRound(Collections.singletonList(CharacterCard.ARCHITECT));
+        botRichard.setDiscardedCardDuringTheRound(Arrays.asList(CharacterCard.ARCHITECT, CharacterCard.ASSASSIN));
 
-        
         //Take the Merchant
+        botRichard.setGolds(1);
         botRichard.getHands().clear();
         botRichard.setListCopyPlayers(players);
         assertEquals(CharacterCard.MERCHANT, characterCard.get(botRichard.chooseCharacter(characterCard)));
-//Take the Magician
-        botRichard.setGolds(2);
+        botRichard.setDiscardedCardDuringTheRound(Arrays.asList(CharacterCard.ARCHITECT, CharacterCard.ASSASSIN));
+        //Take the Magician
+        botRichard.setGolds(4);
+        botRichard.getHands().clear();
+        botRichard.setListCopyPlayers(players);
         assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //Don't take the magician when all have empty hands
