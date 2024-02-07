@@ -183,11 +183,14 @@ public class Richard extends Player implements GameActions {
         discoverValidCard();
 
         //King
-        if(cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0 && !(this.isCrowned() && getListCopyPlayers().size() < 5)){
+        if((cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.KING) && this.isCrowned() && getListCopyPlayers().size() < 5)){
             return cards.indexOf(CharacterCard.KING);
         }
         else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
             return cards.indexOf(CharacterCard.BISHOP);
+        }//To have 3 golds directly
+        else if((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)){
+            return cards.indexOf(CharacterCard.MERCHANT);
         }
         else if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
             return cards.indexOf(CharacterCard.MAGICIAN);
@@ -202,9 +205,7 @@ public class Richard extends Player implements GameActions {
 
             }
             //TODO
-
         }
-
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 
