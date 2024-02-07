@@ -209,9 +209,7 @@ public class Richard extends Player implements GameActions {
         else if (cards.contains(CharacterCard.WARLORD) && (countNumberOfSpecifiedColorCard(Color.RED)>0||(firstHas1GoldDistrict(getListCopyPlayers()) && getCurrentNbRound()>3))){
             return cards.indexOf(CharacterCard.WARLORD);
         }
-        else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
-
-        } else if (!getDiscardedCardDuringTheRound().contains(CharacterCard.ARCHITECT)) {
+        else if (!getDiscardedCardDuringTheRound().contains(CharacterCard.ARCHITECT)) {
             List<Player> playersThatCanNotChooseArchitect = playerThatCanNotChooseArchitect();
             List<Player> playersOrdered = getListCopyPlayers();
             for (Player player : playersThatCanNotChooseArchitect) {
@@ -225,10 +223,9 @@ public class Richard extends Player implements GameActions {
                 }
             }
         } else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE) > 0 || (hasValidCard() && getCurrentNbRound() > 3))) {
-
             return cards.indexOf(CharacterCard.BISHOP);
         }
-        else if((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)){
+        else if((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.GREEN) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)){
             return cards.indexOf(CharacterCard.MERCHANT);
         }
         else if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
