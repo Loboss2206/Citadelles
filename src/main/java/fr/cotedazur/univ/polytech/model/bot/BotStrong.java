@@ -7,14 +7,8 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
 
 import java.util.*;
 
-public class BotStrong extends Player implements GameActions {
-
-
+public class BotStrong extends PlayerAssassinStrategy implements GameActions {
     private final Random random = new Random();
-
-    public BotStrong() {
-        super();
-    }
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
@@ -27,36 +21,34 @@ public class BotStrong extends Player implements GameActions {
         return null;
     }
 
-    @Override
     public DistrictCard putADistrict() {
         discoverValidCard();
-        //List des différentes couleurs sur le Terrain
+
         Set<Color> colorsOnBoard = colorInList(getBoard());
-        if (!validCards.isEmpty()) {
-            List<DistrictCard> purpleCard = new ArrayList<>();
-            List<DistrictCard> colorNotOnBoard = new ArrayList<>();
-            List<DistrictCard> cardsThatMatchWithRoleColor = new ArrayList<>();
-            for (DistrictCard districtCard : validCards) {
-                if (districtCard.getDistrictColor() == Color.PURPLE) {
-                    purpleCard.add(districtCard);
-                }
-                if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
-                    colorNotOnBoard.add(districtCard);
-                }
-                if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()) {
-                    cardsThatMatchWithRoleColor.add(districtCard);
-                }
-            }
-            if (!purpleCard.isEmpty()) return maxPrice(purpleCard);
+        if (validCards.isEmpty()) return null;
 
-            if (!cardsThatMatchWithRoleColor.isEmpty()) return maxPrice(cardsThatMatchWithRoleColor);
+        List<DistrictCard> purpleCard = new ArrayList<>();
+        List<DistrictCard> colorNotOnBoard = new ArrayList<>();
+        List<DistrictCard> cardsThatMatchWithRoleColor = new ArrayList<>();
 
-            if (!colorNotOnBoard.isEmpty()) return maxPrice(colorNotOnBoard);
-
-            return maxPrice(validCards);
+        for (DistrictCard districtCard : validCards) {
+            if (districtCard.getDistrictColor() == Color.PURPLE) purpleCard.add(districtCard);
+            else if (!colorsOnBoard.contains(districtCard.getDistrictColor())) colorNotOnBoard.add(districtCard);
+            else if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor())
+                cardsThatMatchWithRoleColor.add(districtCard);
         }
 
-        return null;
+        List<DistrictCard> prioritizedCards;
+        if (purpleCard.isEmpty()) {
+            if (cardsThatMatchWithRoleColor.isEmpty()) {
+                prioritizedCards = colorNotOnBoard;
+            } else {
+                prioritizedCards = cardsThatMatchWithRoleColor;
+            }
+        } else {
+            prioritizedCards = purpleCard;
+        }
+        return maxPrice(prioritizedCards.isEmpty() ? validCards : prioritizedCards);
     }
 
     /**
@@ -126,18 +118,6 @@ public class BotStrong extends Player implements GameActions {
     }
 
     @Override
-    public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
-        if (getPlayerRole() == CharacterCard.ASSASSIN) {
-            LOGGER.info("Le joueur " + getName() + " utilise l'effet de l'assassin");
-            if (players.size() < 4) return characterCards.get(3);
-            if (players.size() < 6) return characterCards.get(5);
-            else return characterCards.get(6);
-        }
-        LOGGER.info("Le joueur " + getName() + " ne peut pas utiliser l'effet de l'assassin");
-        return null;
-    }
-
-    @Override
     public int chooseCharacter(List<CharacterCard> characters) {
         discoverValidCard();
         if (getGolds() == 0 && characters.contains(CharacterCard.MERCHANT)) {
@@ -156,71 +136,13 @@ public class BotStrong extends Player implements GameActions {
             return characters.indexOf(CharacterCard.ARCHITECT);
         }
         if (hasColoredCards()) {
-            Map<Color, Integer> colorMap = createColorMap(characters);
-            List<Map.Entry<Color, Integer>> entryList = new ArrayList<>(colorMap.entrySet());
-            entryList.sort(Map.Entry.comparingByValue(Collections.reverseOrder()));
-
-            if (!entryList.isEmpty()) {
-                LOGGER.info("Le joueur " + getName() + " prend le personnage " + entryList.get(0).getKey() + " car il a le plus de quartiers de cette couleur");
-                return getCharacterIndexByColor(characters, entryList.get(0).getKey());
+            int characterIndex = getCharacterAccordingToColor(characters);
+            if (characterIndex != -1) {
+                LOGGER.info("Le joueur " + getName() + " prend un personnage en fonction de la couleur de ses cartes");
+                return characterIndex;
             }
         }
         return random.nextInt(characters.size());
-    }
-
-    /**
-     * function that checks whether there is at least one color on the player's board that can be improved by a character
-     */
-    private boolean hasColoredCards() {
-        return countNumberOfSpecifiedColorCard(Color.YELLOW) >= 1 ||
-                countNumberOfSpecifiedColorCard(Color.GREEN) >= 1 ||
-                countNumberOfSpecifiedColorCard(Color.BLUE) >= 1;
-    }
-
-    /**
-     * function that count the number of district card on the board for a specific color
-     */
-    public int countNumberOfSpecifiedColorCard(Color color) {
-        int count = 0;
-        for (DistrictCard card : getBoard()) {
-            if (card.getDistrictColor() == color) count++;
-        }
-        return count;
-    }
-
-    /**
-     * Creates a HashMap that maps each specified character card to its corresponding color count.
-     *
-     * @param characters the characters available
-     * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
-     * and the values are the counts of cards of that color in the given list.
-     */
-    private Map<Color, Integer> createColorMap(List<CharacterCard> characters) {
-        Map<Color, Integer> hashMap = new EnumMap<>(Color.class);
-        if (characters.contains(CharacterCard.KING))
-            hashMap.put(Color.YELLOW, countNumberOfSpecifiedColorCard(Color.YELLOW));
-        if (characters.contains(CharacterCard.BISHOP))
-            hashMap.put(Color.BLUE, countNumberOfSpecifiedColorCard(Color.BLUE));
-        if (characters.contains(CharacterCard.MERCHANT))
-            hashMap.put(Color.GREEN, countNumberOfSpecifiedColorCard(Color.GREEN));
-        return hashMap;
-    }
-
-
-    /**
-     * Retrieves the index of a specific character card in the given list based on its associated color.
-     *
-     * @param characters the characters available
-     * @param color      The color associated with the character card to find.
-     * @return The index of the character card associated with the specified color, or an exception if not found.
-     */
-    private int getCharacterIndexByColor(List<CharacterCard> characters, Color color) {
-        return switch (color) {
-            case YELLOW -> characters.indexOf(CharacterCard.KING);
-            case GREEN -> characters.indexOf(CharacterCard.MERCHANT);
-            case BLUE -> characters.indexOf(CharacterCard.BISHOP);
-            default -> throw new UnsupportedOperationException("la valeur de color est : " + color);
-        };
     }
 
     @Override
@@ -306,7 +228,9 @@ public class BotStrong extends Player implements GameActions {
     }
 
     @Override
-    public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
+    public void drawCard
+            (Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard...
+                    cards) {
         ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
@@ -352,5 +276,18 @@ public class BotStrong extends Player implements GameActions {
             }
         }
         return false;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof BotStrong botStrong)) return false;
+        if (!super.equals(o)) return false;
+        return random.equals(botStrong.random);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
     }
 }

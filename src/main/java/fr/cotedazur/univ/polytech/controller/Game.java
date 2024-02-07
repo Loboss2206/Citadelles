@@ -41,7 +41,6 @@ public class Game {
     // All the decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck;
-    private final int maxRound = 100; //prevent an infinite game
 
 
     public Game(List<Player> players, GameView view) {
@@ -108,6 +107,8 @@ public class Game {
         }
 
         //Start the rounds until a player has won
+        //prevent an infinite game
+        int maxRound = 100;
         do {
             //Set the crowned player as the first player of the list
             setCrownedPlayerToFirstPlace();

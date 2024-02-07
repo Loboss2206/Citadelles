@@ -227,14 +227,13 @@ public class Round {
      * @param player the player who will play his district cards
      */
     private void playDistrictCards(Player player) {
-        //TODO verify SMITHY effect when 2 cards in deck
-        if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && districtDeck.size() >= 3 && (player.wantsToUseSmithyEffect())) {
+        if (player.hasCardOnTheBoard(DistrictCard.SMITHY) && player.getGolds() >= 3 && !districtDeck.isEmpty() && (player.wantsToUseSmithyEffect())) {
             view.printPurpleEffect(player, PurpleEffectState.SMITHY_EFFECT);
             player.setGolds(player.getGolds() - 3);
             stackOfGolds.addGoldsToStack(3);
-            player.addCardToHand(districtDeck.draw());
-            player.addCardToHand(districtDeck.draw());
-            player.addCardToHand(districtDeck.draw());
+            for (int i = 0; i < 3; i++) {
+                if (i < districtDeck.size()) player.addCardToHand(districtDeck.draw());
+            }
         }
 
         //Because architect automatically take +2 cards
@@ -316,35 +315,41 @@ public class Round {
      */
     public void playerWantToDrawCard(Player player) {
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
-
         int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
-        if (nbCardToDraw == 3) view.printPurpleEffect(player, PurpleEffectState.OBSERVATORY_EFFECT);
-        for (int i = 0; i < nbCardToDraw; i++) {
-            if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
-        }
+      
+        if (nbCardToDraw == 3)
+            view.printPurpleEffect(player, PurpleEffectState.OBSERVATORY_EFFECT);
+
+        drawCards(cardsThatPlayerDraw, nbCardToDraw);
 
         Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
         cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
         cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
 
-        //If maybe there is only one card in the deck so the bot just take one card
-        if (cardsThatPlayerDraw.size() == 3) {
-            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1), cardsThatPlayerDraw.get(2));
-        } else if (cardsThatPlayerDraw.size() == 2) {
-            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0), cardsThatPlayerDraw.get(1));
-        } else {
-            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsThatPlayerDraw.get(0));
-        }
+        dispatchCards(player, cardsThatPlayerDraw, cardsThatThePlayerDontWantAndThatThePlayerWant);
 
-        if (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
-            if (player.getBoard().contains(DistrictCard.LIBRARY) && cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1)
-                view.printPurpleEffect(player, PurpleEffectState.LIBRARY_EFFECT);
-            player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
-        }
+        handleRemainingCards(cardsThatThePlayerDontWantAndThatThePlayerWant);
+    }
 
-        //Return the cards that the bot did not choose to the hand
-        if (!cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).isEmpty()) {
-            for (DistrictCard card : cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED)) {
+    private void drawCards(ArrayList<DistrictCard> cardsThatPlayerDraw, int nbCardToDraw) {
+        for (int i = 0; i < nbCardToDraw; i++) {
+            if (!districtDeck.isEmpty())
+                cardsThatPlayerDraw.add(districtDeck.draw());
+        }
+    }
+
+    private void dispatchCards(Player player, ArrayList<DistrictCard> cardsThatPlayerDraw, Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant) {
+        int numberOfCards = cardsThatPlayerDraw.size();
+        if (numberOfCards > 0) {
+            DistrictCard[] cardsArray = cardsThatPlayerDraw.toArray(new DistrictCard[0]);
+            player.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, cardsArray);
+        }
+    }
+
+    private void handleRemainingCards(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant) {
+        ArrayList<DistrictCard> cardsNotWanted = cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED);
+        if (!cardsNotWanted.isEmpty()) {
+            for (DistrictCard card : cardsNotWanted) {
                 districtDeck.add(card);
             }
         }
