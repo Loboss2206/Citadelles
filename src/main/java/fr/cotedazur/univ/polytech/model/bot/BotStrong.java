@@ -36,37 +36,38 @@ public class BotStrong extends PlayerAssassinStrategy implements GameActions {
                 if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
                     colorNotOnBoard.add(districtCard);
                 }
-                if(districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()){
+                if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()) {
                     cardsThatMatchWithRoleColor.add(districtCard);
                 }
             }
             if (!purpleCard.isEmpty()) return maxPrice(purpleCard);
-
-        if (validCards.isEmpty()) return null;
-
-        List<DistrictCard> purpleCard = new ArrayList<>();
-        List<DistrictCard> colorNotOnBoard = new ArrayList<>();
-        List<DistrictCard> cardsThatMatchWithRoleColor = new ArrayList<>();
-
-        for (DistrictCard districtCard : validCards) {
-            if (districtCard.getDistrictColor() == Color.PURPLE) purpleCard.add(districtCard);
-            else if (!colorsOnBoard.contains(districtCard.getDistrictColor())) colorNotOnBoard.add(districtCard);
-            else if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor())
-                cardsThatMatchWithRoleColor.add(districtCard);
         }
 
-        List<DistrictCard> prioritizedCards;
-        if (purpleCard.isEmpty()) {
-            if (cardsThatMatchWithRoleColor.isEmpty()) {
-                prioritizedCards = colorNotOnBoard;
-            } else {
-                prioritizedCards = cardsThatMatchWithRoleColor;
+            if (validCards.isEmpty()) return null;
+
+            List<DistrictCard> purpleCard = new ArrayList<>();
+            List<DistrictCard> colorNotOnBoard = new ArrayList<>();
+            List<DistrictCard> cardsThatMatchWithRoleColor = new ArrayList<>();
+
+            for (DistrictCard districtCard : validCards) {
+                if (districtCard.getDistrictColor() == Color.PURPLE) purpleCard.add(districtCard);
+                else if (!colorsOnBoard.contains(districtCard.getDistrictColor())) colorNotOnBoard.add(districtCard);
+                else if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor())
+                    cardsThatMatchWithRoleColor.add(districtCard);
             }
-        } else {
-            prioritizedCards = purpleCard;
+
+            List<DistrictCard> prioritizedCards;
+            if (purpleCard.isEmpty()) {
+                if (cardsThatMatchWithRoleColor.isEmpty()) {
+                    prioritizedCards = colorNotOnBoard;
+                } else {
+                    prioritizedCards = cardsThatMatchWithRoleColor;
+                }
+            } else {
+                prioritizedCards = purpleCard;
+            }
+            return maxPrice(prioritizedCards.isEmpty() ? validCards : prioritizedCards);
         }
-        return maxPrice(prioritizedCards.isEmpty() ? validCards : prioritizedCards);
-    }
 
     public Set<Color> colorInList(List<DistrictCard> districtCards) {
         Set<Color> listeUnique = new HashSet<>();
