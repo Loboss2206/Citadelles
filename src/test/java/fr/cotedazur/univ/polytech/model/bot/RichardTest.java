@@ -93,6 +93,7 @@ class RichardTest {
 
         //Take Thief
         botRichard.addCardToHand(DistrictCard.KEEP);
+
         assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //try to take the thief when Richard has a lot of golds
@@ -144,7 +145,7 @@ class RichardTest {
         assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //try to take assassin but every player has at least 1 card
-        botRichard.getHands().add(DistrictCard.KEEP);
+        botRichard.getHands().add(DistrictCard.GRAVEYARD);
         for (Player player : players) {
             player.addCardToHand(DistrictCard.KEEP);
         }
@@ -197,6 +198,175 @@ class RichardTest {
         botRichard.setGolds(5);
         when(random.nextInt(characterCard.size())).thenReturn(0);
         assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void testBeforeLastRound(){
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+            player.addCardToHand(DistrictCard.PALACE);
+        }
+
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        botRichard.getBoard().add(DistrictCard.FORTRESS);
+        botRichard.getBoard().add(DistrictCard.DRAGON_GATE);
+        botRichard.getBoard().add(DistrictCard.PRISON);
+        botRichard.getBoard().add(DistrictCard.DOCKS);
+        botRichard.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        botRichard.getBoard().add(DistrictCard.HAUNTED_CITY);
+
+        //Choose Character before last round (6/8)
+        assertEquals(CharacterCard.MERCHANT, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        players.get(0).getBoard().add(DistrictCard.FORTRESS);
+        players.get(0).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(0).getBoard().add(DistrictCard.PRISON);
+        players.get(0).getBoard().add(DistrictCard.DOCKS);
+        players.get(0).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(0).getBoard().add(DistrictCard.HAUNTED_CITY);
+
+
+        //When the cards contain the king and is not discarded
+        assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //When the king is not contained in the card and the player that is set to win is before Richard
+        characterCard.remove(CharacterCard.KING);
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertEquals(CharacterCard.KING, botRichard.getTarget());
+
+        //When the player that is set to win is not before Richard
+        players.add(players.remove(0));
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertNull(botRichard.getTarget());
+
+        //when king is discarded
+        botRichard.setDiscardedCardDuringTheRound(Collections.singletonList(CharacterCard.KING));
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //when assassin is not in the deck
+        characterCard.remove(CharacterCard.ASSASSIN);
+        assertEquals(CharacterCard.WARLORD, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        //We verify that there is not a player targeted by the warlord because the player that is set to win is not the 1st player
+        assertNull(botRichard.getTargetedPlayerWhenIsLastBefore());
+        //When then player that is set to win is the first player
+        Player player = players.remove(players.size() - 1);
+        players.add(0, player);
+        botRichard.setDiscardedCardDuringTheRound(new ArrayList<>());
+        assertEquals(CharacterCard.WARLORD, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        //We verify that there is not a player targeted by the warlord because the player that is set to win is not the 1st player
+        assertEquals(player,botRichard.getTargetedPlayerWhenIsLastBefore());
+
+        //when the warlord is not in the choice
+        characterCard.remove(CharacterCard.WARLORD);
+        assertEquals(CharacterCard.BISHOP, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        //when the bishop is not in the choice
+        characterCard.remove(CharacterCard.BISHOP);
+        assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void testWhenAPlayerThatIsSetToWinTakeTheKing(){
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+            player.addCardToHand(DistrictCard.PALACE);
+        }
+        players.add(botRichard);
+        players.get(0).getBoard().add(DistrictCard.FORTRESS);
+        players.get(0).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(0).getBoard().add(DistrictCard.PRISON);
+        players.get(0).getBoard().add(DistrictCard.DOCKS);
+        players.get(0).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(0).getBoard().add(DistrictCard.BATTLEFIELD);
+        characterCard.remove(CharacterCard.KING);
+
+        botRichard.setListCopyPlayers(players);
+        botRichard.setPlayerRole(characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertEquals(CharacterCard.ASSASSIN, botRichard.getPlayerRole());
+        //When Richard is the assassin, and we know that the player that can win take the king
+        assertEquals(CharacterCard.KING, botRichard.selectWhoWillBeAffectedByAssassinEffect(players, characterCard));
+
+        //Test when there is not the assassin in the choice
+        characterCard.remove(CharacterCard.ASSASSIN);
+        botRichard.setPlayerRole(characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertEquals(CharacterCard.WARLORD, botRichard.getPlayerRole());
+        assertEquals(players.get(0), botRichard.choosePlayerToDestroy(players));
+        assertEquals(DistrictCard.PRISON, botRichard.chooseDistrictToDestroy(players.get(0),players.get(0).getBoard()));
+
+        //Test when the player that is set to win is not the first
+        players.add(players.remove(0));
+        assertNotEquals(CharacterCard.KING, botRichard.selectWhoWillBeAffectedByAssassinEffect(players, characterCard));
+    }
+
+    @Test
+    void testWhenAPlayerThatIsSetToWinDontTakeTheKing(){
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+            player.addCardToHand(DistrictCard.PALACE);
+        }
+        players.add(botRichard);
+        players.get(0).getBoard().add(DistrictCard.FORTRESS);
+        players.get(0).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(0).getBoard().add(DistrictCard.PRISON);
+        players.get(0).getBoard().add(DistrictCard.DOCKS);
+        players.get(0).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(0).addCardToHand(DistrictCard.MARKET);
+        characterCard.remove(CharacterCard.KING);
+        characterCard.remove(CharacterCard.ASSASSIN);
+        botRichard.setListCopyPlayers(players);
+        botRichard.setPlayersThatIsSetToWin(Collections.singletonList(players.get(0)));
+        botRichard.setCurrentChoiceOfCharactersCardsDuringTheRound(characterCard);
+        botRichard.setPlayerRole(CharacterCard.MAGICIAN);
+        botRichard.setBeforeLastRound(true);
+
+
+        players.get(0).setPlayerRole(CharacterCard.ASSASSIN);
+        botRichard.setRoleKilledByAssassin(CharacterCard.WARLORD);
+        //When Richard is the magician, and we know that the player that is set to win take the assassin and kill the warlord
+        assertEquals(players.get(0), botRichard.selectMagicianTarget(players));
+
+        players.get(0).setPlayerRole(CharacterCard.MERCHANT);
+        //When Richard is the magician, and we know that the player that is set to win take the warlord or bishop
+        characterCard.remove(CharacterCard.BISHOP);
+        assertEquals(players.get(0), botRichard.selectMagicianTarget(players));
+
+        //When Richard is the assassin, and we know that the player that is set to win take the warlord or bishop
+        botRichard.setPlayerRole(CharacterCard.ASSASSIN);
+        assertEquals(CharacterCard.WARLORD, botRichard.selectWhoWillBeAffectedByAssassinEffect(players, characterCard));
+
+        //When Richard is the Thief, and we know that the player that is set to win take the warlord or bishop
+        botRichard.setPlayerRole(CharacterCard.THIEF);
+        assertEquals(CharacterCard.WARLORD, botRichard.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
+
+        characterCard.remove(CharacterCard.WARLORD);
+        characterCard.add(CharacterCard.BISHOP);
+        //When Richard is the assassin, and we know that the player that is set to win take the warlord or bishop
+        botRichard.setPlayerRole(CharacterCard.ASSASSIN);
+        assertEquals(CharacterCard.BISHOP, botRichard.selectWhoWillBeAffectedByAssassinEffect(players, characterCard));
+
+        //When Richard is the Thief, and we know that the player that is set to win take the warlord or bishop
+        botRichard.setPlayerRole(CharacterCard.THIEF);
+        assertEquals(CharacterCard.BISHOP, botRichard.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
+
+        //when this is not the before last round
+        botRichard.setBeforeLastRound(false);
+        botRichard.setPlayerRole(CharacterCard.ASSASSIN);
+        assertEquals(CharacterCard.THIEF, botRichard.selectWhoWillBeAffectedByAssassinEffect(players, characterCard));
+
+        botRichard.setPlayerRole(CharacterCard.THIEF);
+        assertNotEquals(CharacterCard.WARLORD, botRichard.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
     }
 
     @Test
@@ -619,5 +789,35 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
         botRichard.setPlayerRole(CharacterCard.ASSASSIN);
         assertTrue(botRichard.wantToUseEffect(true));
 
+    }
+
+    @Test
+    void testIsBeforeLastRound() {
+        List<Player> players = new ArrayList<>();
+        for(int i = 0; i < 4; i++){
+            Player player = new BotRandom();
+            List<DistrictCard> cards = new ArrayList<>();
+            cards.add(DistrictCard.DRAGON_GATE);
+            cards.add(DistrictCard.TEMPLE);
+            cards.add(DistrictCard.TAVERN);
+            player.setHands(cards);
+            players.add(player);
+        }
+        List<DistrictCard> cards = new ArrayList<>();
+        cards.add(DistrictCard.DRAGON_GATE);
+        cards.add(DistrictCard.TEMPLE);
+        cards.add(DistrictCard.TAVERN);
+        cards.add(DistrictCard.MARKET);
+        cards.add(DistrictCard.SCHOOL_OF_MAGIC);
+        cards.add(DistrictCard.CASTLE);
+        botRichard.setBoard(cards);
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        assertFalse(botRichard.ifIsBeforeLastRound());
+
+        //When someone has 6 cards
+        Player player2 = players.get(0);
+        player2.getBoard().addAll(cards);
+        assertTrue(botRichard.ifIsBeforeLastRound());
     }
 }
