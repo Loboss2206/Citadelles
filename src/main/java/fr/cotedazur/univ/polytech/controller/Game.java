@@ -148,8 +148,10 @@ public class Game {
             for (DistrictCard card : player.getBoard()) {
                 int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
                 player.setPoints(player.getPoints() + card.getDistrictValue() + i);
-                if(card == DistrictCard.DRAGON_GATE) view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
-                if(card == DistrictCard.UNIVERSITY) view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
+                if (card == DistrictCard.DRAGON_GATE)
+                    view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
+                if (card == DistrictCard.UNIVERSITY)
+                    view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
             }
 
             //If the player has 5 different colors
@@ -226,19 +228,24 @@ public class Game {
         LOGGER.info("Les joueurs ont été triés par ordre de points");
     }
 
-    public List<Player> getPlayers() {
-        return players;
-    }
-
+    /**
+     * Start the game and return the name of the winner
+     *
+     * @return the winner
+     */
     public String startGameTest() {
         startGame();
         return players.get(0).getClass().getName();
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
     public Player getWinner() {
         return players.get(0);
     }
-  
+
     public int getId() {
         return id;
     }

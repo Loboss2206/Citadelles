@@ -308,9 +308,15 @@ public class Round {
         view.printPlayerAction(choice, player);
     }
 
+    /**
+     * Function that allows each player to draw a card
+     *
+     * @param player the player who will draw a card
+     */
     public void playerWantToDrawCard(Player player) {
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
         int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
+      
         if (nbCardToDraw == 3)
             view.printPurpleEffect(player, PurpleEffectState.OBSERVATORY_EFFECT);
 
@@ -349,6 +355,11 @@ public class Round {
         }
     }
 
+    /**
+     * Check if no player has already been set as first to 8 districts
+     *
+     * @return true if no player has already been set as first to 8 districts, false otherwise
+     */
     public boolean noPlayerAddCompleteFirst() {
         for (Player player : players) {
             if (player.isFirstToAdd8district()) return false;
@@ -378,6 +389,11 @@ public class Round {
         return faceUpCharactersDiscarded;
     }
 
+    /**
+     * Collect two golds or less for the player
+     *
+     * @param player the player who will collect the golds
+     */
     public void collectTwoGoldsForPlayer(Player player) {
         int nbMaxCoins = 0;
         for (int i = 0; i < 2; i++) {
@@ -386,6 +402,11 @@ public class Round {
         player.setGolds(player.getGolds() + nbMaxCoins);
     }
 
+    /**
+     * Put a district for the player
+     *
+     * @param player the player who will put the district
+     */
     public void putDistrictForPlayer(Player player) {
         DistrictCard districtToPut;
         do {
