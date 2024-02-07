@@ -59,9 +59,12 @@ class RichardTest {
         botRichard.addCardToHand(DistrictCard.PALACE);
         assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
-        //Take the Magician
+        //Take the Merchant
         botRichard.getHands().clear();
         botRichard.setListCopyPlayers(players);
+        assertEquals(CharacterCard.MERCHANT, characterCard.get(botRichard.chooseCharacter(characterCard)));
+
+        botRichard.setGolds(2);
         assertEquals(CharacterCard.MAGICIAN, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //Don't take the magician when all have empty hands
@@ -337,5 +340,18 @@ class RichardTest {
         playerThatShouldBeTargeted = players.get(3);
         assertEquals(playerThatShouldBeTargeted, botRichard.selectMagicianTarget(players));
 
+    }
+
+    @Test
+    void testWantToUseEffectForRichard(){
+        botRichard.setPlayerRole(CharacterCard.BISHOP);
+        assertTrue(botRichard.wantToUseEffect(true));
+
+        botRichard.getHands().add(DistrictCard.TEMPLE);
+        botRichard.setGolds(3);
+        assertFalse(botRichard.wantToUseEffect(true));
+
+        botRichard.setPlayerRole(CharacterCard.ASSASSIN);
+        assertTrue(botRichard.wantToUseEffect(true));
     }
 }
