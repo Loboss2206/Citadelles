@@ -260,8 +260,6 @@ public class Richard extends Player implements GameActions {
         List<Player> playersInOrder = players;
         Collections.sort(playersInOrder, Comparator.comparingInt(Player::getNbCardsInHand));
         Collections.reverse(playersInOrder);
-        System.out.println(playersInOrder.size());
-        System.out.println(playersInOrder);
         return playersInOrder;
     }
 
@@ -304,7 +302,7 @@ public class Richard extends Player implements GameActions {
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
         List<DistrictCard> cards = player.getBoard();
         cards.sort(districtCardComparator);
-        return cards.get(0).getDistrictValue();
+        return cards.isEmpty() ? 0 : cards.get(0).getDistrictValue();
     }
 
     private List<Player> playerThatCanNotChooseArchitect() {
