@@ -3,6 +3,7 @@ package fr.cotedazur.univ.polytech.model.bot;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
+import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -20,35 +21,78 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DispatchState startChoice() {
-        int randomIndex = random.nextInt(2);
-        switch (randomIndex) {
-            case 0 -> {
+        discoverValidCard();
+        Set<Color> colorsOnBoard = colorInList(getBoard());
+        for (DistrictCard districtCard : validCards){
+            if (!colorsOnBoard.contains(districtCard.getDistrictColor())){
                 return DispatchState.TWO_GOLDS;
-            }
-            case 1 -> {
-                return DispatchState.DRAW_CARD;
-            }
-            default -> {
-                return null;
+
             }
         }
+        if (getGolds() <= 4) {
+            return DispatchState.TWO_GOLDS;
+        }
+        if (getHands().isEmpty() || validCards.isEmpty() || getGolds() >= 6) {
+            return DispatchState.DRAW_CARD;
+        }
+        return DispatchState.TWO_GOLDS;
     }
 
 
     @Override
     public DistrictCard choiceHowToPlayDuringTheRound() {
-        int randomIndex = random.nextInt(2);
-        if (randomIndex == 0) {
-            return putADistrict();
-        }
-        return null;
+        return putADistrict();
     }
 
     @Override
     public DistrictCard putADistrict() {
-        if (hasValidCard()) {
-            int randomIndex = random.nextInt(validCards.size());
-            return validCards.get(randomIndex);
+        discoverValidCard();
+        //List des différentes couleurs sur le Terrain
+        Set<Color> colorsOnBoard = colorInList(getBoard());
+        if (!validCards.isEmpty()) {
+            List<DistrictCard> purpleCard = new ArrayList<>();
+            List<DistrictCard> colorNotOnBoard = new ArrayList<>();
+            List<DistrictCard> cardsThatMatchWithRoleColor = new ArrayList<>();
+            for (DistrictCard districtCard : validCards) {
+                if (districtCard.getDistrictColor() == Color.PURPLE) {
+                    purpleCard.add(districtCard);
+                }
+                if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
+                    colorNotOnBoard.add(districtCard);
+                }
+                if(districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()){
+                    cardsThatMatchWithRoleColor.add(districtCard);
+                }
+            }
+            if (!purpleCard.isEmpty()) return maxPrice(purpleCard);
+
+            if (!cardsThatMatchWithRoleColor.isEmpty()) return maxPrice(cardsThatMatchWithRoleColor);
+
+            if (!colorNotOnBoard.isEmpty()) return maxPrice(colorNotOnBoard);
+
+            return maxPrice(validCards);
+        }
+
+        return null;
+    }
+
+    public Set<Color> colorInList(List<DistrictCard> districtCards) {
+        Set<Color> listeUnique = new HashSet<>();
+        for (DistrictCard districtCard : districtCards) {
+            listeUnique.add(districtCard.getDistrictColor());
+        }
+        return listeUnique;
+    }
+
+    public DistrictCard maxPrice(List<DistrictCard> districtCards) {
+        if (!districtCards.isEmpty()) {
+            DistrictCard maxValue = districtCards.get(0);
+            for (DistrictCard card : districtCards) {
+                if (maxValue.getDistrictValue() < card.getDistrictValue()) {
+                    maxValue = card;
+                }
+            }
+            return maxValue;
         }
         return null;
     }
@@ -323,49 +367,59 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public Color chooseColorForSchoolOfMagic() {
-        return Color.values()[random.nextInt(Color.values().length)];
+        if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
+            return getPlayerRole().getCharacterColor();
+        }
+        return Color.PURPLE;
     }
-
     @Override
     public Color chooseColorForHauntedCity() {
-        return Color.values()[random.nextInt(Color.values().length)];
+        Set<Color> colorsOnBoard = colorInList(getBoard());
+        for (Color color : Color.values()) {
+            if (!colorsOnBoard.contains(color)) {
+                return color;
+            }
+        }
+        return Color.PURPLE;
     }
-
 
     @Override
     public boolean wantToUseLaboratoryEffect() {
-        return random.nextInt(2) == 0;
+        discoverValidCard();
+        for (DistrictCard card : this.getHands()) {
+            if (!validCards.contains(card)) {
+                return true;
+            }
+        }
+        return false;
     }
-
     @Override
     public DistrictCard chooseHandCardToDiscard() {
-        boolean wantToUseDistrictCard = random.nextBoolean();
-        if (!getHands().isEmpty() && (wantToUseDistrictCard)) {
-            return getHands().get(random.nextInt(getHands().size()));
-
+        if(!getHands().isEmpty()) {
+            ArrayList<DistrictCard> listOfCardsForSort = (ArrayList<DistrictCard>) getHands();
+            DistrictCardComparator districtCardComparator = new DistrictCardComparator();
+            listOfCardsForSort.sort(districtCardComparator);
+            return listOfCardsForSort.get(0);
         }
         return null;
     }
 
     @Override
     public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
-        int randomCard = random.nextInt(cards.length);
-        int randomSecondCard = -1;
-        if (this.getBoard().contains(DistrictCard.LIBRARY) && cards.length > 1) {
-            do {
-                randomSecondCard = random.nextInt(cards.length);
-            } while (randomSecondCard == randomCard);
-        }
+        ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
-        for (int i = 0; i < cards.length; i++) {
-            if (i == randomCard || i == randomSecondCard) {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).add(cards[i]);
+        DistrictCardComparator districtCardComparator = new DistrictCardComparator();
+        listOfCardsForSort.sort(districtCardComparator);
+        for (int i = 0; i < listOfCardsForSort.size(); i++) {
+            if (i == 0 || (this.getBoard().contains(DistrictCard.LIBRARY) && i == 1)) {
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).add(listOfCardsForSort.get(listOfCardsForSort.size() - 1 - i));
             } else {
-                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).add(cards[i]);
+                cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).add(listOfCardsForSort.get(listOfCardsForSort.size() - 1 - i));
             }
         }
         LOGGER.info("Cartes jetées : " + cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED));
     }
+
 
 
     @Override
@@ -403,18 +457,18 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public boolean wantsToUseSmithyEffect() {
-        return random.nextInt(2) == 0;
+        return getGolds() >= 3 && validCards.isEmpty();
     }
 
     @Override
     public List<DistrictCard> chooseCardsToChange() {
-        List<DistrictCard> cardsToExchange = new ArrayList<>();
-        if (getHands().isEmpty()) return cardsToExchange;
-        int nbCards = random.nextInt(this.getHands().size()) + 1;
-        for (int i = 0; i < nbCards; i++) {
-            cardsToExchange.add(this.getHands().get(i));
+        List<DistrictCard> districtCards = new ArrayList<>();
+        for (DistrictCard districtCard : this.getHands()) {
+            if (!validCards.contains(districtCard)) {
+                districtCards.add(districtCard);
+            }
         }
-        return cardsToExchange;
+        return districtCards;
     }
 
     @Override
@@ -422,9 +476,7 @@ public class Richard extends Player implements GameActions {
         Player highNbCards = players.get(0);
         for (Player p : players) {
             //if equals we trade with someone who has the most district
-            if (p.getHands().size() == highNbCards.getHands().size() && p.getBoard().size() > highNbCards.getBoard().size()) {
-                highNbCards = p;
-            } else if (p.getHands().size() > highNbCards.getHands().size()) {
+            if ((p.getHands().size() == highNbCards.getHands().size() && p.getBoard().size() > highNbCards.getBoard().size()) || p.getHands().size() > highNbCards.getHands().size()) {
                 highNbCards = p;
             }
         }
@@ -433,8 +485,7 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public boolean wantToUseGraveyardEffect() {
-        int choice = random.nextInt(2);
-        return choice == 0;
+        return true;
     }
 
     public CharacterCard getTarget() {
