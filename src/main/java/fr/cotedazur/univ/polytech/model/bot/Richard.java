@@ -16,6 +16,7 @@ public class Richard extends Player implements GameActions {
     }
 
     private CharacterCard target;
+    private Player targetOfTheMagician;
 
     @Override
     public DispatchState startChoice() {
@@ -135,6 +136,15 @@ public class Richard extends Player implements GameActions {
         return false;
     }
 
+    public boolean isLastRound() {
+        for (Player player : getListCopyPlayers()) {
+            if (player != this && player.getBoard().size() == 7) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean isFirst(List<Player> players) {
         int countThis = 0;
         int countPlayer = 0;
@@ -190,8 +200,31 @@ public class Richard extends Player implements GameActions {
     public int chooseCharacter(List<CharacterCard> cards) {
         discoverValidCard();
 
+        if (isLastRound()) {
+            List<Player> playersOrdered = getListCopyPlayers();
+            int position = playersOrdered.indexOf(playerWhoIsGonnaWin(playersOrdered));
+
+            // If Richard is the first or second player
+            if (position <= 1) {
+                if (position == 1 && (!cards.contains(CharacterCard.BISHOP) || !cards.contains(CharacterCard.WARLORD)) && cards.contains(CharacterCard.ASSASSIN)) {
+                    target = cards.contains(CharacterCard.BISHOP) ? CharacterCard.BISHOP : CharacterCard.WARLORD;
+                    return cards.indexOf(CharacterCard.ASSASSIN);
+                }
+                if (cards.contains(CharacterCard.ASSASSIN)) {
+                    return cards.indexOf(CharacterCard.ASSASSIN);
+                } else if (cards.contains(CharacterCard.BISHOP) || cards.contains(CharacterCard.WARLORD)) {
+                    return cards.contains(CharacterCard.BISHOP) ? cards.indexOf(CharacterCard.BISHOP) : cards.indexOf(CharacterCard.WARLORD);
+                }
+            }
+
+            // If Richard is the third player
+            Integer cardToChoose = RichardCombo(cards, playersOrdered, position);
+            if (cardToChoose != null) return cardToChoose;
+
+        }
+
         //King
-        if((cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.KING) && this.isCrowned() && getListCopyPlayers().size() < 5)){
+        if ((cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.KING) && this.isCrowned() && getListCopyPlayers().size() < 5)) {
             return cards.indexOf(CharacterCard.KING);
         } else if (!getDiscardedCardDuringTheRound().contains(CharacterCard.ARCHITECT)) {
             List<Player> playersThatCanNotChooseArchitect = playerThatCanNotChooseArchitect();
@@ -208,24 +241,53 @@ public class Richard extends Player implements GameActions {
             }
         } else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE) > 0 || (hasValidCard() && getCurrentNbRound() > 3))) {
             return cards.indexOf(CharacterCard.BISHOP);
-        }
-        else if((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)){
+        } else if ((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)) {
             return cards.indexOf(CharacterCard.MERCHANT);
-        }
-        else if(cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()){
+        } else if (cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()) {
             return cards.indexOf(CharacterCard.MAGICIAN);
         }
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
         else if (cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()) {
             return cards.indexOf(CharacterCard.THIEF);
-        } else if (cards.contains(CharacterCard.ASSASSIN)) {
-            if ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers()))) {
-                target = CharacterCard.MAGICIAN;
-                return cards.indexOf(CharacterCard.ASSASSIN);
-            }
-            //TODO
+        } else if (cards.contains(CharacterCard.ASSASSIN) && ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers())))) {
+            target = CharacterCard.MAGICIAN;
+            return cards.indexOf(CharacterCard.ASSASSIN);
         }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
+    }
+
+    Integer RichardCombo(List<CharacterCard> cards, List<Player> playersOrdered, int position) {
+        if (position >= 2) {
+            int selfIndex = playersOrdered.indexOf(this);
+            if (cards.contains(CharacterCard.ASSASSIN) && cards.contains(CharacterCard.WARLORD) && cards.contains(CharacterCard.BISHOP)) {
+                if (selfIndex == 0) {
+                    return cards.indexOf(CharacterCard.WARLORD);
+                } else if (selfIndex == 1) {
+                    target = CharacterCard.BISHOP;
+                    return cards.indexOf(CharacterCard.ASSASSIN);
+                }
+            } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 0 && cards.contains(CharacterCard.ASSASSIN) && playersOrdered.get(1).getHands().size() >= playersOrdered.get(position-1).getHands().size()) {
+                target = CharacterCard.MAGICIAN;
+                return cards.indexOf(CharacterCard.ASSASSIN);
+            } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 1 && playersOrdered.get(0).getHands().size() < 2 && cards.contains(CharacterCard.MAGICIAN)) {
+                targetOfTheMagician = playersOrdered.get(position - 1);
+                return cards.indexOf(CharacterCard.MAGICIAN);
+            } else if (!cards.contains(CharacterCard.ASSASSIN) && selfIndex == 0 && cards.contains(CharacterCard.WARLORD)) {
+                return cards.indexOf(CharacterCard.WARLORD);
+            } else if (!cards.contains(CharacterCard.ASSASSIN) && selfIndex == 1 && cards.contains(CharacterCard.BISHOP)) {
+                return cards.indexOf(CharacterCard.BISHOP);
+            }
+        }
+        return null;
+    }
+
+    private Player playerWhoIsGonnaWin(List<Player> playersOrdered) {
+        for (Player player : playersOrdered) {
+            if (player.getBoard().size() == 7) {
+                return player;
+            }
+        }
+        return null;
     }
 
 
@@ -381,6 +443,9 @@ public class Richard extends Player implements GameActions {
     @Override
     public Player selectMagicianTarget(List<Player> players) {
         Player highNbCards = players.get(0);
+        if (targetOfTheMagician != null) {
+            return targetOfTheMagician;
+        }
         for (Player p : players) {
             //if equals we trade with someone who has the most district
             if (p.getHands().size() == highNbCards.getHands().size() && p.getBoard().size() > highNbCards.getBoard().size()) {
