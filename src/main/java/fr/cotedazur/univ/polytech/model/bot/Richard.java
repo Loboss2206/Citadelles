@@ -31,8 +31,8 @@ public class Richard extends Player implements GameActions {
     public DispatchState startChoice() {
         discoverValidCard();
         Set<Color> colorsOnBoard = colorInList(getBoard());
-        for (DistrictCard districtCard : validCards){
-            if (!colorsOnBoard.contains(districtCard.getDistrictColor())){
+        for (DistrictCard districtCard : validCards) {
+            if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
                 return DispatchState.TWO_GOLDS;
 
             }
@@ -68,7 +68,7 @@ public class Richard extends Player implements GameActions {
                 if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
                     colorNotOnBoard.add(districtCard);
                 }
-                if(districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()){
+                if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()) {
                     cardsThatMatchWithRoleColor.add(districtCard);
                 }
             }
@@ -107,16 +107,16 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
-        if(isBeforeLastRound){
-            if(getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.WARLORD) && !getDiscardedCardDuringTheRound().contains(CharacterCard.WARLORD)){
-                for(Player player : playersThatIsSetToWin){
-                    if(players.indexOf(player) == 0){
+        if (isBeforeLastRound) {
+            if (getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.WARLORD) && !getDiscardedCardDuringTheRound().contains(CharacterCard.WARLORD)) {
+                for (Player player : playersThatIsSetToWin) {
+                    if (players.indexOf(player) == 0) {
                         return CharacterCard.WARLORD;
                     }
                 }
-            } else if(getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.BISHOP) && !getDiscardedCardDuringTheRound().contains(CharacterCard.BISHOP)){
-                for(Player player : playersThatIsSetToWin){
-                    if(players.indexOf(player) == 0){
+            } else if (getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.BISHOP) && !getDiscardedCardDuringTheRound().contains(CharacterCard.BISHOP)) {
+                for (Player player : playersThatIsSetToWin) {
+                    if (players.indexOf(player) == 0) {
                         return CharacterCard.BISHOP;
                     }
                 }
@@ -136,16 +136,16 @@ public class Richard extends Player implements GameActions {
     @Override
     public CharacterCard selectWhoWillBeAffectedByAssassinEffect(List<Player> players, List<CharacterCard> characterCards) {
 
-        if(isBeforeLastRound){
-            if(getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.WARLORD) && !getDiscardedCardDuringTheRound().contains(CharacterCard.WARLORD)){
-                for(Player player : playersThatIsSetToWin){
-                    if(players.indexOf(player) == 0){
+        if (isBeforeLastRound) {
+            if (getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.WARLORD) && !getDiscardedCardDuringTheRound().contains(CharacterCard.WARLORD)) {
+                for (Player player : playersThatIsSetToWin) {
+                    if (players.indexOf(player) == 0) {
                         return CharacterCard.WARLORD;
                     }
                 }
-            } else if(getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.BISHOP) && !getDiscardedCardDuringTheRound().contains(CharacterCard.BISHOP)){
-                for(Player player : playersThatIsSetToWin){
-                    if(players.indexOf(player) == 0){
+            } else if (getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.BISHOP) && !getDiscardedCardDuringTheRound().contains(CharacterCard.BISHOP)) {
+                for (Player player : playersThatIsSetToWin) {
+                    if (players.indexOf(player) == 0) {
                         return CharacterCard.BISHOP;
                     }
                 }
@@ -230,7 +230,6 @@ public class Richard extends Player implements GameActions {
         return !playersThatIsSetToWin.isEmpty();
     }
 
-    
 
     public boolean isLastRound() {
         for (Player player : getListCopyPlayers()) {
@@ -242,11 +241,11 @@ public class Richard extends Player implements GameActions {
     }
 
 
-    public boolean isFirst(List<Player> players){
+    public boolean isFirst(List<Player> players) {
         return numberOfDistrictOfFirstPlayer(players) == this.getBoard().size();
     }
 
-    public int numberOfDistrictOfFirstPlayer(List<Player> players){
+    public int numberOfDistrictOfFirstPlayer(List<Player> players) {
         int countPlayer = 0;
         int maxCountPlayer = 0;
         for (Player player : players) {
@@ -257,7 +256,7 @@ public class Richard extends Player implements GameActions {
     }
 
 
-    public List<Player> numberOfDistrictInOrder(List<Player> players){
+    public List<Player> numberOfDistrictInOrder(List<Player> players) {
         List<Player> playersInOrder = players;
         Collections.sort(playersInOrder, Comparator.comparingInt(Player::getNbCardsInHand));
         Collections.reverse(playersInOrder);
@@ -306,6 +305,8 @@ public class Richard extends Player implements GameActions {
         List<DistrictCard> cards = player.getBoard();
         cards.sort(districtCardComparator);
         return cards.get(0).getDistrictValue();
+    }
+
     private List<Player> playerThatCanNotChooseArchitect() {
         List<Player> playerThatDoNotChooseArchitect = new ArrayList<>();
         for (Player player : getListCopyPlayers()) {
@@ -329,9 +330,9 @@ public class Richard extends Player implements GameActions {
                 return cards.indexOf(CharacterCard.KING);
             } else if (cards.contains(CharacterCard.ASSASSIN)) {
                 //If the king is not in the hand we target the king
-                if(!getDiscardedCardDuringTheRound().contains(CharacterCard.KING)){
-                    for(Player player : playersThatIsSetToWin) {
-                        if (getListCopyPlayers().indexOf(player) == 0){
+                if (!getDiscardedCardDuringTheRound().contains(CharacterCard.KING)) {
+                    for (Player player : playersThatIsSetToWin) {
+                        if (getListCopyPlayers().indexOf(player) == 0) {
                             target = CharacterCard.KING;
                         }
                     }
@@ -339,10 +340,10 @@ public class Richard extends Player implements GameActions {
                 return cards.indexOf(CharacterCard.ASSASSIN);
             } else if (cards.contains(CharacterCard.WARLORD)) {
                 //If the king is not in the hand we target the king
-                if(!getDiscardedCardDuringTheRound().contains(CharacterCard.KING) && !getDiscardedCardDuringTheRound().contains(CharacterCard.ASSASSIN)){
-                    for(Player player : playersThatIsSetToWin) {
+                if (!getDiscardedCardDuringTheRound().contains(CharacterCard.KING) && !getDiscardedCardDuringTheRound().contains(CharacterCard.ASSASSIN)) {
+                    for (Player player : playersThatIsSetToWin) {
                         //If the player is first
-                        if (getListCopyPlayers().indexOf(player) == 0){
+                        if (getListCopyPlayers().indexOf(player) == 0) {
                             targetedPlayerWhenIsLastBefore = playerThatCanWinWithTheLeastExpensiveDistrict();
                         }
                     }
@@ -386,12 +387,10 @@ public class Richard extends Player implements GameActions {
             return cards.indexOf(CharacterCard.BISHOP);
         }//To have 3 golds directly
         else if ((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.GREEN) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)) {
-
-        }
-        else if (cards.contains(CharacterCard.WARLORD) && (countNumberOfSpecifiedColorCard(Color.RED)>0||(firstHas1GoldDistrict(getListCopyPlayers()) && getCurrentNbRound()>3))){
+            return cards.indexOf(CharacterCard.MERCHANT);
+        } else if (cards.contains(CharacterCard.WARLORD) && (countNumberOfSpecifiedColorCard(Color.RED) > 0 || (firstHas1GoldDistrict(getListCopyPlayers()) && getCurrentNbRound() > 3))) {
             return cards.indexOf(CharacterCard.WARLORD);
-        }
-        else if (!getDiscardedCardDuringTheRound().contains(CharacterCard.ARCHITECT)) {
+        } else if (!getDiscardedCardDuringTheRound().contains(CharacterCard.ARCHITECT)) {
             List<Player> playersThatCanNotChooseArchitect = playerThatCanNotChooseArchitect();
             List<Player> playersOrdered = getListCopyPlayers();
             for (Player player : playersThatCanNotChooseArchitect) {
@@ -404,18 +403,12 @@ public class Richard extends Player implements GameActions {
                     return cards.indexOf(CharacterCard.ARCHITECT);
                 }
             }
-        } else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE) > 0 || (hasValidCard() && getCurrentNbRound() > 3))) {
-            return cards.indexOf(CharacterCard.BISHOP);
-        } else if ((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.GREEN) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)) {
-            return cards.indexOf(CharacterCard.MERCHANT);
         } else if (cards.contains(CharacterCard.MAGICIAN) && getHands().isEmpty() && thereIsSomeoneWithALotOfCards()) {
             return cards.indexOf(CharacterCard.MAGICIAN);
         }
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
         else if (cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()) {
             return cards.indexOf(CharacterCard.THIEF);
-        } else if (cards.contains(CharacterCard.ASSASSIN)) {
-            if ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers()))) {
         } else if (cards.contains(CharacterCard.ASSASSIN) && ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers())))) {
             target = CharacterCard.MAGICIAN;
             return cards.indexOf(CharacterCard.ASSASSIN);
@@ -433,7 +426,7 @@ public class Richard extends Player implements GameActions {
                     target = CharacterCard.BISHOP;
                     return cards.indexOf(CharacterCard.ASSASSIN);
                 }
-            } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 0 && cards.contains(CharacterCard.ASSASSIN) && playersOrdered.get(1).getHands().size() >= playersOrdered.get(position-1).getHands().size()) {
+            } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 0 && cards.contains(CharacterCard.ASSASSIN) && playersOrdered.get(1).getHands().size() >= playersOrdered.get(position - 1).getHands().size()) {
                 target = CharacterCard.MAGICIAN;
                 return cards.indexOf(CharacterCard.ASSASSIN);
             } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 1 && playersOrdered.get(0).getHands().size() < 2 && cards.contains(CharacterCard.MAGICIAN)) {
@@ -459,11 +452,11 @@ public class Richard extends Player implements GameActions {
 
     public boolean firstHas1GoldDistrict(List<Player> players) {
 
-        for (Player player : players){
-            if (player.equals(this))continue;
-            if (numberOfDistrictOfFirstPlayer(players) == player.getBoard().size()){
-                for (DistrictCard districtCard : player.getBoard()){
-                    if (districtCard.getDistrictValue() == 1){
+        for (Player player : players) {
+            if (player.equals(this)) continue;
+            if (numberOfDistrictOfFirstPlayer(players) == player.getBoard().size()) {
+                for (DistrictCard districtCard : player.getBoard()) {
+                    if (districtCard.getDistrictValue() == 1) {
                         return true;
                     }
                 }
@@ -496,16 +489,16 @@ public class Richard extends Player implements GameActions {
             return targetedPlayerWhenIsLastBefore;
         }
         List<Player> playersInOrder = numberOfDistrictInOrder(players);
-        for (Player player : playersInOrder){
+        for (Player player : playersInOrder) {
             if (player.equals(this)) continue;
             if (has1CardDistrictOnBoard(player)) return player;
         }
         return null;
     }
 
-    public  boolean has1CardDistrictOnBoard(Player player){
-        for (DistrictCard districtCard : player.getBoard()){
-            if (districtCard.getDistrictValue() == 1){
+    public boolean has1CardDistrictOnBoard(Player player) {
+        for (DistrictCard districtCard : player.getBoard()) {
+            if (districtCard.getDistrictValue() == 1) {
                 return true;
             }
         }
@@ -517,7 +510,7 @@ public class Richard extends Player implements GameActions {
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
         List<DistrictCard> cards = player.getBoard();
         cards.sort(districtCardComparator);
-        return cards.get(0);
+        return  cards.get(0);
     }
 
     public void setRandom(Random random) {
@@ -567,7 +560,7 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
-        if(!getHands().isEmpty()) {
+        if (!getHands().isEmpty()) {
             ArrayList<DistrictCard> listOfCardsForSort = (ArrayList<DistrictCard>) getHands();
             DistrictCardComparator districtCardComparator = new DistrictCardComparator();
             listOfCardsForSort.sort(districtCardComparator);
@@ -577,7 +570,9 @@ public class Richard extends Player implements GameActions {
     }
 
     @Override
-    public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
+    public void drawCard
+            (Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard...
+                    cards) {
         ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
