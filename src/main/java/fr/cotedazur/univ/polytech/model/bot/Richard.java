@@ -6,6 +6,7 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.PurpleEffectState;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class Richard extends Player implements GameActions {
@@ -138,18 +139,26 @@ public class Richard extends Player implements GameActions {
     }
 
     public boolean isFirst(List<Player> players){
-        int countThis = 0;
+        return numberOfDistrictOfFirstPlayer(players) == this.getBoard().size();
+    }
+
+    public int numberOfDistrictOfFirstPlayer(List<Player> players){
         int countPlayer = 0;
-        int maxPlayer = 0;
+        int maxCountPlayer = 0;
         for (Player player : players) {
-            if (player.equals(this)){
-                countThis = getBoard().size();
-            }else{
-                countPlayer = player.getBoard().size();
-            }
-            if (countPlayer > maxPlayer) maxPlayer = countPlayer;
+            countPlayer = player.getBoard().size();
+            if (countPlayer > maxCountPlayer) maxCountPlayer = countPlayer;
         }
-        return maxPlayer <= countThis;
+        return maxCountPlayer;
+    }
+
+    public List<Player> numberOfDistrictInOrder(List<Player> players){
+        List<Player> playersInOrder = players;
+        Collections.sort(playersInOrder, Comparator.comparingInt(Player::getNbCardsInHand));
+        Collections.reverse(playersInOrder);
+        System.out.println(playersInOrder.size());
+        System.out.println(playersInOrder);
+        return playersInOrder;
     }
    
 
@@ -186,6 +195,9 @@ public class Richard extends Player implements GameActions {
         if(cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0 && !(this.isCrowned() && getListCopyPlayers().size() < 5)){
             return cards.indexOf(CharacterCard.KING);
         }
+        else if (cards.contains(CharacterCard.WARLORD) && (countNumberOfSpecifiedColorCard(Color.RED)>0||(firstHas1GoldDistrict(getListCopyPlayers()) && getCurrentNbRound()>3))){
+            return cards.indexOf(CharacterCard.WARLORD);
+        }
         else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE)>0||(hasValidCard() && getCurrentNbRound()>3))){
             return cards.indexOf(CharacterCard.BISHOP);
         }
@@ -208,7 +220,21 @@ public class Richard extends Player implements GameActions {
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 
- 
+    public boolean firstHas1GoldDistrict(List<Player> players) {
+
+        for (Player player : players){
+            if (player.equals(this))continue;
+            if (numberOfDistrictOfFirstPlayer(players) == player.getBoard().size()){
+                for (DistrictCard districtCard : player.getBoard()){
+                    if (districtCard.getDistrictValue() == 1){
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
 
     public boolean thereIsSomeoneWithALotOfGolds(){
         for(Player player : getListCopyPlayers()){
@@ -230,17 +256,29 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public Player choosePlayerToDestroy(List<Player> players) {
-        int rand = random.nextInt(2);
-        if (rand == 0) {
-            return null;
-        } else {
-            return players.get(random.nextInt(players.size()));
+        List<Player> playersInOrder = numberOfDistrictInOrder(players);
+        for (Player player : playersInOrder){
+            if (player.equals(this)) continue;
+            if (has1CardDistrictOnBoard(player)) return player;
         }
+        return null;
+    }
+
+    public  boolean has1CardDistrictOnBoard(Player player){
+        for (DistrictCard districtCard : player.getBoard()){
+            if (districtCard.getDistrictValue() == 1){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
     public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
-        return districtCards.get(random.nextInt(districtCards.size()));
+        for (DistrictCard districtCard : player.getBoard()) {
+            if (districtCard.getDistrictValue() <= 1) return districtCard;
+        }
+        return null;
     }
 
     public void setRandom(Random random) {
@@ -306,18 +344,12 @@ public class Richard extends Player implements GameActions {
 
     @Override
     public DispatchState whichWarlordEffect(List<Player> players) {
-        int randomIndex = random.nextInt(3);
-        switch (randomIndex) {
-            case 0 -> {
-                return DispatchState.KILL;
-            }
-            case 1 -> {
-                return DispatchState.EARNDISTRICT_WARLORD;
-            }
-            default -> {
-                return null;
+        for (Player player : players) {
+            for (DistrictCard districtCard : player.getBoard()) {
+                if (districtCard.getDistrictValue() <= 1) return DispatchState.DESTROY;
             }
         }
+        return DispatchState.EARNDISTRICT_WARLORD;
     }
 
     @Override

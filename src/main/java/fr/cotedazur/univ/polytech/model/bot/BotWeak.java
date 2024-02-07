@@ -221,7 +221,7 @@ public class BotWeak extends Player implements GameActions {
     public DispatchState whichWarlordEffect(List<Player> players) {
         for (Player player : players) {
             for (DistrictCard districtCard : player.getBoard()) {
-                if (districtCard.getDistrictValue() <= 1) return DispatchState.KILL;
+                if (districtCard.getDistrictValue() <= 1) return DispatchState.DESTROY;
             }
         }
         return DispatchState.EARNDISTRICT_WARLORD;
