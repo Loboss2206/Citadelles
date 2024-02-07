@@ -59,6 +59,17 @@ class RichardTest {
         botRichard.addCardToHand(DistrictCard.PALACE);
         assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
+        botRichard.setGolds(4);
+        botRichard.getHands().clear();
+        botRichard.setListCopyPlayers(players);
+
+        if (botRichard.isFirst(players)) {
+            assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        } else {
+            assertEquals(CharacterCard.ARCHITECT, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        }
+        botRichard.setDiscardedCardDuringTheRound(Collections.singletonList(CharacterCard.ARCHITECT));
+
         //Take the Magician
         botRichard.getHands().clear();
         botRichard.setListCopyPlayers(players);
@@ -69,6 +80,8 @@ class RichardTest {
             player.getHands().clear();
         }
         botRichard.getHands().clear();
+        botRichard.setGolds(2);
+        botRichard.setDiscardedCardDuringTheRound(Arrays.asList(CharacterCard.ARCHITECT, CharacterCard.ASSASSIN));
         assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
         //Take Thief
@@ -129,6 +142,48 @@ class RichardTest {
             player.addCardToHand(DistrictCard.CHURCH);
         }
         assertEquals(CharacterCard.KING, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void shouldReturnAssassinWhenPlayerRoleIsNotArchitectAndAssassinIsAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        Player player = new BotRandom();
+        player.setPlayerRole(CharacterCard.KING);
+        players.add(player);
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        botRichard.setDiscardedCardDuringTheRound(new ArrayList<>());
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void shouldReturnArchitectWhenPlayerHasMoreGoldsAndArchitectIsAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        Player player = new BotRandom();
+        player.setPlayerRole(CharacterCard.KING);
+        players.add(botRichard);
+        players.add(player);
+        botRichard.setListCopyPlayers(players);
+        botRichard.setGolds(5);
+        assertEquals(CharacterCard.ARCHITECT, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void shouldReturnRandomWhenPlayerRoleIsArchitectAndAssassinIsNotAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        characterCard.remove(CharacterCard.ASSASSIN);
+        List<Player> players = new ArrayList<>();
+        Player player = new BotRandom();
+        player.setPlayerRole(CharacterCard.ARCHITECT);
+        players.add(player);
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        botRichard.setDiscardedCardDuringTheRound(new ArrayList<>());
+        botRichard.setGolds(5);
+        when(random.nextInt(characterCard.size())).thenReturn(0);
+        assertEquals(CharacterCard.THIEF, characterCard.get(botRichard.chooseCharacter(characterCard)));
     }
 
     @Test
