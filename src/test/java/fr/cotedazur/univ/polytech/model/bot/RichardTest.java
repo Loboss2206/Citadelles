@@ -224,6 +224,45 @@ class RichardTest {
     }
 
     @Test
+    void shouldReturnAssassinWhenRichardIsFirstOrSecondAndAssassinIsAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+
+
+
+    @Test
+    void shouldReturnCardFromRichardComboWhenRichardIsThirdPlayer() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        List<Player> players = new ArrayList<>();
+        Player player1 = new BotRandom();
+        Player player2 = new BotRandom();
+        players.add(player1);
+        players.add(player2);
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        assertNotNull(characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
+    void shouldReturnAssassinWhenRichardIsThirdAndBishopNotAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        characterCard.remove(CharacterCard.BISHOP);
+        List<Player> players = new ArrayList<>();
+        Player player1 = new BotRandom();
+        Player player2 = new BotRandom();
+        players.add(player1);
+        players.add(player2);
+        players.add(botRichard);
+        botRichard.setListCopyPlayers(players);
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+    }
+
+    @Test
     void testIsFirst() {
         List<Player> players = new ArrayList<>();
         Player player = new BotRandom();
@@ -240,6 +279,99 @@ class RichardTest {
         botRichard.getBoard().add(DistrictCard.CHURCH);
         assertTrue(botRichard.isFirst(players));
     }
+    @Test
+    void shouldNotReturnAssassinIndexWhenPositionIsOneAndBishopAndWarlordAreNotAvailableAndAssassinIsNot() {
+        List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+        cards.remove(CharacterCard.BISHOP);
+        cards.remove(CharacterCard.WARLORD);
+        cards.remove(CharacterCard.ASSASSIN);
+        int position = 1;
+        assertNotEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.chooseCharacter(cards));
+    }
+
+    @Test
+void shouldReturnWarlordIndexWhenRichardIsFirstAndAllCardsAreAvailable() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    List<Player> playersOrdered = new ArrayList<>();
+    playersOrdered.add(botRichard);
+    int position = 2;
+    assertEquals(cards.indexOf(CharacterCard.WARLORD), botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
+@Test
+void shouldReturnAssassinIndexWhenRichardIsSecondAndAllCardsAreAvailable() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    List<Player> playersOrdered = new ArrayList<>();
+    playersOrdered.add(new BotRandom());
+    playersOrdered.add(botRichard);
+    int position = 2;
+    assertEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
+@Test
+void shouldReturnAssassinIndexWhenRichardIsFirstAndBishopIsNotAvailable() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    cards.remove(CharacterCard.BISHOP);
+    List<Player> playersOrdered = new ArrayList<>();
+    botRichard.getHands().add(DistrictCard.TEMPLE);
+    BotRandom botRandom = new BotRandom();
+    botRandom.getHands().add(DistrictCard.DRAGON_GATE);
+    botRandom.getHands().add(DistrictCard.MARKET);
+    playersOrdered.add(botRichard);
+    playersOrdered.add(new BotRandom());
+    int position = 2;
+    assertEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
+@Test
+void shouldReturnMagicianIndexWhenRichardIsSecondAndFirstPlayerHasLessCards() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    cards.remove(CharacterCard.BISHOP);
+    List<Player> playersOrdered = new ArrayList<>();
+    Player firstPlayer = new BotRandom();
+    firstPlayer.getHands().clear();
+    playersOrdered.add(firstPlayer);
+    playersOrdered.add(botRichard);
+    botRichard.getHands().add(DistrictCard.TEMPLE);
+    int position = 2;
+    assertEquals(cards.indexOf(CharacterCard.MAGICIAN), botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
+@Test
+void shouldReturnWarlordIndexWhenRichardIsFirstAndAssassinIsNotAvailable() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    cards.remove(CharacterCard.ASSASSIN);
+    List<Player> playersOrdered = new ArrayList<>();
+    playersOrdered.add(botRichard);
+    int position = 2;
+    assertEquals(cards.indexOf(CharacterCard.WARLORD), botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
+@Test
+void shouldReturnBishopIndexWhenRichardIsSecondAndAssassinIsNotAvailable() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    cards.remove(CharacterCard.ASSASSIN);
+    List<Player> playersOrdered = new ArrayList<>();
+    playersOrdered.add(new BotRandom());
+    playersOrdered.add(botRichard);
+    int position = 2;
+    assertEquals(cards.indexOf(CharacterCard.BISHOP), botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
+@Test
+void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
+    List<CharacterCard> cards = new ArrayList<>(List.of(CharacterCard.values()));
+    cards.remove(CharacterCard.ASSASSIN);
+    cards.remove(CharacterCard.WARLORD);
+    cards.remove(CharacterCard.BISHOP);
+    List<Player> playersOrdered = new ArrayList<>();
+    playersOrdered.add(new BotRandom());
+    playersOrdered.add(new BotRandom());
+    playersOrdered.add(botRichard);
+    int position = 2;
+    assertNull(botRichard.RichardCombo(cards, playersOrdered, position));
+}
+
     @Test
     void testSomeHasNoCards(){
         List<Player> players = new ArrayList<>();
