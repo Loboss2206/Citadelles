@@ -112,9 +112,10 @@ public class BotRandom extends Player implements GameActions {
 
 
     @Override
-    public boolean wantToUseLaboratoryEffect(){
+    public boolean wantToUseLaboratoryEffect() {
         return random.nextInt(2) == 0;
     }
+
     @Override
     public DistrictCard chooseHandCardToDiscard() {
         boolean wantToUseDistrictCard = random.nextBoolean();

@@ -71,7 +71,7 @@ public class Round {
         //Discard cards
         discardCards();
 
-        for(Player player : players){
+        for (Player player : players) {
             player.setListCopyPlayers(effectController.playerNeededWithoutSensibleInformation(players, player));
         }
 
@@ -94,7 +94,7 @@ public class Round {
         choiceActionsForTheRound();
 
         //Reset the RoleKilled for all the players
-        for(Player player : players){
+        for (Player player : players) {
             player.setRoleKilledByAssassin(null);
         }
 
@@ -249,7 +249,7 @@ public class Round {
         // If the player has a laboratory, he can discard a card to earn 1 gold
         if (player.hasCardOnTheBoard(DistrictCard.LABORATORY) && !player.getHands().isEmpty() && player.wantToUseLaboratoryEffect()) {
             DistrictCard cardToRemove = player.chooseHandCardToDiscard();
-            if(cardToRemove != null){
+            if (cardToRemove != null) {
                 player.getHands().remove(cardToRemove);
                 player.setGolds(player.getGolds() + stackOfGolds.takeAGold());
                 view.printPurpleEffect(player, PurpleEffectState.LABORATORY_EFFECT);
@@ -309,11 +309,16 @@ public class Round {
         view.printPlayerAction(choice, player);
     }
 
+    /**
+     * Function that allows each player to draw a card
+     *
+     * @param player the player who will draw a card
+     */
     public void playerWantToDrawCard(Player player) {
         ArrayList<DistrictCard> cardsThatPlayerDraw = new ArrayList<>();
 
         int nbCardToDraw = player.getBoard().contains(DistrictCard.OBSERVATORY) ? 3 : 2;
-        if(nbCardToDraw == 3) view.printPurpleEffect(player, PurpleEffectState.OBSERVATORY_EFFECT);
+        if (nbCardToDraw == 3) view.printPurpleEffect(player, PurpleEffectState.OBSERVATORY_EFFECT);
         for (int i = 0; i < nbCardToDraw; i++) {
             if (!districtDeck.isEmpty()) cardsThatPlayerDraw.add(districtDeck.draw());
         }
@@ -332,7 +337,8 @@ public class Round {
         }
 
         if (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1 || (cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 2 && player.getBoard().contains(DistrictCard.LIBRARY))) {
-            if(player.getBoard().contains(DistrictCard.LIBRARY) && cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1) view.printPurpleEffect(player, PurpleEffectState.LIBRARY_EFFECT);
+            if (player.getBoard().contains(DistrictCard.LIBRARY) && cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).size() == 1)
+                view.printPurpleEffect(player, PurpleEffectState.LIBRARY_EFFECT);
             player.getHands().addAll(cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED));
         }
 
@@ -344,6 +350,11 @@ public class Round {
         }
     }
 
+    /**
+     * Check if no player has already been set as first to 8 districts
+     *
+     * @return true if no player has already been set as first to 8 districts, false otherwise
+     */
     public boolean noPlayerAddCompleteFirst() {
         for (Player player : players) {
             if (player.isFirstToAdd8district()) return false;
@@ -373,6 +384,11 @@ public class Round {
         return faceUpCharactersDiscarded;
     }
 
+    /**
+     * Collect two golds or less for the player
+     *
+     * @param player the player who will collect the golds
+     */
     public void collectTwoGoldsForPlayer(Player player) {
         int nbMaxCoins = 0;
         for (int i = 0; i < 2; i++) {
@@ -381,6 +397,11 @@ public class Round {
         player.setGolds(player.getGolds() + nbMaxCoins);
     }
 
+    /**
+     * Put a district for the player
+     *
+     * @param player the player who will put the district
+     */
     public void putDistrictForPlayer(Player player) {
         DistrictCard districtToPut;
         do {

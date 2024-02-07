@@ -95,6 +95,13 @@ public class EffectController {
         return newList;
     }
 
+    /**
+     * get players without their cards and the others sensibles information
+     *
+     * @param players             the list of the players
+     * @param playerThatUseEffect the player that use the effect
+     * @return the list of the players without their cards and the others sensibles information
+     */
     public List<Player> playerNeededWithoutSensibleInformation(List<Player> players, Player playerThatUseEffect) {
         ArrayList<Player> newList = new ArrayList<>();
         for (Player player : players) {
@@ -115,7 +122,8 @@ public class EffectController {
         ArrayList<DistrictCard> newList = new ArrayList<>();
         for (DistrictCard districtCard : playerToDestroy.getBoard()) {
             if (districtCard.isDestroyableDistrict(playerThatUseEffect.getGolds())) newList.add(districtCard);
-            if(districtCard == DistrictCard.KEEP) view.printPurpleEffect(playerToDestroy, PurpleEffectState.KEEP_EFFECT);
+            if (districtCard == DistrictCard.KEEP)
+                view.printPurpleEffect(playerToDestroy, PurpleEffectState.KEEP_EFFECT);
         }
         LOGGER.info("La liste des quartiers qui peuvent être détruits par le joueur " + playerThatUseEffect.getName() + " est: " + newList);
         return newList;
@@ -292,7 +300,13 @@ public class EffectController {
         }
     }
 
-    public Color verifyPresenceOfSchoolOfMagicCard(Player player){
+    /**
+     * Verify the presence of the school of magic card
+     *
+     * @param player the player
+     * @return the color of the district card for this turn
+     */
+    public Color verifyPresenceOfSchoolOfMagicCard(Player player) {
         Color colorDistrictCard = null;
         if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
             colorDistrictCard = player.chooseColorForSchoolOfMagic();
@@ -300,7 +314,7 @@ public class EffectController {
         }
         return colorDistrictCard;
     }
-  
+
     /**
      * Call the methods needed for the warlord
      *

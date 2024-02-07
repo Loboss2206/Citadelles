@@ -18,7 +18,7 @@ public class BotStrong extends Player implements GameActions {
 
     @Override
     public DistrictCard chooseHandCardToDiscard() {
-        if(!getHands().isEmpty()) {
+        if (!getHands().isEmpty()) {
             ArrayList<DistrictCard> listOfCardsForSort = (ArrayList<DistrictCard>) getHands();
             DistrictCardComparator districtCardComparator = new DistrictCardComparator();
             listOfCardsForSort.sort(districtCardComparator);
@@ -32,7 +32,6 @@ public class BotStrong extends Player implements GameActions {
         discoverValidCard();
         //List des différentes couleurs sur le Terrain
         Set<Color> colorsOnBoard = colorInList(getBoard());
-        Set<Color> colorsInHand = colorInList(getHands());
         if (!validCards.isEmpty()) {
             List<DistrictCard> purpleCard = new ArrayList<>();
             List<DistrictCard> colorNotOnBoard = new ArrayList<>();
@@ -44,7 +43,7 @@ public class BotStrong extends Player implements GameActions {
                 if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
                     colorNotOnBoard.add(districtCard);
                 }
-                if(districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()){
+                if (districtCard.getDistrictColor() == getPlayerRole().getCharacterColor()) {
                     cardsThatMatchWithRoleColor.add(districtCard);
                 }
             }
@@ -60,7 +59,12 @@ public class BotStrong extends Player implements GameActions {
         return null;
     }
 
-
+    /**
+     * function that returns the list of colors present in the list of district cards
+     *
+     * @param districtCards list of district cards
+     * @return the list of colors present in the list of district cards
+     */
     public Set<Color> colorInList(List<DistrictCard> districtCards) {
         Set<Color> listeUnique = new HashSet<>();
         for (DistrictCard districtCard : districtCards) {
@@ -69,6 +73,12 @@ public class BotStrong extends Player implements GameActions {
         return listeUnique;
     }
 
+    /**
+     * function that returns the district card with the highest value
+     *
+     * @param districtCards list of district cards
+     * @return the district card with the highest value
+     */
     public DistrictCard maxPrice(List<DistrictCard> districtCards) {
         if (!districtCards.isEmpty()) {
             DistrictCard maxValue = districtCards.get(0);
@@ -87,8 +97,8 @@ public class BotStrong extends Player implements GameActions {
     public DispatchState startChoice() {
         discoverValidCard();
         Set<Color> colorsOnBoard = colorInList(getBoard());
-        for (DistrictCard districtCard : validCards){
-            if (!colorsOnBoard.contains(districtCard.getDistrictColor())){
+        for (DistrictCard districtCard : validCards) {
+            if (!colorsOnBoard.contains(districtCard.getDistrictColor())) {
                 return DispatchState.TWO_GOLDS;
 
             }
@@ -276,7 +286,6 @@ public class BotStrong extends Player implements GameActions {
     }
 
 
-
     @Override
     public Color chooseColorForSchoolOfMagic() {
         if (getPlayerRole() == CharacterCard.KING || getPlayerRole() == CharacterCard.BISHOP || getPlayerRole() == CharacterCard.MERCHANT || getPlayerRole() == CharacterCard.WARLORD) {
@@ -315,8 +324,8 @@ public class BotStrong extends Player implements GameActions {
     @Override
     public boolean wantToUseEffect(boolean beforePuttingADistrict) {
         discoverValidCard();
-        for(DistrictCard districtCard : validCards){
-            if(districtCard.getDistrictColor() == this.getPlayerRole().getCharacterColor() && beforePuttingADistrict){
+        for (DistrictCard districtCard : validCards) {
+            if (districtCard.getDistrictColor() == this.getPlayerRole().getCharacterColor() && beforePuttingADistrict) {
                 return getPlayerRole() == CharacterCard.WARLORD;
             }
         }
