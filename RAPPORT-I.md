@@ -47,9 +47,12 @@ ainsi ?
 
 // Où trouver les infos (de la java doc, de la doc sur les points et les classes importants ?)
 
+- La javadoc est disponible dans la branche javadoc de notre projet et permet d'avoir des informations sur toutes les classes et méthodes importantes de notre code.
 
 // Etat de la base de code : quelles parties sont bien faites ? Quelles parties sont à refactor et
 pourquoi ? Comment la sortie SONAR le montre-elle (ou pas) ?
+
+- TODO AFTER IMPLEMENTATION OF RICHARD
 
 ## 3. Processus
 
@@ -61,3 +64,7 @@ Pour ce qui est des fonctionnalités additionnelles, une personne s'est occupé 
 En resumé, tout le monde a participé à chaque milestone et à chaque fonctionnalité de base et additionnelle.
 
 // Quel est le process de l'équipe (comment git est utilisé, branching strategy)
+
+Nous faisions une milestone par semaine, avec des issues représentatives pour chacunes de ces dernières.
+Chacun travaillait sur sa branche et faisait des pull requests sur la branche ```dev``` avec au minimum 2 personnes pour valider le merge.
+Une fois la fin de la semaine arrivée et toutes les issues réalisées, nous faisions un merge de la branche ```dev``` sur la branche ```master``` et nous taggions la nouvelle version de la branche master.
