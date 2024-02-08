@@ -95,6 +95,13 @@ public class EffectController {
         return newList;
     }
 
+    /**
+     * get players without their cards and the others sensibles information
+     *
+     * @param players             the list of the players
+     * @param playerThatUseEffect the player that use the effect
+     * @return the list of the players without their cards and the others sensibles information
+     */
     public List<Player> playerNeededWithoutSensibleInformation(List<Player> players, Player playerThatUseEffect) {
         ArrayList<Player> newList = new ArrayList<>();
         for (Player player : players) {
@@ -115,7 +122,8 @@ public class EffectController {
         ArrayList<DistrictCard> newList = new ArrayList<>();
         for (DistrictCard districtCard : playerToDestroy.getBoard()) {
             if (districtCard.isDestroyableDistrict(playerThatUseEffect.getGolds())) newList.add(districtCard);
-            if(districtCard == DistrictCard.KEEP) view.printPurpleEffect(playerToDestroy, PurpleEffectState.KEEP_EFFECT);
+            if (districtCard == DistrictCard.KEEP)
+                view.printPurpleEffect(playerToDestroy, PurpleEffectState.KEEP_EFFECT);
         }
         LOGGER.info("La liste des quartiers qui peuvent être détruits par le joueur " + playerThatUseEffect.getName() + " est: " + newList);
         return newList;
@@ -283,7 +291,6 @@ public class EffectController {
     public void playerWantToUseEffectMerchant(Player playerThatWantToUseEffect) {
         if (Boolean.FALSE.equals(this.getIsEffectUsed().get(DispatchState.EARNDISTRICT_MERCHANT))) {
             int golds = playerThatWantToUseEffect.getGolds();
-            Color colorDistrictCard = null;
             playerThatWantToUseEffect.getPlayerRole().useEffect(playerThatWantToUseEffect, stackOfGolds, verifyPresenceOfSchoolOfMagicCard(playerThatWantToUseEffect));
             view.printCharacterGetGolds(playerThatWantToUseEffect, playerThatWantToUseEffect.getPlayerRole().getCharacterColor(), playerThatWantToUseEffect.getGolds() - golds);
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_MERCHANT, true);
@@ -292,7 +299,13 @@ public class EffectController {
         }
     }
 
-    public Color verifyPresenceOfSchoolOfMagicCard(Player player){
+    /**
+     * Verify the presence of the school of magic card
+     *
+     * @param player the player
+     * @return the color of the district card for this turn
+     */
+    public Color verifyPresenceOfSchoolOfMagicCard(Player player) {
         Color colorDistrictCard = null;
         if (player.hasCardOnTheBoard(DistrictCard.SCHOOL_OF_MAGIC)) {
             colorDistrictCard = player.chooseColorForSchoolOfMagic();
@@ -300,7 +313,7 @@ public class EffectController {
         }
         return colorDistrictCard;
     }
-  
+
     /**
      * Call the methods needed for the warlord
      *
@@ -313,8 +326,7 @@ public class EffectController {
 
         DispatchState effect = warlordChooseEffectToUse(playerThatWantToUseEffect, players);
 
-        LOGGER.info(String.format("Le joueur %s (%s) a choisi l'effet %s pour le warlord", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), effect));
-
+        LOGGER.info("Le joueur " + playerThatWantToUseEffect.getName() + " (" + playerThatWantToUseEffect.getPlayerRole().getCharacterName() + ") veut utiliser son effet");
         if (effect == null) return;
 
         if (effect.equals(DispatchState.EARNDISTRICT_WARLORD)) {
@@ -325,35 +337,45 @@ public class EffectController {
             this.getIsEffectUsed().put(DispatchState.EARNDISTRICT_WARLORD, true);
         } else {
             // Case where the warlord destroy a district
-
-            // Create the list of the players that can be destroyed by the warlord
-            List<Player> playersNeeded = playersNeededForWarlordEffect(players, playerThatWantToUseEffect);
-
-            if (playersNeeded.isEmpty()) return;
-
-            Player playerToDestroy = playerThatWantToUseEffect.choosePlayerToDestroy(playersNeeded);
-            LOGGER.info(String.format("Le joueur %s (%s) a choisi le joueur %s pour être détruit", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), playerToDestroy != null ? playerToDestroy.getName() : "null"));
-
-            if (playerToDestroy == null) return;
-
-            // If the bot choose a player to destroy, we create the list of the districts that can be destroyed by the warlord for the playerToDestroy
-            List<DistrictCard> districtsNeeded = districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy);
-
-            if (districtsNeeded.isEmpty()) return;
-
-            DistrictCard districtToDestroy = playerThatWantToUseEffect.chooseDistrictToDestroy(playerToDestroy, districtsNeeded);
-            LOGGER.info(String.format("Le joueur %s (%s) a choisi le quartier %s du joueur %s pour être détruit", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), districtToDestroy.getDistrictName(), playerToDestroy.getName()));
-
-            // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
-            playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardedDeck, this.stackOfGolds);
-            this.getIsEffectUsed().put(DispatchState.DESTROY, true);
-            if (view != null && playerToDestroy.getPlayerRole() != null) {
-                view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
-            }
-
-            // If a bot has the graveyard, it can retrieve it by paying 1 gold
-            useGraveyard(players, districtToDestroy);
+            letTheWarlordDestroyADistrict(playerThatWantToUseEffect, players, districtDiscardedDeck);
         }
+    }
+
+    /**
+     * Call the methods needed for the warlord to destroy a district
+     *
+     * @param playerThatWantToUseEffect the player that want to use the effect
+     * @param players                   the list of the players
+     * @param districtDiscardedDeck     the discard deck of the districts
+     */
+    private void letTheWarlordDestroyADistrict(Player playerThatWantToUseEffect, List<Player> players, Deck<DistrictCard> districtDiscardedDeck) {
+        // Create the list of the players that can be destroyed by the warlord
+        List<Player> playersNeeded = playersNeededForWarlordEffect(players, playerThatWantToUseEffect);
+
+        if (playersNeeded.isEmpty()) return;
+
+        Player playerToDestroy = playerThatWantToUseEffect.choosePlayerToDestroy(playersNeeded);
+        LOGGER.info(String.format("Le joueur %s (%s) a choisi le joueur %s pour être détruit", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), playerToDestroy != null ? playerToDestroy.getName() : "null"));
+        if (playerToDestroy == null) return;
+
+        // If the bot choose a player to destroy, we create the list of the districts that can be destroyed by the warlord for the playerToDestroy
+        List<DistrictCard> districtsNeeded = districtNeededForWarlordEffect(playerThatWantToUseEffect, playerToDestroy);
+
+        if (districtsNeeded.isEmpty()) return;
+
+        DistrictCard districtToDestroy = playerThatWantToUseEffect.chooseDistrictToDestroy(playerToDestroy, districtsNeeded);
+        LOGGER.info(String.format("Le joueur %s (%s) a choisi le quartier %s du joueur %s pour être détruit", playerThatWantToUseEffect.getName(), playerThatWantToUseEffect.getPlayerRole().getCharacterName(), districtToDestroy.getDistrictName(), playerToDestroy.getName()));
+
+        // If the bot choose a district to destroy, we destroy it and display the district that was destroyed and the player who had the district
+        playerThatWantToUseEffect.getPlayerRole().useEffectWarlord(playerThatWantToUseEffect, playerToDestroy, districtToDestroy, districtDiscardedDeck, this.stackOfGolds);
+        this.getIsEffectUsed().put(DispatchState.DESTROY, true);
+        if (view != null && playerToDestroy.getPlayerRole() != null) {
+            assert districtToDestroy != null;
+            view.printDistrictDestroyed(playerThatWantToUseEffect, playerToDestroy, districtToDestroy);
+        }
+
+        // If a bot has the graveyard, it can retrieve it by paying 1 gold
+        useGraveyard(players, districtToDestroy);
     }
 
     /**

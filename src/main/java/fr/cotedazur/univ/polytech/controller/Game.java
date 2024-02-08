@@ -41,7 +41,6 @@ public class Game {
     // All the decks
     private Deck<DistrictCard> districtDeck;
     private Deck<DistrictCard> districtDiscardDeck;
-    private final int maxRound = 100; //prevent an infinite game
 
 
     public Game(List<Player> players, GameView view) {
@@ -108,6 +107,8 @@ public class Game {
         }
 
         //Start the rounds until a player has won
+        //prevent an infinite game
+        int maxRound = 100;
         do {
             //Set the crowned player as the first player of the list
             setCrownedPlayerToFirstPlace();
@@ -130,7 +131,7 @@ public class Game {
      */
     public boolean isGameFinished() {
         for (Player player : players) {
-            if (player.getBoard().size() >= 8) {
+            if (player.isFirstToAdd8district()) {
                 LOGGER.info("Le joueur " + player.getName() + " a gagné la partie");
                 return true;
             }
@@ -147,8 +148,10 @@ public class Game {
             for (DistrictCard card : player.getBoard()) {
                 int i = (card == DistrictCard.DRAGON_GATE || card == DistrictCard.UNIVERSITY) ? 2 : 0;
                 player.setPoints(player.getPoints() + card.getDistrictValue() + i);
-                if(card == DistrictCard.DRAGON_GATE) view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
-                if(card == DistrictCard.UNIVERSITY) view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
+                if (card == DistrictCard.DRAGON_GATE)
+                    view.printPurpleEffect(player, PurpleEffectState.DRAGON_GATE_EFFECT);
+                if (card == DistrictCard.UNIVERSITY)
+                    view.printPurpleEffect(player, PurpleEffectState.UNIVERSITY_EFFECT);
             }
 
             //If the player has 5 different colors
@@ -225,20 +228,33 @@ public class Game {
         LOGGER.info("Les joueurs ont été triés par ordre de points");
     }
 
-    public List<Player> getPlayers() {
-        return players;
-    }
-
+    /**
+     * Start the game and return the name of the winner
+     *
+     * @return the winner
+     */
     public String startGameTest() {
         startGame();
         return players.get(0).getClass().getName();
     }
 
+    public List<Player> getPlayers() {
+        return players;
+    }
+
     public Player getWinner() {
         return players.get(0);
     }
-  
+
     public int getId() {
         return id;
     }
+
+public int getRoundNumber() {
+        return roundNumber;
+    }
+
+
+
+
 }

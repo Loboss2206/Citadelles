@@ -112,9 +112,10 @@ public class BotRandom extends Player implements GameActions {
 
 
     @Override
-    public boolean wantToUseLaboratoryEffect(){
+    public boolean wantToUseLaboratoryEffect() {
         return random.nextInt(2) == 0;
     }
+
     @Override
     public DistrictCard chooseHandCardToDiscard() {
         boolean wantToUseDistrictCard = random.nextBoolean();
@@ -152,7 +153,7 @@ public class BotRandom extends Player implements GameActions {
         int randomIndex = random.nextInt(3);
         switch (randomIndex) {
             case 0 -> {
-                return DispatchState.KILL;
+                return DispatchState.DESTROY;
             }
             case 1 -> {
                 return DispatchState.EARNDISTRICT_WARLORD;

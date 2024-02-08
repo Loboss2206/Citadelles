@@ -111,7 +111,7 @@ public class GameView {
                     displayMessage(playerNameAndRole + " utilise l'effet de l'école de magie et choisis la couleur " + color.getColorName() + " pour sa carte");
             }
             case SMITHY_EFFECT ->
-                    displayMessage(playerNameAndRole + " utilise l'effet de la manufacture pour récupérer 3 cartes du deck en dépensant 2 pièces");
+                    displayMessage(playerNameAndRole + " utilise l'effet de la manufacture pour récupérer au mieux 3 cartes du deck en dépensant 3 pièces d'or");
             default -> displayMessage("Effet violet non connu");
         }
     }
@@ -159,7 +159,7 @@ public class GameView {
      * @param message the message to display
      */
     private void displayMessage(String message) {
-        LOGGER.log(LamaLevel.VIEW,message);
+        LOGGER.log(LamaLevel.VIEW, message);
     }
 
     /**
@@ -307,6 +307,11 @@ public class GameView {
         displayMessage("Le joueur : " + playerMagician.getName() + " a échanger " + cards.size() + " cartes avec le deck");
     }
 
+    /**
+     * print the board of all the players
+     *
+     * @param players the list of players
+     */
     public void printBoardOfAllPlayers(List<Player> players) {
         displayMessage("--------------------------Board des joueurs---------------------------");
         for (Player p : players) {
@@ -315,45 +320,68 @@ public class GameView {
         displayMessage("-----------------------------------------------------------------------\n");
     }
 
-
+    /**
+     * print when the character earn golds
+     *
+     * @param playerThatWantToUseEffect the player who want to use the effect
+     * @param characterColor            the color of the character
+     * @param golds                     the number of golds earned
+     */
     public void printCharacterGetGolds(Player playerThatWantToUseEffect, Color characterColor, int golds) {
         if (golds > 0)
             displayMessage("Le joueur " + playerThatWantToUseEffect.getName() + " recupère " + golds + " pièces d'or grâce à ses quartiers " + characterColor.getColorName());
     }
 
+    /**
+     * print when the player uses the graveyard effect
+     *
+     * @param playerHasGraveyard the player who uses the effect
+     * @param districtToDestroy  the district destroyed
+     */
     public void printGraveyardEffect(Player playerHasGraveyard, DistrictCard districtToDestroy) {
         displayMessage("Le joueur " + playerHasGraveyard.getName() + " recupère le quartier " + districtToDestroy.getDistrictName() + " grace au cimetière");
     }
 
-    public void diplayBotComparaison(Map<String,Integer> winnerPerPlayer, Map<String, Integer> scoringPerPlayer) {
+    /**
+     * Display the comparaison of the bots for the 2000 games
+     *
+     * @param winnerPerPlayer  the number of wins per player
+     * @param scoringPerPlayer the scoring average per player
+     */
+    public void diplayBotComparaison(Map<String, Integer> winnerPerPlayer, Map<String, Integer> scoringPerPlayer) {
         for (Map.Entry<String, Integer> entry : winnerPerPlayer.entrySet()) {
             if (entry.getKey().equals("Draw")) continue;
-            LOGGER.log(LamaLevel.DEMO,entry.getKey() + " : " + entry.getValue() + " wins");
+            LOGGER.log(LamaLevel.DEMO, entry.getKey() + " : " + entry.getValue() + " wins");
         }
 
-        LOGGER.log(LamaLevel.DEMO,"Draw " + winnerPerPlayer.get("Draw") + " times");
+        LOGGER.log(LamaLevel.DEMO, "Draw " + winnerPerPlayer.get("Draw") + " times");
         for (Map.Entry<String, Integer> entry : winnerPerPlayer.entrySet()) {
             if (entry.getKey().equals("Draw")) continue;
-            LOGGER.log(LamaLevel.DEMO,entry.getKey() + " : " + (entry.getValue() * 100 / 1000) + "%");
+            LOGGER.log(LamaLevel.DEMO, entry.getKey() + " : " + (entry.getValue() * 100 / 1000) + "%");
         }
-        LOGGER.log(LamaLevel.DEMO,"Draw rate : " + (winnerPerPlayer.get("Draw") * 100 / 1000) + "%");
-        LOGGER.log(LamaLevel.DEMO,"Scoring avg per player : " + scoringPerPlayer);
+        LOGGER.log(LamaLevel.DEMO, "Draw rate : " + (winnerPerPlayer.get("Draw") * 100 / 1000) + "%");
+        LOGGER.log(LamaLevel.DEMO, "Scoring avg per player : " + scoringPerPlayer);
     }
 
+    /**
+     * Display the statistics of the CSV file
+     *
+     * @param lines the lines of the statistics
+     */
     public void displayStats(List<String[]> lines) {
         String[] line = lines.get(lines.size() - 1);
 
 
-        LOGGER.log(LamaLevel.DEMO,"\nStatistiques : " +
+        LOGGER.log(LamaLevel.DEMO, "\nStatistiques : " +
                 line[0] + " : " + line[1]);
 
-        for (int i=2; i<line.length; i+=11) {
-            LOGGER.log(LamaLevel.DEMO,line[i+0] + " -> " +
-                    line[i+1] + " : " + line[i+2] + " | " +
-                    line[i+3] + " : " + line[i+4] + " | " +
-                    line[i+5] + " : " + line[i+6] + " | " +
-                    line[i+7] + " : " + line[i+8] + " | " +
-                    line[i+9] + " : " + line[i+10]);
+        for (int i = 2; i < line.length; i += 11) {
+            LOGGER.log(LamaLevel.DEMO, line[i + 0] + " -> " +
+                    line[i + 1] + " : " + line[i + 2] + " | " +
+                    line[i + 3] + " : " + line[i + 4] + " | " +
+                    line[i + 5] + " : " + line[i + 6] + " | " +
+                    line[i + 7] + " : " + line[i + 8] + " | " +
+                    line[i + 9] + " : " + line[i + 10]);
         }
     }
 }
