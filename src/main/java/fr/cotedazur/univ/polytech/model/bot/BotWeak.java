@@ -7,7 +7,7 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
 
 import java.util.*;
 
-public class BotWeak extends PlayerAssassinStrategy implements GameActions {
+public class BotWeak extends CommonMethod implements GameActions {
 
     private final Random random = new Random();
 
@@ -36,11 +36,6 @@ public class BotWeak extends PlayerAssassinStrategy implements GameActions {
             return DispatchState.DRAW_CARD;
         }
         return DispatchState.TWO_GOLDS;
-    }
-
-    @Override
-    public DistrictCard choiceHowToPlayDuringTheRound() {
-        return putADistrict();
     }
 
     @Override
@@ -168,24 +163,6 @@ public class BotWeak extends PlayerAssassinStrategy implements GameActions {
             }
         }
         return DispatchState.EXCHANGE_DECK;
-    }
-
-    @Override
-    public Player choosePlayerToDestroy(List<Player> players) {
-        for (Player player : players) {
-            for (DistrictCard districtCard : player.getBoard()) {
-                if (districtCard.getDistrictValue() <= 1) return player;
-            }
-        }
-        return null;
-    }
-
-    @Override
-    public DistrictCard chooseDistrictToDestroy(Player player, List<DistrictCard> districtCards) {
-        for (DistrictCard districtCard : player.getBoard()) {
-            if (districtCard.getDistrictValue() <= 1) return districtCard;
-        }
-        return null;
     }
 
     @Override
