@@ -758,6 +758,9 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
         players.get(0).getBoard().add(DistrictCard.FORTRESS);
         players.get(0).getBoard().add(DistrictCard.SMITHY);
         assertEquals(botRichard.numberOfDistrictInOrder(players).get(0), players.get(0));
+        //A bot and Richard are tied on top
+        botRichard.getBoard().add(DistrictCard.CHURCH);
+        assertEquals(botRichard.numberOfDistrictInOrder(players).get(0), botRichard);
     }
 
     @Test
@@ -790,7 +793,7 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
         botRichard.addCardToBoard(DistrictCard.CASTLE);
         botRichard.addCardToBoard(DistrictCard.PALACE);
         botRichard.addCardToBoard(DistrictCard.MANOR);
-        //assertNull(botRichard.chooseDistrictToDestroy(botRichard, botRichard.getBoard()));
+        assertEquals(DistrictCard.MANOR, botRichard.chooseDistrictToDestroy(botRichard, botRichard.getBoard()));
     }
 
     @Test
@@ -801,9 +804,11 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
             player.getBoard().add(DistrictCard.CHURCH);
             players.add(player);
         }
+        //A bot has a 1 gold district
         players.get(0).getBoard().add(DistrictCard.TAVERN);
         players.add(botRichard);
         assertTrue(botRichard.firstHas1GoldDistrict(players));
+        //Only Richard has a 1 gold district
         players.get(0).getBoard().remove(DistrictCard.TAVERN);
         botRichard.getBoard().add(DistrictCard.TAVERN);
         assertFalse(botRichard.firstHas1GoldDistrict(players));
