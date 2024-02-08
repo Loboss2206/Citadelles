@@ -111,4 +111,5 @@ class BotStrongTest {
         botStrong.setGolds(20);
         assertEquals(CharacterCard.ARCHITECT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
     }
+
 }

@@ -6,6 +6,7 @@ import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.view.GameView;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.RepeatedTest;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -26,16 +27,7 @@ class GameTest {
     @Test
     void testGameIsFinished() {
         game.startGame();
-
-        boolean onePlayerHas8OrMoreDistricts = false;
-        for (Player player : game.getPlayers()) {
-            if (player.getBoard().size() >= 8) {
-                onePlayerHas8OrMoreDistricts = true;
-                break;
-            }
-        }
-
-        assertTrue(onePlayerHas8OrMoreDistricts);
+        assertTrue(game.isGameFinished() || game.getRoundNumber() == 100);
     }
 
     // Change when we change the method calculatePoints

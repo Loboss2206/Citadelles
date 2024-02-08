@@ -189,10 +189,20 @@ public class Round {
                 continue;
             }
 
+            //Reveal the role for all the players
+            for(Player player1 : players){
+                for(Player player2 : player1.getListCopyPlayers()){
+                    if(player2.getName().equals(player.getName())){
+                        player2.setPlayerRole(player.getPlayerRole());
+                    }
+                }
+            }
+
             //If player is dead he will not be stolen
             if (player.isStolen()) {
                 effectController.getPlayerWhoStole().getPlayerRole().useEffectThief(effectController.getPlayerWhoStole(), player, true);
             }
+
 
             this.drawOr2golds(player);
 
