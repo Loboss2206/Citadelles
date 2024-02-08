@@ -158,7 +158,7 @@ class RichardTest {
     }
 
     @Test
-    void shouldReturnArchitectWhenPlayerHasMoreGoldsAndArchitectIsAvailable() {
+    void shouldReturnAssassinWhenPlayerHasMoreGoldsAndAssassintIsAvailable() {
         List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
         List<Player> players = new ArrayList<>();
         Player player = new BotRandom();
@@ -167,7 +167,7 @@ class RichardTest {
         players.add(player);
         botRichard.setListCopyPlayers(players);
         botRichard.setGolds(5);
-        assertEquals(CharacterCard.ARCHITECT, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
     }
 
     @Test

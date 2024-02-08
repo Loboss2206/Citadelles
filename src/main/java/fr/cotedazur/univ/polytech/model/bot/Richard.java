@@ -150,8 +150,7 @@ public class Richard extends Player implements GameActions {
                 }
             }
         }
-        if (target != null)
-            return target;
+        if (target != null) return target;
 
         if (target == CharacterCard.ARCHITECT) return target;
         if (target == CharacterCard.MAGICIAN) return target;
@@ -361,8 +360,8 @@ public class Richard extends Player implements GameActions {
 
             // If the player  who gonna win is the first or second player
             if (selfIndex == 0 && playerGonnaWinIndex == 1 && (!cards.contains(CharacterCard.BISHOP) || !cards.contains(CharacterCard.WARLORD)) && cards.contains(CharacterCard.ASSASSIN)) {
-                    target = cards.contains(CharacterCard.BISHOP) ? CharacterCard.BISHOP : CharacterCard.WARLORD;
-                    return cards.indexOf(CharacterCard.ASSASSIN);
+                target = cards.contains(CharacterCard.BISHOP) ? CharacterCard.BISHOP : CharacterCard.WARLORD;
+                return cards.indexOf(CharacterCard.ASSASSIN);
 
             }
 
@@ -386,7 +385,7 @@ public class Richard extends Player implements GameActions {
             List<Player> playersThatCanNotChooseArchitect = playerThatCanNotChooseArchitect();
             List<Player> playersOrdered = getListCopyPlayers();
             for (Player player : playersThatCanNotChooseArchitect) {
-                if (playersOrdered.indexOf(player) < playersOrdered.indexOf(this) && playersOrdered.get(playersOrdered.indexOf(player)).getPlayerRole() != CharacterCard.ARCHITECT) {
+                if (playersOrdered.indexOf(player) > playersOrdered.indexOf(this) && playersOrdered.get(playersOrdered.indexOf(player)).getPlayerRole() != CharacterCard.ARCHITECT) {
                     if (!getDiscardedCardDuringTheRound().contains(CharacterCard.ASSASSIN) && cards.contains(CharacterCard.ASSASSIN)) {
                         target = CharacterCard.ARCHITECT;
                         return cards.indexOf(CharacterCard.ASSASSIN);
@@ -502,7 +501,7 @@ public class Richard extends Player implements GameActions {
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
         List<DistrictCard> cards = player.getBoard();
         cards.sort(districtCardComparator);
-        return  cards.get(0);
+        return cards.get(0);
     }
 
     public void setRandom(Random random) {
@@ -562,9 +561,7 @@ public class Richard extends Player implements GameActions {
     }
 
     @Override
-    public void drawCard
-            (Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard...
-                    cards) {
+    public void drawCard(Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant, DistrictCard... cards) {
         ArrayList<DistrictCard> listOfCardsForSort = new ArrayList<>(List.of(cards));
         LOGGER.info("Cartes piochées : " + Arrays.toString(cards));
         DistrictCardComparator districtCardComparator = new DistrictCardComparator();
