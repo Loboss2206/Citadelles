@@ -183,9 +183,6 @@ class CharacterCardTest {
         player.setHands(districts);
 
         player.setPlayerRole(CharacterCard.MAGICIAN);
-        System.out.println(player.getHands());
-
-
         player.getPlayerRole().useEffectMagicianWithDeck(player, districtsDiscard, Deck);
         assertEquals(DistrictCard.MARKET, player.getHands().get(0));
         assertEquals(DistrictCard.TAVERN, player.getHands().get(1));

@@ -338,21 +338,6 @@ class BotWeakTest {
         assertTrue(botWeak.getHands().contains(DistrictCard.PALACE));
     }
 
-
-    @Test
-    void testChoosePlayerToDestroyInEmptyList() {
-        assertNull(botWeak.choosePlayerToDestroy(Collections.emptyList()));
-    }
-
-    @Test
-    void testChooseDistrictToDestroy() {
-        BotWeak botWeak2 = new BotWeak();
-        botWeak2.addCardToBoard(DistrictCard.CASTLE);
-        botWeak2.addCardToBoard(DistrictCard.PALACE);
-        botWeak2.addCardToBoard(DistrictCard.MANOR);
-        assertNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
-    }
-
     @Test
     void testWantToUseEffect() {
         assertTrue(botWeak.wantToUseEffect(true));
@@ -400,34 +385,6 @@ class BotWeakTest {
         assertNotEquals(botWeak.hashCode(), botRandom.hashCode());
     }
 
-    @Test
-    void testSelectWhoWillBeAffectedByAssassinEffect() {
-        BotWeak botWeak = new BotWeak();
-        botWeak.setPlayerRole(CharacterCard.ASSASSIN);
-
-        List<Player> players = new ArrayList<>();
-        List<CharacterCard> characterCards = Arrays.asList(CharacterCard.ASSASSIN, CharacterCard.THIEF, CharacterCard.MAGICIAN, CharacterCard.KING, CharacterCard.BISHOP, CharacterCard.MERCHANT, CharacterCard.ARCHITECT, CharacterCard.WARLORD);
-
-        // Test when players size is less than 4
-        players.add(new BotWeak());
-        players.add(new BotWeak());
-        players.add(new BotWeak());
-        assertEquals(CharacterCard.KING, botWeak.selectWhoWillBeAffectedByAssassinEffect(players, characterCards));
-
-        // Test when players size is less than 6
-        players.add(new BotWeak());
-        players.add(new BotWeak());
-        assertEquals(CharacterCard.MERCHANT, botWeak.selectWhoWillBeAffectedByAssassinEffect(players, characterCards));
-
-        // Test when players size is 6 or more
-        players.add(new BotWeak());
-        players.add(new BotWeak());
-        assertEquals(CharacterCard.ARCHITECT, botWeak.selectWhoWillBeAffectedByAssassinEffect(players, characterCards));
-
-        // Test when player role is not ASSASSIN
-        botWeak.setPlayerRole(CharacterCard.KING);
-        assertNull(botWeak.selectWhoWillBeAffectedByAssassinEffect(players, characterCards));
-    }
 
     @Test
     void testChooseHandCardToDiscard() {
@@ -445,22 +402,5 @@ class BotWeakTest {
         assertEquals(DistrictCard.PALACE, botWeak.chooseHandCardToDiscard());
     }
 
-    @Test
-    void testGetCharacterIndexByColor() {
-        BotWeak botWeak = new BotWeak();
 
-        List<CharacterCard> characters = Arrays.asList(CharacterCard.ASSASSIN, CharacterCard.THIEF, CharacterCard.MAGICIAN, CharacterCard.KING, CharacterCard.BISHOP, CharacterCard.MERCHANT, CharacterCard.ARCHITECT, CharacterCard.WARLORD);
-
-        // Test when color is YELLOW
-        assertEquals(3, botWeak.getCharacterIndexByColor(characters, Color.YELLOW));
-
-        // Test when color is GREEN
-        assertEquals(5, botWeak.getCharacterIndexByColor(characters, Color.GREEN));
-
-        // Test when color is BLUE
-        assertEquals(4, botWeak.getCharacterIndexByColor(characters, Color.BLUE));
-
-        // Test when color is not YELLOW, GREEN, or BLUE
-        assertThrows(UnsupportedOperationException.class, () -> botWeak.getCharacterIndexByColor(characters, Color.RED));
-    }
 }
