@@ -131,7 +131,7 @@ public class Game {
      */
     public boolean isGameFinished() {
         for (Player player : players) {
-            if (player.getBoard().size() >= 8) {
+            if (player.isFirstToAdd8district()) {
                 LOGGER.info("Le joueur " + player.getName() + " a gagné la partie");
                 return true;
             }
@@ -249,4 +249,12 @@ public class Game {
     public int getId() {
         return id;
     }
+
+public int getRoundNumber() {
+        return roundNumber;
+    }
+
+
+
+
 }

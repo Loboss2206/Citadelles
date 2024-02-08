@@ -2,7 +2,6 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
-import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -135,7 +134,7 @@ class RichardTest {
         botRichard.getHands().add(DistrictCard.DRAGON_GATE);
         botRichard.getHands().add(DistrictCard.LABORATORY);
         botRichard.getHands().add(DistrictCard.LIBRARY);
-        botRichard.getHands().add(DistrictCard.SCHOOL_OF_MAGIC);
+        botRichard.getHands().remove(DistrictCard.TEMPLE);
         assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
         assertEquals(CharacterCard.MAGICIAN, botRichard.getTarget());
 
@@ -156,26 +155,6 @@ class RichardTest {
         botRichard.setListCopyPlayers(players);
         assertEquals(CharacterCard.WARLORD, characterCard.get(botRichard.chooseCharacter(characterCard)));
 
-    }
-
-    @Test
-    void shouldReturnAssassinWhenPlayerRoleIsNotArchitectAndAssassinIsAvailable() {
-        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
-        List<Player> players = new ArrayList<>();
-        Player player = new BotRandom();
-        player.setPlayerRole(CharacterCard.KING);
-        players.add(player);
-        players.add(botRichard);
-        botRichard.setListCopyPlayers(players);
-        botRichard.setDiscardedCardDuringTheRound(new ArrayList<>());
-        players.get(0).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
-        players.get(0).getBoard().add(DistrictCard.SMITHY);
-        players.get(0).getBoard().add(DistrictCard.CASTLE);
-        players.get(0).getBoard().add(DistrictCard.BATTLEFIELD);
-        players.get(0).getBoard().add(DistrictCard.DRAGON_GATE);
-        players.get(0).getBoard().add(DistrictCard.TAVERN);
-        players.get(0).getBoard().add(DistrictCard.TAVERN);
-        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
     }
 
     @Test
@@ -400,29 +379,6 @@ class RichardTest {
         assertFalse(botRichard.onlyOneWith1GoldDistrict(players));
     }
 
-    /*@Test
-    void shouldReturnAssassinWhenRichardIsFirstOrSecondAndAssassinIsAvailable() {
-        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
-        List<Player> players = new ArrayList<>();
-        players.add(botRichard);
-        for(int i = 0 ; i < 3; i ++){
-            Player player = new BotRandom();
-            players.add(player);
-        }
-        botRichard.setListCopyPlayers(players);
-        players.get(3).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
-        players.get(3).getBoard().add(DistrictCard.SMITHY);
-        players.get(3).getBoard().add(DistrictCard.CASTLE);
-        players.get(3).getBoard().add(DistrictCard.BATTLEFIELD);
-        players.get(3).getBoard().add(DistrictCard.DRAGON_GATE);
-        players.get(3).getBoard().add(DistrictCard.TAVERN);
-        players.get(3).getBoard().add(DistrictCard.TAVERN);
-        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
-    }*/
-
-
-
-
     @Test
     void shouldReturnCardFromRichardComboWhenRichardIsThirdPlayer() {
         List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
@@ -450,17 +406,17 @@ class RichardTest {
         List<Player> players = new ArrayList<>();
         Player player1 = new BotRandom();
         Player player2 = new BotRandom();
-        players.add(player1);
-        players.add(player2);
         players.add(botRichard);
+        players.add(player2);
+        players.add(player1);
         botRichard.setListCopyPlayers(players);
-        players.get(0).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
-        players.get(0).getBoard().add(DistrictCard.SMITHY);
-        players.get(0).getBoard().add(DistrictCard.CASTLE);
-        players.get(0).getBoard().add(DistrictCard.BATTLEFIELD);
-        players.get(0).getBoard().add(DistrictCard.DRAGON_GATE);
-        players.get(0).getBoard().add(DistrictCard.TAVERN);
-        players.get(0).getBoard().add(DistrictCard.TAVERN);
+        players.get(2).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(2).getBoard().add(DistrictCard.SMITHY);
+        players.get(2).getBoard().add(DistrictCard.CASTLE);
+        players.get(2).getBoard().add(DistrictCard.BATTLEFIELD);
+        players.get(2).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(2).getBoard().add(DistrictCard.TAVERN);
+        players.get(2).getBoard().add(DistrictCard.TAVERN);
         assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
     }
 
@@ -497,7 +453,7 @@ void shouldReturnWarlordIndexWhenRichardIsFirstAndAllCardsAreAvailable() {
     List<Player> playersOrdered = new ArrayList<>();
     playersOrdered.add(botRichard);
     int position = 2;
-    assertEquals(cards.indexOf(CharacterCard.WARLORD), botRichard.RichardCombo(cards, playersOrdered, position));
+    assertEquals(cards.indexOf(CharacterCard.WARLORD), botRichard.combo(cards, playersOrdered, position));
 }
 
 @Test
@@ -507,8 +463,52 @@ void shouldReturnAssassinIndexWhenRichardIsSecondAndAllCardsAreAvailable() {
     playersOrdered.add(new BotRandom());
     playersOrdered.add(botRichard);
     int position = 2;
-    assertEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.RichardCombo(cards, playersOrdered, position));
+    assertEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.combo(cards, playersOrdered, position));
 }
+
+    @Test
+    void shouldReturnAssassinWhenWhoIsGonnaWinIsSecondAndBishopNotAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        characterCard.remove(CharacterCard.BISHOP);
+        List<Player> players = new ArrayList<>();
+        Player player1 = new BotRandom();
+        Player player2 = new BotRandom();
+        players.add(botRichard);
+        players.add(player1);
+        players.add(player2);
+        botRichard.setListCopyPlayers(players);
+        players.get(1).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(1).getBoard().add(DistrictCard.SMITHY);
+        players.get(1).getBoard().add(DistrictCard.CASTLE);
+        players.get(1).getBoard().add(DistrictCard.BATTLEFIELD);
+        players.get(1).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(1).getBoard().add(DistrictCard.TAVERN);
+        players.get(1).getBoard().add(DistrictCard.TAVERN);
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertEquals(CharacterCard.WARLORD, botRichard.getTarget());
+    }
+
+    @Test
+    void shouldReturnAssassinWhenWhoIsGonnaWinIsSecondAndWarlordNotAvailable() {
+        List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        characterCard.remove(CharacterCard.WARLORD);
+        List<Player> players = new ArrayList<>();
+        Player player1 = new BotRandom();
+        Player player2 = new BotRandom();
+        players.add(botRichard);
+        players.add(player1);
+        players.add(player2);
+        botRichard.setListCopyPlayers(players);
+        players.get(1).getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        players.get(1).getBoard().add(DistrictCard.SMITHY);
+        players.get(1).getBoard().add(DistrictCard.CASTLE);
+        players.get(1).getBoard().add(DistrictCard.BATTLEFIELD);
+        players.get(1).getBoard().add(DistrictCard.DRAGON_GATE);
+        players.get(1).getBoard().add(DistrictCard.TAVERN);
+        players.get(1).getBoard().add(DistrictCard.TAVERN);
+        assertEquals(CharacterCard.ASSASSIN, characterCard.get(botRichard.chooseCharacter(characterCard)));
+        assertEquals(CharacterCard.BISHOP, botRichard.getTarget());
+    }
 
 @Test
 void shouldReturnAssassinIndexWhenRichardIsFirstAndBishopIsNotAvailable() {
@@ -522,7 +522,7 @@ void shouldReturnAssassinIndexWhenRichardIsFirstAndBishopIsNotAvailable() {
     playersOrdered.add(botRichard);
     playersOrdered.add(new BotRandom());
     int position = 2;
-    assertEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.RichardCombo(cards, playersOrdered, position));
+    assertEquals(cards.indexOf(CharacterCard.ASSASSIN), botRichard.combo(cards, playersOrdered, position));
 }
 
 @Test
@@ -536,7 +536,7 @@ void shouldReturnMagicianIndexWhenRichardIsSecondAndFirstPlayerHasLessCards() {
     playersOrdered.add(botRichard);
     botRichard.getHands().add(DistrictCard.TEMPLE);
     int position = 2;
-    assertEquals(cards.indexOf(CharacterCard.MAGICIAN), botRichard.RichardCombo(cards, playersOrdered, position));
+    assertEquals(cards.indexOf(CharacterCard.MAGICIAN), botRichard.combo(cards, playersOrdered, position));
 }
 
 @Test
@@ -546,7 +546,7 @@ void shouldReturnWarlordIndexWhenRichardIsFirstAndAssassinIsNotAvailable() {
     List<Player> playersOrdered = new ArrayList<>();
     playersOrdered.add(botRichard);
     int position = 2;
-    assertEquals(cards.indexOf(CharacterCard.WARLORD), botRichard.RichardCombo(cards, playersOrdered, position));
+    assertEquals(cards.indexOf(CharacterCard.WARLORD), botRichard.combo(cards, playersOrdered, position));
 }
 
 @Test
@@ -557,7 +557,7 @@ void shouldReturnBishopIndexWhenRichardIsSecondAndAssassinIsNotAvailable() {
     playersOrdered.add(new BotRandom());
     playersOrdered.add(botRichard);
     int position = 2;
-    assertEquals(cards.indexOf(CharacterCard.BISHOP), botRichard.RichardCombo(cards, playersOrdered, position));
+    assertEquals(cards.indexOf(CharacterCard.BISHOP), botRichard.combo(cards, playersOrdered, position));
 }
 
 @Test
@@ -571,7 +571,7 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
     playersOrdered.add(new BotRandom());
     playersOrdered.add(botRichard);
     int position = 2;
-    assertNull(botRichard.RichardCombo(cards, playersOrdered, position));
+    assertNull(botRichard.combo(cards, playersOrdered, position));
 }
 
     @Test

@@ -7,7 +7,6 @@ import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.card.DistrictCardComparator;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 
 public class Richard extends Player implements GameActions {
@@ -357,23 +356,18 @@ public class Richard extends Player implements GameActions {
 
         if (isLastRound()) {
             List<Player> playersOrdered = getListCopyPlayers();
-            int position = playersOrdered.indexOf(playerWhoIsGonnaWin(playersOrdered));
+            int playerGonnaWinIndex = playersOrdered.indexOf(playerWhoIsGonnaWin(playersOrdered));
+            int selfIndex = playersOrdered.indexOf(this);
 
-            // If Richard is the first or second player
-            if (position <= 1) {
-                if (position == 1 && (!cards.contains(CharacterCard.BISHOP) || !cards.contains(CharacterCard.WARLORD)) && cards.contains(CharacterCard.ASSASSIN)) {
+            // If the player  who gonna win is the first or second player
+            if (selfIndex == 0 && playerGonnaWinIndex == 1 && (!cards.contains(CharacterCard.BISHOP) || !cards.contains(CharacterCard.WARLORD)) && cards.contains(CharacterCard.ASSASSIN)) {
                     target = cards.contains(CharacterCard.BISHOP) ? CharacterCard.BISHOP : CharacterCard.WARLORD;
                     return cards.indexOf(CharacterCard.ASSASSIN);
-                }
-                if (cards.contains(CharacterCard.ASSASSIN)) {
-                    return cards.indexOf(CharacterCard.ASSASSIN);
-                } else if (cards.contains(CharacterCard.BISHOP) || cards.contains(CharacterCard.WARLORD)) {
-                    return cards.contains(CharacterCard.BISHOP) ? cards.indexOf(CharacterCard.BISHOP) : cards.indexOf(CharacterCard.WARLORD);
-                }
+
             }
 
-            // If Richard is the third player
-            Integer cardToChoose = RichardCombo(cards, playersOrdered, position);
+            // If Richard is the third player and more
+            Integer cardToChoose = combo(cards, playersOrdered, playerGonnaWinIndex);
             if (cardToChoose != null) return cardToChoose;
 
         }
@@ -381,7 +375,7 @@ public class Richard extends Player implements GameActions {
         //King
         if ((cards.contains(CharacterCard.KING) && countNumberOfSpecifiedColorCard(Color.YELLOW) > 0) || (cards.contains(CharacterCard.KING) && this.isCrowned() && getListCopyPlayers().size() < 5)) {
             return cards.indexOf(CharacterCard.KING);
-        } else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE) > 0 || (hasValidCard() && getCurrentNbRound() > 3))) {
+        } else if (cards.contains(CharacterCard.BISHOP) && (countNumberOfSpecifiedColorCard(Color.BLUE) > 0 || (hasValidCard() && getBoard().size() >= 5))) {
             return cards.indexOf(CharacterCard.BISHOP);
         }//To have 3 golds directly
         else if ((cards.contains(CharacterCard.MERCHANT) && countNumberOfSpecifiedColorCard(Color.GREEN) > 0) || (cards.contains(CharacterCard.MERCHANT) && getGolds() < 2)) {
@@ -407,15 +401,15 @@ public class Richard extends Player implements GameActions {
         //Thief is interesting at first but when the game progresses he is not interesting (according to tt-22a5e3f98e5243b9f1135d1caadc4cc7)
         else if (cards.contains(CharacterCard.THIEF) && getCurrentNbRound() <= 3 && getGolds() <= 2 && thereIsSomeoneWithALotOfGolds()) {
             return cards.indexOf(CharacterCard.THIEF);
-        } else if (cards.contains(CharacterCard.ASSASSIN) && ((this.getHands().size() >= 5 && someoneHasNoCards(getListCopyPlayers())))) {
+        } else if (cards.contains(CharacterCard.ASSASSIN) && ((this.getHands().size() >= 4 && someoneHasNoCards(getListCopyPlayers())))) {
             target = CharacterCard.MAGICIAN;
             return cards.indexOf(CharacterCard.ASSASSIN);
         }
         return random.nextInt(cards.size()); //return a random number between 0 and the size of the list
     }
 
-    Integer RichardCombo(List<CharacterCard> cards, List<Player> playersOrdered, int position) {
-        if (position >= 2) {
+    Integer combo(List<CharacterCard> cards, List<Player> playersOrdered, int playerGonnaWinIndex) {
+        if (playerGonnaWinIndex >= 2) {
             int selfIndex = playersOrdered.indexOf(this);
             if (cards.contains(CharacterCard.ASSASSIN) && cards.contains(CharacterCard.WARLORD) && cards.contains(CharacterCard.BISHOP)) {
                 if (selfIndex == 0) {
@@ -424,11 +418,11 @@ public class Richard extends Player implements GameActions {
                     target = CharacterCard.BISHOP;
                     return cards.indexOf(CharacterCard.ASSASSIN);
                 }
-            } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 0 && cards.contains(CharacterCard.ASSASSIN) && playersOrdered.get(1).getHands().size() >= playersOrdered.get(position - 1).getHands().size()) {
+            } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 0 && cards.contains(CharacterCard.ASSASSIN) && playersOrdered.get(1).getHands().size() >= playersOrdered.get(playerGonnaWinIndex - 1).getHands().size()) {
                 target = CharacterCard.MAGICIAN;
                 return cards.indexOf(CharacterCard.ASSASSIN);
             } else if (!cards.contains(CharacterCard.BISHOP) && selfIndex == 1 && playersOrdered.get(0).getHands().size() < 2 && cards.contains(CharacterCard.MAGICIAN)) {
-                targetOfTheMagician = playersOrdered.get(position - 1);
+                targetOfTheMagician = playersOrdered.get(playerGonnaWinIndex - 1);
                 return cards.indexOf(CharacterCard.MAGICIAN);
             } else if (!cards.contains(CharacterCard.ASSASSIN) && selfIndex == 0 && cards.contains(CharacterCard.WARLORD)) {
                 return cards.indexOf(CharacterCard.WARLORD);
