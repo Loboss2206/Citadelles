@@ -150,10 +150,11 @@ public class Main {
 
         for (int i = 0; i < 1000; i++) {
             players.clear();
-            bot1 = new BotStrong();
-            bot2 = new BotStrong();
-            bot3 = new BotStrong();
-            bot4 = new BotStrong();
+            bot1 = new BotWeak();
+            bot2 = new BotWeak();
+            bot3 = new BotWeak();
+            bot4 = new Richard();
+            // to add bots -> Player bot5 = new BotWeak(); -> add the bot to the addAll
             players.addAll(List.of(bot1, bot2, bot3, bot4));
             launchCustomGame(players, view, winnerPerPlayer, scoringPerPlayer);
 
@@ -208,20 +209,14 @@ public class Main {
     }
 
     private static void launchCustomGame(List<Player> players, GameView view, Map<String, Integer> winnerPerPlayer, Map<String, Integer> scoringPerPlayer) {
-        Player bot1 = players.get(0);
-        Player bot2 = players.get(1);
-        Player bot3 = players.get(2);
-        Player bot4 = players.get(3);
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < players.size(); i++) {
             Player bot = players.get(i);
             String b = bot instanceof BotWeak ? "BotWeak" + (i+1) : "BotRandom" + (i+1);
             b = bot instanceof BotStrong ? "BotStrong" + (i+1) : b;
+            b= bot instanceof Richard ? "Richard" + (i+1) : b;
             bot.setName(b);
         }
-
-        players.clear();
-        players.addAll(List.of(bot1, bot2, bot3, bot4));
         for (Player player : players) {
             winnerPerPlayer.put(player.getName(), winnerPerPlayer.getOrDefault(player.getName(), 0));
         }
