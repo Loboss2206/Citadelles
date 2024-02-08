@@ -42,7 +42,7 @@ public abstract class PlayerAssassinStrategy extends Player {
      * Creates a HashMap that maps each specified character card to its corresponding color count.
      *
      * @param characters the characters available
-     * @return A HashMap<Color, Integer> where the keys are colors associated with the specified character cards
+     * @return {@code Map<Color, Integer>} where the keys are colors associated with the specified character cards
      * and the values are the counts of cards of that color in the given list.
      */
     protected Map<Color, Integer> createColorMap(List<CharacterCard> characters) {
