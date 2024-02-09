@@ -8,8 +8,10 @@ import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -118,4 +120,13 @@ class BotStrongTest {
         assertEquals(CharacterCard.ARCHITECT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
     }
 
+    @Test
+    void testSelectWhoWillBeAffectedByThiefEffect(){
+        java.util.List<Player> players = new ArrayList<>();
+        java.util.List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        botStrong.setPlayerRole(CharacterCard.THIEF);
+        assertEquals(CharacterCard.KING, botStrong.selectWhoWillBeAffectedByThiefEffect(players,characterCard ));
+        botStrong.setPlayerRole(CharacterCard.ASSASSIN);
+        assertNull(botStrong.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
+    }
 }
