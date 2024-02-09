@@ -52,7 +52,6 @@ Si au lancement du programme, le paramètre '--csv' est renseigné, alors le pro
 <!---un résumé de ce qui a été fait pour le bot spécifique demandé, et éventuellement une
 comparaison avec votre meilleur bot et une analyse de pourquoi celui qui gagne est le
 meilleur -->
-
 ### Bot Richard
 - TODO PAR MOMEN (il connait le mieux)
 
@@ -60,10 +59,9 @@ meilleur -->
 
 <!--- Comment est faite l'architecture du projet ? Et quels choix vous ont amené à la réaliser
 ainsi ? -->
-
+### Architecture
 
 <!---Où trouver les infos (de la java doc, de la doc sur les points et les classes importants ?) -->
-### Architecture
 ###  JavaDoc
 La javadoc est disponible dans la branche javadoc de notre projet et permet d'avoir des informations sur toutes les classes et méthodes importantes de notre code.
 
@@ -71,16 +69,27 @@ La javadoc est disponible dans la branche javadoc de notre projet et permet d'av
 <!---Etat de la base de code : quelles parties sont bien faites ? Quelles parties sont à refactor et
 pourquoi ? Comment la sortie SONAR le montre-elle (ou pas) ? -->
 ### Qualité du code
+
 #### Tests
 
-#### Partie en confiance
+Nous avons une couverture de tests d'environ 80% sur notre code, nous avons essayé de tester le plus de méthodes possible
+et surtout les plus importantes, mais il reste tout de même encore des parties de certaines méthodes qui restent non testées mais qui pourrait l'être dans le futur.
 
-#### Partie suspicieuse
+#### Parties bien faites
 
-#### Sonar
+Dans notre code, je pense que la plupart des parties sont bien faites, nous avons essayé de respecter les principes SOLID et de faire des classes et méthodes les plus petites possibles.
+Pour donner différents exemples, je pense que les classes concernant les bots ainsi que les classes concernant les quartiers ou les loggers sont bien faites.
 
+#### Parties à refactor
 
-- TODO AFTER IMPLEMENTATION OF RICHARD
+Il reste tout de même des parties de notre code qui pourraient être refactorisées, je pourrais par exemple citer:
+- L'implémentation des cartes violettes qui pourrait être refactorisée pour être plus propre et pour être plus facilement être adaptable dans le cas de nouvelles cartes
+- L'implémentation des personnages qu'on pourrait refactoriser en créant une classe pour chaque personnage héritant tous de la même classe abstraite, cela permettrait des nouveaux personnages bien plus facilement.
+
+#### Comment SONAR nous a aidé ?
+
+Sonar nous a beaucoup aidé à améliorer la qualité de notre code, il nous a permis de voir toutes les parties de notre code qui n'étaient pas couverts par les tests, qui avaient des bugs, des failles de securité ou tout simplement des parties de code qui n'étaient pas optimales et qui contenaient des "code smells".
+Avec toutes ces informations, il était simple pour nous de savoir quoi améliorer dans notre code.
 
 ## 3. Processus
 
