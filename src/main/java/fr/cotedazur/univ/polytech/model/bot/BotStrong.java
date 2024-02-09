@@ -100,6 +100,7 @@ public class BotStrong extends CommonMethod implements GameActions {
     public Player selectMagicianTarget(List<Player> players) {
         Player highNbCards = players.get(0);
         for (Player p : players) {
+            if (p.equals(this)) continue;
             if (p.getHands().size() >= highNbCards.getHands().size()) {
                 highNbCards = p;
             }
