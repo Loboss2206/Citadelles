@@ -121,7 +121,7 @@ La stratégie de notre bot `Strong` est bien précise:
 - Le bot `Strong` n'implémente pas de stratégie de dernier tour visant à contrer les adversaires.
 En conséquence, le bot `Strong` est plus performant que `Richard` car il a une stratégie de jeu différentes et plus absolu que celle de `Richard`.
 
-En termes de chiffres, `Richard` a un taux de victoire de environ 5,3% contre 94,7% pour le bot `Strong`, ce qui en fait le second bot le plus performant de notre jeu, derrère le bot `Strong`.
+En termes de chiffres, `Richard` a un taux de victoire d'environ 5,3% contre 94,7% pour le bot `Strong`, ce qui en fait le second bot le plus performant de notre jeu, derrière le bot `Strong`.
 
 
 ## 2. Architecture et qualité
