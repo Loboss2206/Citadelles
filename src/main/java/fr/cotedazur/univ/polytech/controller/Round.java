@@ -248,7 +248,6 @@ public class Round {
 
         //Because architect automatically take +2 cards
         if (player.getPlayerRole() == CharacterCard.ARCHITECT)
-            //TODO use effect architect in useEffectController
             player.getPlayerRole().useEffectArchitect(player, districtDeck);
 
         //Because Merchant automatically take +1 gold
