@@ -36,6 +36,7 @@ class BotWeakTest {
 
     @Test
     void putADistrict() {
+        assertNull(botWeak.putADistrict());
         botWeak.getHands().add(DistrictCard.PALACE);
         botWeak.getHands().add(DistrictCard.TEMPLE);
         botWeak.getHands().add(DistrictCard.GRAVEYARD);
@@ -302,6 +303,10 @@ class BotWeakTest {
         botWeak.setGolds(80);
         botWeak.getHands().clear();
         assertEquals(DispatchState.DRAW_CARD, botWeak.startChoice());
+
+        botWeak.setGolds(4);
+        botWeak.getHands().add(DistrictCard.MARKET);
+        assertEquals(DispatchState.TWO_GOLDS, botWeak.startChoice());
     }
 
     @Test
@@ -402,5 +407,102 @@ class BotWeakTest {
         assertEquals(DistrictCard.PALACE, botWeak.chooseHandCardToDiscard());
     }
 
+    @Test
+    void testChooseColorForHauntedCity(){
+        botWeak.getBoard().add(DistrictCard.CASTLE);
+        botWeak.getBoard().add(DistrictCard.MARKET);
+        botWeak.getBoard().add(DistrictCard.SCHOOL_OF_MAGIC);
+        botWeak.getBoard().add(DistrictCard.BATTLEFIELD);
+        //botWeak don't have blue card in hand
+        assertEquals(Color.BLUE, botWeak.chooseColorForHauntedCity());
+        //botWeak has all colors in hand
+        botWeak.getBoard().add(DistrictCard.CATHEDRAL);
+        assertEquals(Color.PURPLE, botWeak.chooseColorForHauntedCity());
+    }
 
+    @Test
+    void testWantToUseLaboratoryEffect(){
+        botWeak.getHands().add(DistrictCard.MARKET);
+        assertFalse(botWeak.wantToUseLaboratoryEffect());
+        botWeak.getHands().add(DistrictCard.CASTLE);
+        assertTrue(botWeak.wantToUseLaboratoryEffect());
+    }
+
+    @Test
+    void testWhichWarlordEffect(){
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotWeak();
+            player.setGolds(4);
+            players.add(player);
+        }
+        //no-one has a 1 gold district
+        assertEquals(DispatchState.EARNDISTRICT_WARLORD, botWeak.whichWarlordEffect(players));
+        players.get(1).getBoard().add(DistrictCard.TAVERN);
+        //someone has a 1 gold district
+        assertEquals(DispatchState.DESTROY, botWeak.whichWarlordEffect(players));
+    }
+
+    @Test
+    void testWhichMagicianEffect(){
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+        }
+        //botWeak has the most cards
+        botWeak.getHands().add(DistrictCard.TAVERN);
+        players.add(botWeak);
+        assertEquals(DispatchState.EXCHANGE_DECK, botWeak.whichMagicianEffect(players));
+        //botWeak and a bot has the most cards
+        players.get(1).getHands().add(DistrictCard.CASTLE);
+        assertEquals(DispatchState.EXCHANGE_DECK, botWeak.whichMagicianEffect(players));
+        //Someone has more cards than botWeak
+        players.get(1).getHands().add(DistrictCard.FORTRESS);
+        assertEquals(DispatchState.EXCHANGE_PLAYER, botWeak.whichMagicianEffect(players));
+    }
+
+    @Test
+    void testChooseCardsToChange(){
+        //botWeak don't have card who cost less than 3 gold
+        botWeak.getHands().add(DistrictCard.TAVERN);
+        assertTrue(botWeak.chooseCardsToChange().isEmpty());
+        //botWeak have a card who cost more than 3 gold
+        botWeak.getHands().add(DistrictCard.CASTLE);
+        assertFalse(botWeak.chooseCardsToChange().isEmpty());
+    }
+
+    @Test
+    void testSelectMagicianTarget(){
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+        }
+        //player 1 has the most card
+        players.get(0).getHands().add(DistrictCard.CASTLE);
+        players.get(0).getHands().add(DistrictCard.CASTLE);
+        players.get(1).getHands().add(DistrictCard.TAVERN);
+        assertEquals(players.get(0), botWeak.selectMagicianTarget(players));
+        //player 1 and player 0 has the most card so last player in players is returned
+        players.get(1).getHands().add(DistrictCard.OBSERVATORY);
+        assertEquals(players.get(1), botWeak.selectMagicianTarget(players));
+    }
+
+    @Test
+    void testWantToUseGraveyardEffect(){
+        assertTrue(botWeak.wantToUseGraveyardEffect());
+    }
+
+    @Test
+    void testEquals() {
+    BotWeak botWeak1 = new BotWeak();
+    Player botWeak2 = new BotWeak();
+    assertFalse(botWeak.equals(botWeak1));
+    assertFalse(botWeak.equals(null));
+    assertTrue(botWeak.equals(botWeak));
+    assertFalse(botWeak.equals(botWeak2));
+    }
 }
