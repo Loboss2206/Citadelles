@@ -16,8 +16,20 @@ import java.util.StringJoiner;
 import java.util.logging.Logger;
 
 public class GameView {
-    private static final Logger LOGGER = Logger.getLogger(LamaLogger.class.getName());
 
+    private Logger logger;
+
+    public GameView() {
+        logger = Logger.getLogger(LamaLogger.class.getName());
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public GameView(Logger logger) {
+        this.logger = logger;
+    }
 
     /**
      * print the announcement of the start of the game
@@ -84,6 +96,10 @@ public class GameView {
     }
 
     public void printPurpleEffect(Player player, DistrictCard districtCard, Color color, PurpleEffectState purpleEffectUsed) {
+        if (player == null || purpleEffectUsed == null) {
+            displayMessage("Effet violet non connu");
+            return;
+        }
         String playerNameAndRole = "Le joueur " + player.getName() + " (" + (player.getPlayerRole() != null ? player.getPlayerRole().getCharacterName() : "") + ")";
         switch (purpleEffectUsed) {
             case LABORATORY_EFFECT ->
@@ -93,7 +109,7 @@ public class GameView {
                     displayMessage(playerNameAndRole + " utilise l'effet du cimetière pour récupérer " + districtCard.getDistrictName() + " venant d'être détruit ");
             }
             case KEEP_EFFECT ->
-                    displayMessage(playerNameAndRole + " possèede un donjon qui ne peut pas être détruit par le warlord");
+                    displayMessage(playerNameAndRole + " possède un donjon qui ne peut pas être détruit par le warlord");
             case HAUNTED_CITY -> {
                 if (color != null)
                     displayMessage(playerNameAndRole + " utilise l'effet de la cours des miracles et choisis la couleur " + color.getColorName() + " pour sa carte");
@@ -159,7 +175,7 @@ public class GameView {
      * @param message the message to display
      */
     private void displayMessage(String message) {
-        LOGGER.log(LamaLevel.VIEW, message);
+        logger.log(LamaLevel.VIEW, message);
     }
 
     /**
@@ -304,6 +320,14 @@ public class GameView {
      * @param cards          the cards that the player give to the deck
      */
     public void exchangeDeckCard(Player playerMagician, List<DistrictCard> cards) {
+        if (playerMagician == null) {
+            logger.log(LamaLevel.SEVERE, "exchangeDeckCard error : playerMagician is null");
+            return;
+        }
+        if (cards == null || cards.isEmpty()) {
+            displayMessage("Le joueur : " + playerMagician.getName() + " a échanger 0 cartes avec le deck");
+            return;
+        }
         displayMessage("Le joueur : " + playerMagician.getName() + " a échanger " + cards.size() + " cartes avec le deck");
     }
 
@@ -349,18 +373,22 @@ public class GameView {
      * @param scoringPerPlayer the scoring average per player
      */
     public void diplayBotComparaison(Map<String, Integer> winnerPerPlayer, Map<String, Integer> scoringPerPlayer) {
+        if (winnerPerPlayer == null || scoringPerPlayer == null || winnerPerPlayer.isEmpty() || scoringPerPlayer.isEmpty()) {
+            logger.log(LamaLevel.SEVERE, "diplayBotComparaison error : winnerPerPlayer or scoringPerPlayer is null or empty");
+            return;
+        }
         for (Map.Entry<String, Integer> entry : winnerPerPlayer.entrySet()) {
             if (entry.getKey().equals("Draw")) continue;
-            LOGGER.log(LamaLevel.DEMO, entry.getKey() + " : " + entry.getValue() + " wins");
+            logger.log(LamaLevel.DEMO, entry.getKey() + " : " + entry.getValue() + " wins");
         }
 
-        LOGGER.log(LamaLevel.DEMO, "Draw " + winnerPerPlayer.get("Draw") + " times");
+        logger.log(LamaLevel.DEMO, "Draw " + winnerPerPlayer.get("Draw") + " times");
         for (Map.Entry<String, Integer> entry : winnerPerPlayer.entrySet()) {
             if (entry.getKey().equals("Draw")) continue;
-            LOGGER.log(LamaLevel.DEMO, entry.getKey() + " : " + (entry.getValue() * 100 / 1000) + "%");
+            logger.log(LamaLevel.DEMO, entry.getKey() + " : " + (entry.getValue() * 100 / 1000) + "%");
         }
-        LOGGER.log(LamaLevel.DEMO, "Draw rate : " + (winnerPerPlayer.get("Draw") * 100 / 1000) + "%");
-        LOGGER.log(LamaLevel.DEMO, "Scoring avg per player : " + scoringPerPlayer);
+        logger.log(LamaLevel.DEMO, "Draw rate : " + (winnerPerPlayer.get("Draw") * 100 / 1000) + "%");
+        logger.log(LamaLevel.DEMO, "Scoring avg per player : " + scoringPerPlayer);
     }
 
     /**
@@ -369,15 +397,20 @@ public class GameView {
      * @param line the line to display
      */
     public void displayStats(String[] line) {
-        LOGGER.log(LamaLevel.DEMO, line[1] + " : ");
-        LOGGER.log(LamaLevel.DEMO, "    " + line[2] + " : " + line[3]);
-        for (int i = 4; i < line.length; i += 11) {
-            LOGGER.log(LamaLevel.DEMO, "    " + line[i] + " -> " +
-                    line[i + 1] + " : " + line[i + 2] + " | " +
-                    line[i + 3] + " : " + line[i + 4] + " | " +
-                    line[i + 5] + " : " + line[i + 6] + " | " +
-                    line[i + 7] + " : " + line[i + 8] + " | " +
-                    line[i + 9] + " : " + line[i + 10]);
+        if (line == null) {
+            logger.log(LamaLevel.SEVERE, "displayStats error : line is null");
+            return;
         }
+        try {
+            logger.log(LamaLevel.DEMO, line[1] + " : ");
+            logger.log(LamaLevel.DEMO, "    " + line[2] + " : " + line[3]);
+            for (int i = 4; i < line.length; i += 11) {
+                logger.log(LamaLevel.DEMO, "    " + line[i] + " -> " + line[i + 1] + " : " + line[i + 2] + " | " + line[i + 3] + " : " + line[i + 4] + " | " + line[i + 5] + " : " + line[i + 6] + " | " + line[i + 7] + " : " + line[i + 8] + " | " + line[i + 9] + " : " + line[i + 10]);
+            }
+        } catch (ArrayIndexOutOfBoundsException e) {
+            logger.log(LamaLevel.SEVERE, "displayStats error : " + e.getMessage());
+        }
+
+
     }
 }
