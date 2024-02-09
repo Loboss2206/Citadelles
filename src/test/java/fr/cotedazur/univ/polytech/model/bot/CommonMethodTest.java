@@ -1,5 +1,6 @@
 package fr.cotedazur.univ.polytech.model.bot;
 
+import fr.cotedazur.univ.polytech.controller.EffectController;
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
 import fr.cotedazur.univ.polytech.model.card.Color;
@@ -13,8 +14,8 @@ import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class CommonMethodTest extends BotStrong {
-    Player botStrong;
+class CommonMethodTest extends BotStrong {
+    CommonMethod botStrong;
     Deck<DistrictCard> districtDeck;
 
     Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
@@ -26,6 +27,16 @@ public class CommonMethodTest extends BotStrong {
         this.districtDeck.shuffle();
         cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
         cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
+    }
+
+    @Test
+    void testMaxPrice(){
+        botStrong = new BotStrong();
+        assertNull(botStrong.maxPrice(botStrong.getBoard()));
+
+        botStrong.addCardToBoard(DistrictCard.TEMPLE);
+        botStrong.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        assertEquals(DistrictCard.SCHOOL_OF_MAGIC, botStrong.maxPrice(botStrong.getBoard()));
     }
 
     @Test
@@ -129,4 +140,117 @@ public class CommonMethodTest extends BotStrong {
         botWeak2.addCardToBoard(DistrictCard.MANOR);
         assertNull(botWeak.chooseDistrictToDestroy(botWeak2, botWeak2.getBoard()));
     }
+
+    @Test
+    void testStartChoice(){
+        botStrong = new BotStrong();
+        botStrong.setGolds(5);
+        botStrong.addCardToHand(DistrictCard.MARKET);
+        botStrong.addCardToBoard(DistrictCard.TAVERN);
+        assertEquals(DispatchState.TWO_GOLDS, botStrong.startChoice());
+    }
+
+    @Test
+    void testChooseHandCardToDiscard(){
+        botStrong = new BotStrong();
+        botStrong.setGolds(5);
+        botStrong.addCardToHand(DistrictCard.MARKET);
+        botStrong.addCardToHand(DistrictCard.PALACE);
+        assertEquals(DistrictCard.MARKET, botStrong.chooseHandCardToDiscard());
+
+        //When the hand is empty
+        botStrong.getHands().clear();
+        assertNull(botStrong.chooseHandCardToDiscard());
+    }
+
+    @Test
+    void testDrawCard(){
+        Deck<DistrictCard> districtCardDeck = new Deck<>();
+        districtCardDeck.getCards().add(DistrictCard.MARKET);
+        districtCardDeck.getCards().add(DistrictCard.TEMPLE);
+        districtCardDeck.getCards().add(DistrictCard.PALACE);
+        botStrong = new BotStrong();
+        botStrong.setGolds(5);
+        botStrong.addCardToBoard(DistrictCard.LIBRARY);
+        Map<DispatchState, ArrayList<DistrictCard>> cardsThatThePlayerDontWantAndThatThePlayerWant = new EnumMap<>(DispatchState.class);
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_WANTED, new ArrayList<>());
+        cardsThatThePlayerDontWantAndThatThePlayerWant.put(DispatchState.CARDS_NOT_WANTED, new ArrayList<>());
+
+
+
+        botStrong.drawCard(cardsThatThePlayerDontWantAndThatThePlayerWant, districtCardDeck.draw(), districtCardDeck.draw(), districtCardDeck.draw());
+
+        assertEquals(DistrictCard.PALACE, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).get(0));
+        assertEquals(DistrictCard.MARKET, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_WANTED).get(1));
+        assertEquals(DistrictCard.TEMPLE, cardsThatThePlayerDontWantAndThatThePlayerWant.get(DispatchState.CARDS_NOT_WANTED).get(0));
+    }
+
+    @Test
+    void testWhichWarlordEffectAndChooseToDestroy(){
+        botStrong = new BotStrong();
+        Player player = new BotRandom();
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(player);
+        assertEquals(DispatchState.EARNDISTRICT_WARLORD, botStrong.whichWarlordEffect(players));
+        assertNull(botStrong.choosePlayerToDestroy(players));
+
+        player.addCardToBoard(DistrictCard.TAVERN);
+        assertEquals(DispatchState.DESTROY, botStrong.whichWarlordEffect(players));
+        assertEquals(player, botStrong.choosePlayerToDestroy(players));
+
+        player.getBoard().clear();
+        player.addCardToBoard(DistrictCard.SCHOOL_OF_MAGIC);
+        assertEquals(DispatchState.EARNDISTRICT_WARLORD, botStrong.whichWarlordEffect(players));
+        assertNull(botStrong.choosePlayerToDestroy(players));
+        assertNull(botStrong.chooseDistrictToDestroy(player, player.getBoard()));
+
+    }
+
+    @Test
+    void testWantToUseLaboratoryEffect(){
+        botStrong = new BotStrong();
+        botStrong.addCardToHand(DistrictCard.MARKET);
+        botStrong.addCardToHand(DistrictCard.PALACE);
+        assertTrue(botStrong.wantToUseLaboratoryEffect());
+
+        botStrong.setGolds(5);
+        assertFalse(botStrong.wantToUseLaboratoryEffect());
+    }
+
+    @Test
+    void testChooseCardsToChange(){
+        botStrong = new BotStrong();
+        botStrong.addCardToHand(DistrictCard.MARKET);
+        botStrong.addCardToHand(DistrictCard.PALACE);
+        assertEquals(2,botStrong.chooseCardsToChange().size());
+
+        botStrong.setGolds(5);
+        assertEquals(0,botStrong.chooseCardsToChange().size());
+    }
+
+    @Test
+    void testChooseColorForHauntedCity(){
+        botStrong = new BotStrong();
+        botStrong.addCardToBoard(DistrictCard.MARKET);
+        botStrong.addCardToBoard(DistrictCard.PALACE);
+        botStrong.addCardToBoard(DistrictCard.TEMPLE);
+        botStrong.addCardToBoard(DistrictCard.UNIVERSITY);
+        assertEquals(Color.RED, botStrong.chooseColorForHauntedCity());
+
+        botStrong.addCardToBoard(DistrictCard.WATCHTOWER);
+        assertEquals(Color.PURPLE, botStrong.chooseColorForHauntedCity());
+
+
+    }
+
+    @Test
+    void testChooseColorForSchoolOfMagic(){
+        botStrong = new BotStrong();
+        assertEquals(Color.PURPLE, botStrong.chooseColorForSchoolOfMagic());
+
+        //Set A Character
+        botStrong.setPlayerRole(CharacterCard.BISHOP);
+        assertEquals(Color.BLUE, botStrong.chooseColorForSchoolOfMagic());
+    }
+
 }

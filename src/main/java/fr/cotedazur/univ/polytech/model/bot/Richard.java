@@ -30,7 +30,6 @@ public class Richard extends CommonMethod implements GameActions {
     @Override
     public DistrictCard putADistrict() {
         discoverValidCard();
-        //List des différentes couleurs sur le Terrain
         Set<Color> colorsOnBoard = colorInList(getBoard());
         if (!validCards.isEmpty()) {
             List<DistrictCard> purpleCard = new ArrayList<>();
@@ -64,13 +63,13 @@ public class Richard extends CommonMethod implements GameActions {
     @Override
     public CharacterCard selectWhoWillBeAffectedByThiefEffect(List<Player> players, List<CharacterCard> characterCards) {
         if (isBeforeLastRound) {
-            if (getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.WARLORD) && !getDiscardedCardDuringTheRound().contains(CharacterCard.WARLORD)) {
+            if (!getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.WARLORD) && !getDiscardedCardDuringTheRound().contains(CharacterCard.WARLORD) && getRoleKilledByAssassin() != CharacterCard.WARLORD) {
                 for (Player player : playersThatIsSetToWin) {
                     if (players.indexOf(player) == 0) {
                         return CharacterCard.WARLORD;
                     }
                 }
-            } else if (getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.BISHOP) && !getDiscardedCardDuringTheRound().contains(CharacterCard.BISHOP)) {
+            } else if (!getCurrentChoiceOfCharactersCardsDuringTheRound().contains(CharacterCard.BISHOP) && !getDiscardedCardDuringTheRound().contains(CharacterCard.BISHOP) && getRoleKilledByAssassin() != CharacterCard.BISHOP) {
                 for (Player player : playersThatIsSetToWin) {
                     if (players.indexOf(player) == 0) {
                         return CharacterCard.BISHOP;
@@ -83,9 +82,6 @@ public class Richard extends CommonMethod implements GameActions {
         //Avoid aggressive characters and opportunist characters (warlord, thief, assassin, magician, bishop) and remove the visible discarded cards and the character that has been killed
         List<CharacterCard> characterCardsCopy = new ArrayList<>(characterCards);
         characterCardsCopy.removeIf(element -> (element != CharacterCard.ARCHITECT && element != CharacterCard.KING && element != CharacterCard.MERCHANT) || (getDiscardedCardDuringTheRound().contains(element)) || element == getRoleKilledByAssassin());
-        if (!characterCardsCopy.isEmpty()) {
-            return characterCardsCopy.get(random.nextInt(characterCardsCopy.size()));
-        }
         return characterCards.get(random.nextInt(characterCards.size()));
     }
 

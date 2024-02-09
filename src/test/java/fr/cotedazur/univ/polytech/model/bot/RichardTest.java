@@ -33,13 +33,48 @@ class RichardTest {
         when(random.nextInt(anyInt())).thenReturn(1);
         List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
         botRichard.setRoleKilledByAssassin(null);
-        assertEquals(CharacterCard.MERCHANT, botRichard.selectWhoWillBeAffectedByThiefEffect(new ArrayList<Player>(), characterCard));
+        assertEquals(CharacterCard.THIEF, botRichard.selectWhoWillBeAffectedByThiefEffect(new ArrayList<Player>(), characterCard));
 
         //Test when discarded Card and role killed contains the constructor role
         when(random.nextInt(anyInt())).thenReturn(0);
         botRichard.setRoleKilledByAssassin(CharacterCard.MERCHANT);
         botRichard.setDiscardedCardDuringTheRound(Collections.singletonList(CharacterCard.ARCHITECT));
-        assertEquals(CharacterCard.KING, botRichard.selectWhoWillBeAffectedByThiefEffect(new ArrayList<Player>(), characterCard));
+        assertEquals(CharacterCard.ASSASSIN, botRichard.selectWhoWillBeAffectedByThiefEffect(new ArrayList<Player>(), characterCard));
+
+        //isLastBefore
+        Player player = new BotWeak();
+        ArrayList<Player> players = new ArrayList<>();
+        players.add(botRichard);
+        players.add(player);
+        player.getBoard().add(DistrictCard.PALACE);
+        player.getBoard().add(DistrictCard.TEMPLE);
+        player.getBoard().add(DistrictCard.GRAVEYARD);
+        player.getBoard().add(DistrictCard.MARKET);
+        player.getBoard().add(DistrictCard.LIBRARY);
+        player.getBoard().add(DistrictCard.MANOR);
+        botRichard.setBeforeLastRound(true);
+        botRichard.getPlayersThatIsSetToWin().add(player);
+
+        //when player that is set to win is not first
+        assertEquals(CharacterCard.ASSASSIN, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+        botRichard.setRoleKilledByAssassin(CharacterCard.WARLORD);
+        assertEquals(CharacterCard.ASSASSIN, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+        botRichard.setRoleKilledByAssassin(null);
+
+        players.add(players.remove(0));
+
+        assertEquals(CharacterCard.WARLORD, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+        botRichard.setRoleKilledByAssassin(CharacterCard.WARLORD);
+        assertEquals(CharacterCard.BISHOP, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+        botRichard.setDiscardedCardDuringTheRound(Collections.singletonList(CharacterCard.WARLORD));
+        assertEquals(CharacterCard.BISHOP, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+        botRichard.setRoleKilledByAssassin(CharacterCard.BISHOP);
+        assertEquals(CharacterCard.ASSASSIN, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+
+        botRichard.setRoleKilledByAssassin(CharacterCard.WARLORD);
+        botRichard.setDiscardedCardDuringTheRound(Collections.singletonList(CharacterCard.BISHOP));
+        assertEquals(CharacterCard.ASSASSIN, botRichard.selectWhoWillBeAffectedByThiefEffect(players,characterCard));
+
     }
 
     @Test
@@ -334,7 +369,7 @@ class RichardTest {
 
         //When Richard is the Thief, and we know that the player that is set to win take the warlord or bishop
         botRichard.setPlayerRole(CharacterCard.THIEF);
-        assertEquals(CharacterCard.WARLORD, botRichard.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
+        assertEquals(CharacterCard.BISHOP, botRichard.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
 
         characterCard.remove(CharacterCard.WARLORD);
         characterCard.add(CharacterCard.BISHOP);
@@ -344,6 +379,8 @@ class RichardTest {
 
         //When Richard is the Thief, and we know that the player that is set to win take the warlord or bishop
         botRichard.setPlayerRole(CharacterCard.THIEF);
+        botRichard.getCurrentChoiceOfCharactersCardsDuringTheRound().remove(CharacterCard.BISHOP);
+        botRichard.getDiscardedCardDuringTheRound().remove(CharacterCard.BISHOP);
         assertEquals(CharacterCard.BISHOP, botRichard.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
 
         //when this is not the before last round
@@ -820,5 +857,47 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
         Player player2 = players.get(0);
         player2.getBoard().addAll(cards);
         assertTrue(botRichard.ifIsBeforeLastRound());
+    }
+
+    @Test
+    void testPutADistrict() {
+        botRichard.getHands().add(DistrictCard.PALACE);
+        botRichard.getHands().add(DistrictCard.TEMPLE);
+        botRichard.getHands().add(DistrictCard.GRAVEYARD);
+        botRichard.getHands().add(DistrictCard.MARKET);
+        botRichard.getHands().add(DistrictCard.LIBRARY);
+        botRichard.getHands().add(DistrictCard.MANOR);
+        botRichard.setGolds(20);
+        botRichard.setPlayerRole(CharacterCard.ASSASSIN);
+
+        //Should be Library because it's the purple card with the highest value
+        botRichard.addCardToBoard(botRichard.choiceHowToPlayDuringTheRound());
+        assertEquals(DistrictCard.LIBRARY, botRichard.getBoard().get(0));
+
+        //Should be Graveyard because its value are now the highest of the botRichard hand
+        botRichard.addCardToBoard(botRichard.choiceHowToPlayDuringTheRound());
+        assertEquals(DistrictCard.GRAVEYARD, botRichard.getBoard().get(1));
+
+
+        botRichard.addCardToBoard(DistrictCard.MARKET);
+        botRichard.addCardToBoard(DistrictCard.TEMPLE);
+        botRichard.addCardToBoard(DistrictCard.PRISON);
+
+        //Should be Palace because its value are now the highest of the botRichard hand and its purple
+        botRichard.addCardToBoard(botRichard.choiceHowToPlayDuringTheRound());
+        assertEquals(DistrictCard.PALACE, botRichard.getBoard().get(5));
+
+        //Should be Manor because its value are now the highest of the botRichard hand
+        botRichard.addCardToBoard(botRichard.choiceHowToPlayDuringTheRound());
+        assertEquals(DistrictCard.MANOR, botRichard.getBoard().get(6));
+
+        botRichard.getHands().clear();
+        botRichard.addCardToHand(DistrictCard.PALACE);
+        assertNull(botRichard.choiceHowToPlayDuringTheRound());
+
+        botRichard.getBoard().clear();
+        botRichard.setPlayerRole(CharacterCard.BISHOP);
+        botRichard.addCardToHand(DistrictCard.TEMPLE);
+        assertEquals(DistrictCard.TEMPLE,botRichard.choiceHowToPlayDuringTheRound());
     }
 }
