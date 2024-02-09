@@ -35,7 +35,7 @@ Citadels game and all its features in a simplified version without a graphical i
 
 ### State of the project
 
-The citadels project is in development
+The citadels project is finished and all the features are implemented.
 
 ## Usage
 
