@@ -180,12 +180,12 @@ et surtout les plus importantes, mais il reste tout de même encore des parties 
 
 #### Parties bien faites
 
-Dans notre code, je pense que la plupart des parties sont bien faites, nous avons essayé de respecter les principes SOLID et de faire des classes et méthodes les plus petites possibles.
-Pour donner différents exemples, je pense que les classes concernant les bots ainsi que les classes concernant les quartiers ou les loggers sont bien faites.
+Dans notre code, nous pensons que la plupart des parties sont bien faites, nous avons essayé de respecter les principes SOLID et de faire des classes et méthodes les plus petites possibles.
+Pour donner différents exemples, les classes concernant les bots ainsi que les classes concernant les quartiers ou les loggers sont bien faites.
 
 #### Parties à refactor
 
-Il reste tout de même des parties de notre code qui pourraient être refactorisées, je pourrais par exemple citer:
+Il reste tout de même des parties de notre code qui pourraient être refactorisées, l'on pourrait par exemple citer:
 - L'implémentation des cartes violettes qui pourrait être refactorisée pour être plus propre et pour être plus facilement être adaptable dans le cas de nouvelles cartes
 - L'implémentation des personnages qu'on pourrait refactoriser en créant une classe pour chaque personnage héritant tous de la même classe abstraite, cela permettrait des nouveaux personnages bien plus facilement.
 
