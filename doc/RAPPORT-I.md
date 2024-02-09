@@ -166,7 +166,7 @@ Puis nous avons aussi 4 packages:
 
 <!---Où trouver les infos (de la java doc, de la doc sur les points et les classes importants ?) -->
 ###  JavaDoc
-La javadoc est disponible dans la branche javadoc de notre projet et permet dStrong
+La javadoc est disponible dans la branche ```javadoc``` de notre projet et permet d'avoir des informations sur toutes les classes et méthodes importantes de notre code.
 
 
 <!---Etat de la base de code : quelles parties sont bien faites ? Quelles parties sont à refactor et
