@@ -109,15 +109,26 @@ class BotStrongTest {
         assertEquals(CharacterCard.MERCHANT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
 
         //Test when merchant is not in list of characters
-        characterDeck.getCards().remove(CharacterCard.THIEF);
-        assertEquals(CharacterCard.MERCHANT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
+        characterDeck.getCards().remove(CharacterCard.MERCHANT);
+        assertEquals(CharacterCard.THIEF, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
+
+        //Test with magician
+        botStrong.getHands().clear();
+        botStrong.setGolds(20);
+        assertEquals(CharacterCard.MAGICIAN, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
 
         //Test with architect
+        botStrong.getHands().add(DistrictCard.SMITHY);
         botStrong.getHands().add(DistrictCard.PALACE);
         botStrong.getHands().add(DistrictCard.TOWN_HALL);
         botStrong.getHands().add(DistrictCard.MARKET);
-        botStrong.setGolds(20);
         assertEquals(CharacterCard.ARCHITECT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
+
+        //Test colored cards
+        botStrong.setGolds(3);
+        botStrong.getBoard().add(DistrictCard.CATHEDRAL);
+        assertEquals(CharacterCard.BISHOP, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
+
     }
 
     @Test
@@ -128,5 +139,37 @@ class BotStrongTest {
         assertEquals(CharacterCard.KING, botStrong.selectWhoWillBeAffectedByThiefEffect(players,characterCard ));
         botStrong.setPlayerRole(CharacterCard.ASSASSIN);
         assertNull(botStrong.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
+    }
+
+    @Test
+    void testSelectMagicianTarget(){
+        List<Player> players = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            Player player = new BotRandom();
+            player.setGolds(4);
+            players.add(player);
+        }
+        //Magician can't target himself
+        botStrong.getBoard().add(DistrictCard.CATHEDRAL);
+        botStrong.getBoard().add(DistrictCard.MARKET);
+        botStrong.getBoard().add(DistrictCard.TAVERN);
+        //player 1 has the most card
+        players.get(0).getHands().add(DistrictCard.CASTLE);
+        players.get(0).getHands().add(DistrictCard.CASTLE);
+        players.get(1).getHands().add(DistrictCard.TAVERN);
+        assertEquals(players.get(0), botStrong.selectMagicianTarget(players));
+        //player 1 and player 0 has the most card so last player in players is returned
+        players.get(1).getHands().add(DistrictCard.OBSERVATORY);
+        assertEquals(players.get(1), botStrong.selectMagicianTarget(players));
+    }
+
+    @Test
+    void testEquals() {
+        BotStrong botStrong1 = new BotStrong();
+        BotStrong botStrong2 = new BotStrong();
+        assertFalse(botStrong1.equals(botStrong2));
+        assertFalse(botStrong.equals(null));
+        assertTrue(botStrong.equals(botStrong));
+        assertFalse(botStrong.equals(botStrong1));
     }
 }
