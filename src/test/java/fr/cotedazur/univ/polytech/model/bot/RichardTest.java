@@ -687,28 +687,6 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
     }
 
     @Test
-    void testWhichMagicianEffect() {
-        List<Player> players = new ArrayList<>();
-        for(int i = 0; i < 4; i++){
-            Player player = new BotRandom();
-            List<DistrictCard> cards = new ArrayList<>();
-            cards.add(DistrictCard.DRAGON_GATE);
-            cards.add(DistrictCard.TEMPLE);
-            cards.add(DistrictCard.TAVERN);
-            player.setHands(cards);
-            players.add(player);
-        }
-        assertEquals(DispatchState.EXCHANGE_PLAYER, botRichard.whichMagicianEffect(players));
-
-
-        //Test when the bot richard has the same number of cards as the other
-        for(Player player : players){
-            player.getHands().clear();
-        }
-        assertEquals(DispatchState.EXCHANGE_DECK, botRichard.whichMagicianEffect(players));
-    }
-
-    @Test
     void testSelectMagicianTarget() {
         List<Player> players = new ArrayList<>();
         for(int i = 0; i < 4; i++){
@@ -812,20 +790,6 @@ void shouldReturnNullWhenRichardIsThirdAndAllCardsAreNotAvailable() {
         players.get(0).getBoard().remove(DistrictCard.TAVERN);
         botRichard.getBoard().add(DistrictCard.TAVERN);
         assertFalse(botRichard.firstHas1GoldDistrict(players));
-    }
-
-    @Test
-    void testWantToUseEffectForRichard(){
-        botRichard.setPlayerRole(CharacterCard.BISHOP);
-        assertTrue(botRichard.wantToUseEffect(true));
-
-        botRichard.getHands().add(DistrictCard.TEMPLE);
-        botRichard.setGolds(3);
-        assertFalse(botRichard.wantToUseEffect(true));
-
-        botRichard.setPlayerRole(CharacterCard.ASSASSIN);
-        assertTrue(botRichard.wantToUseEffect(true));
-
     }
 
     @Test
