@@ -8,8 +8,10 @@ import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.EnumMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -40,6 +42,7 @@ class BotStrongTest {
         botStrong.getHands().add(DistrictCard.MARKET);
         botStrong.getHands().add(DistrictCard.LIBRARY);
         botStrong.getHands().add(DistrictCard.MANOR);
+        botStrong.getHands().add(DistrictCard.CHURCH);
         botStrong.setGolds(20);
         botStrong.setPlayerRole(CharacterCard.ASSASSIN);
 
@@ -52,17 +55,22 @@ class BotStrongTest {
         assertEquals(DistrictCard.GRAVEYARD, botStrong.getBoard().get(1));
 
 
+        botStrong.addCardToBoard(DistrictCard.CHURCH);
         botStrong.addCardToBoard(DistrictCard.MARKET);
-        botStrong.addCardToBoard(DistrictCard.TEMPLE);
         botStrong.addCardToBoard(DistrictCard.PRISON);
 
         //Should be Graveyard because its value are now the highest of the botStrong hand and its purple
         botStrong.addCardToBoard(botStrong.choiceHowToPlayDuringTheRound());
         assertEquals(DistrictCard.PALACE, botStrong.getBoard().get(5));
 
+        //Should be Temple because its match with the color of his player's character
+        botStrong.setPlayerRole(CharacterCard.BISHOP);
+        botStrong.addCardToBoard(botStrong.choiceHowToPlayDuringTheRound());
+        assertEquals(DistrictCard.TEMPLE, botStrong.getBoard().get(6));
+
         //Should be Manor because its value are now the highest of the botStrong hand
         botStrong.addCardToBoard(botStrong.choiceHowToPlayDuringTheRound());
-        assertEquals(DistrictCard.MANOR, botStrong.getBoard().get(6));
+        assertEquals(DistrictCard.MANOR, botStrong.getBoard().get(7));
 
         botStrong.getHands().clear();
         botStrong.addCardToHand(DistrictCard.PALACE);
@@ -112,4 +120,13 @@ class BotStrongTest {
         assertEquals(CharacterCard.ARCHITECT, characterDeck.getCards().get(botStrong.chooseCharacter(characterDeck.getCards())));
     }
 
+    @Test
+    void testSelectWhoWillBeAffectedByThiefEffect(){
+        java.util.List<Player> players = new ArrayList<>();
+        java.util.List<CharacterCard> characterCard = new ArrayList<>(List.of(CharacterCard.values()));
+        botStrong.setPlayerRole(CharacterCard.THIEF);
+        assertEquals(CharacterCard.KING, botStrong.selectWhoWillBeAffectedByThiefEffect(players,characterCard ));
+        botStrong.setPlayerRole(CharacterCard.ASSASSIN);
+        assertNull(botStrong.selectWhoWillBeAffectedByThiefEffect(players, characterCard));
+    }
 }

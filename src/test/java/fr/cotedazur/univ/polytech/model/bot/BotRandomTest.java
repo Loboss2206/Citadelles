@@ -2,6 +2,7 @@ package fr.cotedazur.univ.polytech.model.bot;
 
 import fr.cotedazur.univ.polytech.logger.LamaLogger;
 import fr.cotedazur.univ.polytech.model.card.CharacterCard;
+import fr.cotedazur.univ.polytech.model.card.Color;
 import fr.cotedazur.univ.polytech.model.card.DistrictCard;
 import fr.cotedazur.univ.polytech.model.deck.Deck;
 import fr.cotedazur.univ.polytech.model.deck.DeckFactory;
@@ -9,9 +10,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
 
+import java.rmi.MarshalException;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyBoolean;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -66,13 +69,6 @@ class BotRandomTest {
         assertNull(botRandom2.choiceHowToPlayDuringTheRound());
     }
 
-    /*@Test
-    void testBotRandomActionIfDistrictDeckIsEmpty() {
-        districtDeck.clear();
-        //If the deck is empty the bot should collect 2 golds
-        assertEquals(Communication.TWOGOLDS, botRandom1.startChoice());
-        assertEquals(Communication.TWOGOLDS, botRandom2.startChoice());
-    }*/
 
     @Test
     void testBotRandomPutADistrict() {
@@ -218,13 +214,7 @@ class BotRandomTest {
         assertNull(botRandom1.choiceHowToPlayDuringTheRound());
     }
 
-    /*@Test
-    void testUseRoleEffect() {
-        CharacterCard characterCard = spy(CharacterCard.KING);
-        botRandom1.setPlayerRole(characterCard);
-        botRandom1.selectWhoWillBeAffectedByCharacterEffect(Optional.of(districtDeck), Optional.empty());
-        verify(characterCard, times(1)).useEffect(botRandom1, districtDeck);
-    }*/
+
 
     @Test
     void testChooseCharacter() {
@@ -311,4 +301,35 @@ class BotRandomTest {
         when(random.nextInt(anyInt())).thenReturn(0);
         assertTrue(botRandom1.wantToUseGraveyardEffect());
     }
+
+    @Test
+    void chooseColorForSchoolOfMagic(){
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertEquals(Color.BLUE, botRandom1.chooseColorForSchoolOfMagic());
+    }
+
+    @Test
+    void chooseColorForHauntedCity(){
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertEquals(Color.BLUE, botRandom1.chooseColorForHauntedCity());
+    }
+
+    @Test
+    void wantToUseLaboratoryEffect(){
+        when(random.nextInt(anyInt())).thenReturn(0);
+        assertTrue(botRandom1.wantToUseLaboratoryEffect());
+    }
+
+    @Test
+    void testChooseHandCardToDiscard(){
+        when(random.nextInt(anyInt())).thenReturn(0);
+        when(random.nextBoolean()).thenReturn(true);
+        botRandom1.getHands().add(DistrictCard.MARKET);
+        botRandom1.getHands().add(DistrictCard.BATTLEFIELD);
+        assertEquals(DistrictCard.MARKET, botRandom1.chooseHandCardToDiscard());
+        when(random.nextBoolean()).thenReturn(false);
+        assertNull(botRandom1.chooseHandCardToDiscard());
+
+    }
+
 }

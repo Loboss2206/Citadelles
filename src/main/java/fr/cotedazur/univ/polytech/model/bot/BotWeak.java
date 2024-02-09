@@ -86,6 +86,7 @@ public class BotWeak extends CommonMethod implements GameActions {
     @Override
     public Color chooseColorForHauntedCity() {
         for (Color color : Color.values()) {
+            if (color.equals(Color.GRAY)) continue;
             if (countNumberOfSpecifiedColorCard(color) == 0) {
                 return color;
             }
@@ -155,10 +156,8 @@ public class BotWeak extends CommonMethod implements GameActions {
 
     @Override
     public DispatchState whichMagicianEffect(List<Player> players) {
-        int nbCardPlayer = this.getHands().size();
         for (Player p : players) {
-            int nbCardOther = p.getHands().size();
-            if (nbCardOther > nbCardPlayer) {
+            if (p.getHands().size() > this.getHands().size()) {
                 return DispatchState.EXCHANGE_PLAYER;
             }
         }
