@@ -61,6 +61,40 @@ meilleur -->
 ainsi ? -->
 ### Architecture
 
+Notre architecture est plutôt simple, nous utilisons un semblant de modèle MVC.<br>
+Nous avons une classe ```Main``` qui est la classe principale de notre programme, c'est elle qui va lancer la partie et qui va gérer les arguments passés au lancement du programme qui n'est dans aucun package.<br>
+Puis nous avons aussi 4 packages:
+- Un package ```controller``` qui contient:
+  - La classe ```Game``` qui est la classe qui gère la partie et qui va appeler les différentes méthodes des autres classes pour faire avancer la partie
+  - La classe ```Round``` qui est la classe qui gère un tour de jeu
+  - La classe ```EffectController``` qui va appeler les différentes méthodes en fonction du rôle du joueur
+- Un package ```model``` qui contient lui même 4 packages:
+  - Un package ```bot``` qui contient les différentes classes de bots:
+    - La classe ```Player``` qui est la classe mère de tous les bots qui contient tous les attributs des bots et les méthodes communes à tous les bots
+    - La classe ```GameActions``` qui est l'interface qui contient les méthodes que tous les bots doivent implémenter
+    - La classe ```PlayerComparator``` qui est la classe qui permet de comparer les joueurs en fonction de leur points (ou de leur dernier rôle si ils ont le même nombre de points)
+    - La classe ```DispatchState``` qui est l'enum qui contient toutes les actions possibles pour un bot
+    - La classe ```BotRandom``` qui est la classe qui gère le bot aléatoire
+    - La classe ```BotWeak``` qui est la classe qui gère le bot constructeur
+    - La classe ```BotStrong``` qui est la classe qui gère le bot avancé
+    - La classe ```Richard``` qui est la classe qui gère le bot Richard
+  - Un package ```card``` qui contient les différentes classes de cartes:
+    - La classe ```Color``` qui est l'enum qui contient toutes les couleurs possibles pour les cartes et les personnages
+    - La classe ```CharacterCard``` qui est l'enum qui contient tous les personnages possibles
+    - La classe ```DistrictCard``` qui est l'enum qui contient tous les quartiers possibles
+    - La classe ```DistrictCardComparator``` qui est la classe qui permet de comparer les quartiers en fonction de leur coût
+    - La classe ```PurpleEffectState``` qui est l'enum qui contient tous les effets possibles pour les quartiers violets
+  - Un package ```deck``` qui contient les différentes classes de decks:
+    - La classe ```Deck``` qui est la classe générique qui gère les decks
+    - La classe ```DeckFactory``` qui est la classe qui permet de créer les decks
+  - Un package ```golds``` qui contient une seule classe ```StackOfGolds``` qui est la classe qui gère la pile d'or
+- Un package ```view``` qui contient:
+  - La classe ```GameView``` qui est la classe qui gère l'affichage de la partie
+- Un package ```logger``` qui contient:
+  - La classe ```LamaLevel``` qui est l'enum qui contient les niveaux de log qu'on a ajoutés nous-même
+  - La classe ```LamaFormatter``` qui est la classe qui gère le format des logs
+  - La classe ```LamaLogger``` qui est la classe qui gère les logs
+
 <!---Où trouver les infos (de la java doc, de la doc sur les points et les classes importants ?) -->
 ###  JavaDoc
 La javadoc est disponible dans la branche javadoc de notre projet et permet d'avoir des informations sur toutes les classes et méthodes importantes de notre code.
