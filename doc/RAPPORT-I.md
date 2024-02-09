@@ -13,13 +13,13 @@ Le jeu est terminé et fonctionnel à 100%, que ce soit les fonctionnalités de 
 - Implémentation des règles à 100% (même les plus farfelus)
 - Avoir une partie avec tous les personnages et leurs effets jouables
 - Avoir une partie avec tous les quartiers violets et leurs effets jouables
-- Différents types de bots (Bot aléatoire, Bot constructeur, Bot avancé, Bot Richard)
+- Différents types de bots (Bot aléatoire, Bot constructeur, Bot avancé, Bot `Richard`)
 - Mise en place d'un système de logs
 - Mise en place d'un système de gestion des arguments au lancement de la partie permettant de lancer différents types de parties:
   - Possibilité de lancer 2000 parties d'un coup
   - Possibilité de lancer une partie de demo
   - Possibilité de lancer des parties garder les informations de la partie dans un fichier CSV (cumulables avec les autres paramètres)
-- Mise en place d'un bot spécifique demandé en se basant sur un guide pour débutant d'un forum de stratégies de jeu (Bot Richard)
+- Mise en place d'un bot spécifique demandé en se basant sur un guide pour débutant d'un forum de stratégies de jeu (Bot `Richard`)
 
 <!---un résumé de ce qui a été fait pour les logs (en quelques lignes max, quels choix ont été
 faits pour les réaliser) -->
@@ -53,7 +53,76 @@ Si au lancement du programme, le paramètre '--csv' est renseigné, alors le pro
 comparaison avec votre meilleur bot et une analyse de pourquoi celui qui gagne est le
 meilleur -->
 ### Bot Richard
-- TODO PAR MOMEN (il connait le mieux)
+Le bot `Richard` (du nom de l'auteur originel) est un bot qui implémente une stratégie de jeu basée sur un [guide pour débutant d'un forum de stratégies de jeu](https://forum.trictrac.net/t/citadelles-charte-citadelles-de-base/509).
+Ce bot permet d'avoir une stratégie de jeu qui cherche à contrer ses adversaires plutot que de gagner par tout les moyens, de plus dans beaucoups de cas, on doit faire confiance ou espérer que les autres joueurs jouent d'une façon précise, ce qui n'est pas toujours le cas en pratique.
+
+#### Analyse du guide
+Dans un premier temps, nous avons dû analyser le guide pour comprendre les comportements à adopter pour ce bot. Nous avons donc dû extraire les informations importantes de ce dernier sachant que un autre utilisateur du forum, Alphonse (ou tt-22a5e3f98e5243b9f1135d1caadc4cc7 pour les intimes) a donné des indications complémentaires sur certains personnages et situations que l'on a aussi dû prendre en compte.
+
+#### Stratégie
+La stratégie fournie par le guide donne des conseils pour tout les personnages du jeu (en combinant les réponses) et donne des conseils pour les situations de jeu les plus courantes, ce qui nous a permis de faire une stratégie globale pour le bot.
+
+##### Stratégie générale
+Tout d'abord la stratégie "générale" du bot, qui est basée sur les informations du guide:
+- Priorité au Roi s'il possède au moins une carte jaune ou s'il est couronné avec moins de cinq joueurs.
+- Ensuite, l'Évêque est privilégié s'il a au moins une carte bleue ou s'il a déjà construit cinq quartiers.
+- Le Marchand est choisi s'il a au moins une carte verte ou s'il a moins de deux pièces d'or.
+- Le Condotierre est sélectionné s'il a au moins une carte rouge ou s'il est le premier joueur avec une pièce d'or et que le tour est supérieur à trois.
+- En l'absence de l'Architecte, le joueur peut opter pour l'Assassin s'il peut éliminer un joueur ou l'Architecte s'il possède au moins quatre pièces d'or.
+- Si le joueur n'a aucune carte en main, il peut choisir le Magicien s'il y a quelqu'un avec beaucoup de cartes.
+- Le Voleur est choisi tôt dans le jeu s'il y a quelqu'un avec beaucoup de pièces d'or et le joueur a peu de pièces d'or.
+- Enfin, l'Assassin peut être utilisé pour éliminer un joueur sans cartes si le joueur en a au moins quatre en main.
+
+L'utilisation de cartes violettes ou la construction de quartiers n'est pas mentionnée dans le guide, nous avons donc dû reprendre les stratégies de nos autres bots pour les implémenter dans le bot `Richard`, notamment celles du bot `Strong`.
+
+###### Stratégie spéciale - Avant dernier tour
+Lors de l'avant dernier tour : 
+- Si le Roi est disponible, le choisir.
+- Sinon, si l'Assassin est disponible :
+  - Si le Roi n'est pas dans la main et n'a pas été défaussé ce tour, cibler le Roi.
+- Sinon, si le Condotierre est disponible :
+  - Si ni le Roi ni l'Assassin ne sont dans la main ou n'ont été défaussés ce tour, cibler le joueur en passe de gagner avec le quartier le moins cher.
+- Sinon, si l'Évêque est disponible, le choisir.
+- Sinon, si le Magicien est disponible, le choisir.
+
+###### Stratégie spéciale - Dernier tour
+Il y a une situation particulière pour le dernier tour, pour laquelle le bot va essayer de contrer ses adversaires au maximum. Bien que parfois cette stratégie implique d'être suivi par d'autres joueurs et fait également appelle à des suppositions sur les choix des autres joueurs concernant le choix des personnages.
+Voici la stratégie de jeu de `Richard` pour le dernier tour:
+Cette stratégie est basée sur le fait que `Richard` calcul quel joueur est en tête et va essayer de contrer ce joueur en priorité.
+- Si le joueur en passe de gagner est le premier ou le deuxième joueur :
+  - S'il n'y a ni l'Évêque ni le Condotierre parmi les cartes du joueur, mais qu'il possède l'Assassin, il peut choisir de cibler soit l'Évêque soit le Condotierre.
+- Si le joueur en passe de gagner est au moins le troisième joueur :
+  - Si les cartes du joueur incluent l'Assassin, le Condotierre et l'Évêque :
+    - Si le joueur actuel est le premier joueur, il peut choisir le Condotierre.
+    - Si le joueur actuel est le deuxième joueur, il peut choisir l'Assassin pour cibler l'Évêque.
+  - Si l'Évêque n'est pas parmi les cartes du joueur et qu'il est le premier joueur, et que l'Assassin est disponible, il peut choisir l'Assassin pour cibler le Magicien si le deuxième joueur a autant de cartes que le joueur en passe de gagner.
+  - Si l'Évêque n'est pas parmi les cartes du joueur et qu'il est le deuxième joueur, et que le premier joueur a moins de deux cartes en main et que le Magicien est disponible, il peut choisir le Magicien pour cibler le joueur en passe de gagner.
+  - Si l'Assassin n'est pas disponible et qu'il est le premier joueur, et que le Condotierre est disponible, il peut choisir le Condotierre.
+  - Si l'Assassin n'est pas disponible et qu'il est le deuxième joueur, et que l'Évêque est disponible, il peut choisir l'Évêque.
+
+
+Le bot `Richard` est donc un bot qui cherche plus a contrer ses adversaires que de gagner ce qui n'est pas forcément la meilleure stratégie à adopter, face à des bots plus agressifs, où `Richard` aura plus de mal à contrer les adversaires et donc à gagner.
+
+#### Implémentation
+
+Nous avons fait face à plusieurs cas de figures lors de l'implémentation de ce bot, dans certains cas, la description faite sur le forum était suffisante pour implémenter le comportement du bot sans trop réfléchir. Mais dans d'autres cas, nous avons dû faire interpréter des informations pour comprendre le comportement attendu et ainsi faire une implémentation qui s'en rapproche le plus possible. Pour finir, certains cas de figures n'étaient pas cités dans le guide, nous avons donc pris ceux de nos autres bots, notaemment pour la jouabilité des cartes violettes qui sont absentes de ce guide mais qui doivent tout des mêmes êtres jouables et implémenter par notre bot.
+
+Toutes ces règles ont été implémentées dans la classe ````Richard```` et qui permet de jouer une partie en suivant les règles de ce guide, bien que certaines règles sont libres d'interprétation, nous avons fait de notre mieux pour implémenter le comportement le plus proche possible de ce qui est décrit dans le guide.
+
+#### Comparaison avec nos autres bots et analyse
+
+D'apres les tests que nous avons pu réalisé pour définir des statistiques sur les bots, le bot `Richard` est plus performant que le bot aléatoire et le bot `Weak` mais il est moins performant que le bot `Strong`.
+De manière plus détaillée, `Richard` et notre bot `Weak` ont des comportements très similaires ce qui fait que les chances de victoire sont très proches donnant donc en moyenne une égalité entre les deux bots.
+Le bot `Weak` essayant de construire le plus de quartiers possibles, si possible au plus bas coût, fait que la stratégie de `Richard`, bien que différentes dans les faits, sont très proches en terme de résultats.
+En revanche, `Richard` est moins performant que le bot `Strong` car ce dernier dispose d'une stratégie de jeu plus optimale que celle de `Richard`.     
+La stratégie de notre bot `Strong` est bien précise: 
+- Il ne doit poser que très rarement des districts à 1 point
+- Les personnages choisit par le bot `Strong` ne sont pas forcement ceux qui sont utilisés dans la stratégie de `Richard`
+- Le bot `Strong` n'implémente pas de stratégie de dernier tour visant à contrer les adversaires.
+En conséquence, le bot `Strong` est plus performant que `Richard` car il a une stratégie de jeu différentes et plus absolu que celle de `Richard`.
+
+En termes de chiffres, `Richard` a un taux de victoire de environ 5,3% contre 94,7% pour le bot `Strong`, ce qui en fait le second bot le plus performant de notre jeu, derrère le bot `Strong`.
+
 
 ## 2. Architecture et qualité
 
@@ -97,7 +166,7 @@ Puis nous avons aussi 4 packages:
 
 <!---Où trouver les infos (de la java doc, de la doc sur les points et les classes importants ?) -->
 ###  JavaDoc
-La javadoc est disponible dans la branche javadoc de notre projet et permet d'avoir des informations sur toutes les classes et méthodes importantes de notre code.
+La javadoc est disponible dans la branche javadoc de notre projet et permet dStrong
 
 
 <!---Etat de la base de code : quelles parties sont bien faites ? Quelles parties sont à refactor et
@@ -125,13 +194,14 @@ Il reste tout de même des parties de notre code qui pourraient être refactoris
 Sonar nous a beaucoup aidé à améliorer la qualité de notre code, il nous a permis de voir toutes les parties de notre code qui n'étaient pas couverts par les tests, qui avaient des bugs, des failles de securité ou tout simplement des parties de code qui n'étaient pas optimales et qui contenaient des "code smells".
 Avec toutes ces informations, il était simple pour nous de savoir quoi améliorer dans notre code.
 
+
 ## 3. Processus
 
 <!---Qui est responsable de quoi / qui a fait quoi ? -->
 ### Répartition des tâches
 Pour ce qui est de la répartition des tâches, nous nous répartissions les tâches équitablement sur chaque milestone, par exemple, tout le monde a travaillé sur les bots, le refactoring, les tests, les nouvelles features ou encore les réglages de bugs.
 Par exemple, chacun a fait 2 personnages et leurs effets et chacun a fait 2/3 quartiers violets et leurs effets.
-Pour ce qui est des fonctionnalités additionnelles, une personne s'est occupé des logs/JCommander, une autre des statistiques en CSV et deux autre du bot Richard.
+Pour ce qui est des fonctionnalités additionnelles, une personne s'est occupé des logs/JCommander, une autre des statistiques en CSV et deux autre du bot `Richard`.
 En resumé, tout le monde a participé à chaque milestone et à chaque fonctionnalité de base et additionnelle.
 
 <!---Quel est le process de l'équipe (comment git est utilisé, branching strategy)-->
