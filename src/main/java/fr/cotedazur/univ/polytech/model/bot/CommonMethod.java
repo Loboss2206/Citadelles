@@ -191,6 +191,7 @@ public abstract class CommonMethod extends Player {
 
     @Override
     public List<DistrictCard> chooseCardsToChange() {
+        discoverValidCard();
         List<DistrictCard> districtCards = new ArrayList<>();
         for (DistrictCard districtCard : this.getHands()) {
             if (!validCards.contains(districtCard)) {
@@ -212,7 +213,7 @@ public abstract class CommonMethod extends Player {
     public Color chooseColorForHauntedCity() {
         Set<Color> colorsOnBoard = colorInList(getBoard());
         for (Color color : Color.values()) {
-            if (!colorsOnBoard.contains(color)) {
+            if (!colorsOnBoard.contains(color) && color != Color.GRAY) {
                 return color;
             }
         }
