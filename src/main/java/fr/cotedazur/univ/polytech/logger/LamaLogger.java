@@ -7,7 +7,7 @@ import java.util.logging.*;
 
 public class LamaLogger {
 
-    private static final java.util.logging.Logger LOGGER = Logger.getLogger("");
+    static final java.util.logging.Logger LOGGER = Logger.getLogger("");
     private static final List<Handler> handlers = new ArrayList<>();
 
     private LamaLogger() {
