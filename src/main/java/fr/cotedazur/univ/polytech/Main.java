@@ -69,6 +69,12 @@ public class Main {
         }
     }
 
+    /**
+     * Start the base game when no command line arguments are given
+     * @param jCommanderSpoke the command line arguments
+     * @param writer the csv writer
+     * @param view the view
+     */
     private static void startBaseGame(JCommanderSpoke jCommanderSpoke, CSVWriter writer, GameView view) {
         Player bot1 = new BotStrong();
         Player bot2 = new BotWeak();
@@ -83,13 +89,19 @@ public class Main {
         // Write in csv if csv mode is enabled
         if (jCommanderSpoke.csvMode) {
             try {
-                writePlayersStats(writer, players);
+                writePlayersStats2Strong2Weak(writer, players);
             } catch (NullPointerException e) {
                 LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
             }
         }
     }
 
+    /**
+     * Start the demo game
+     * @param jCommanderSpoke the command line arguments
+     * @param writer the csv writer
+     * @param view the view
+     */
     public static void startDemoGame(JCommanderSpoke jCommanderSpoke, CSVWriter writer, GameView view) {
         Player bot1 = new Richard();
         Player bot2 = new BotRandom();
@@ -104,13 +116,19 @@ public class Main {
         // Write in csv if csv mode is enabled
         if (jCommanderSpoke.csvMode) {
             try {
-                writePlayersStats(writer, players);
+                writePlayersStats2Random1Richard1Weak(writer, players);
             } catch (NullPointerException e) {
                 LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
             }
         }
     }
 
+    /**
+     * Start the game with 2000 games
+     * @param jCommanderSpoke the command line arguments
+     * @param writer the csv writer
+     * @param view the view
+     */
     private static void startTwoThousandsGame(JCommanderSpoke jCommanderSpoke, CSVWriter writer, GameView view) {
         Map<String, Integer> scoringPerPlayer = new HashMap<>();
         Map<String, Integer> winnerPerPlayer = new HashMap<>();
@@ -134,7 +152,7 @@ public class Main {
             // Write in csv if csv mode is enabled
             if (jCommanderSpoke.csvMode) {
                 try {
-                    writePlayersStats(writer, players);
+                    writePlayersStats2Strong2Weak(writer, players);
                 } catch (NullPointerException e) {
                     LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
                 }
@@ -161,7 +179,7 @@ public class Main {
             // Write in csv if csv mode is enabled
             if (jCommanderSpoke.csvMode) {
                 try {
-                    writePlayersStats(writer, players);
+                    writePlayersStats4Strong(writer, players);
                 } catch (NullPointerException e) {
                     LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
                 }
@@ -171,6 +189,13 @@ public class Main {
         createStatsAndDisplay(view, scoringPerPlayer, winnerPerPlayer, players);
     }
 
+    /**
+     * Create the stats and display them
+     * @param view the view
+     * @param scoringPerPlayer the scoring per player
+     * @param winnerPerPlayer the winner per player
+     * @param players the list of players
+     */
     public static void createStatsAndDisplay(GameView view, Map<String, Integer> scoringPerPlayer, Map<String, Integer> winnerPerPlayer, List<Player> players) {
         for (Player player : players) {
             scoringPerPlayer.put(player.getName(), scoringPerPlayer.get(player.getName()) / 1000);
@@ -179,6 +204,12 @@ public class Main {
         //Displaying the results
         view.diplayBotComparaison(winnerPerPlayer, scoringPerPlayer);
     }
+
+    /**
+     * Start the game with 40 games and write the stats in the csv file
+     * @param writer the csv writer
+     * @param view the view
+     */
     private static void startCSVGame(CSVWriter writer, GameView view) {
         Player bot1;
         Player bot2;
@@ -201,7 +232,25 @@ public class Main {
             game.startGame();
 
             try {
-                writePlayersStats(writer, players);
+                writePlayersStats2Strong2Weak(writer, players);
+            } catch (NullPointerException e) {
+                LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
+            }
+
+            players.clear();
+
+            bot1 = new BotStrong();
+            bot2 = new BotStrong();
+            bot3 = new BotStrong();
+            bot4 = new BotStrong();
+
+            players.addAll(List.of(bot1, bot2, bot3, bot4));
+
+            game = new Game(players, view);
+            game.startGame();
+
+            try {
+                writePlayersStats4Strong(writer, players);
             } catch (NullPointerException e) {
                 LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
             }
@@ -255,7 +304,7 @@ public class Main {
             writer = new CSVWriter(new FileWriter(path.toFile(), true));
 
             if (newFile) writeFirstLine(writer);
-            else removeLastLine(path);
+            else removeLastLinesOfStats(path);
         } catch (IOException e) {
             LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
         }
@@ -273,12 +322,17 @@ public class Main {
     private static void writeLastLineAndDisplayCSV(CSVWriter writer, Path path, GameView view) {
         try {
             writer.close();
-            addLastLine(path);
+            addLastLines(path);
         } catch (IOException e) {
             LOGGER.log(LamaLevel.SEVERE, "Error while writing in the csv file");
         }
         List<String[]> lines = recoverAllLines(path);
-        view.displayStats(lines);
+        LOGGER.log(LamaLevel.DEMO, "");
+        LOGGER.log(LamaLevel.DEMO, "Statistiques");
+        for (String[] line : lines) {
+            if (line[0].equals("STATS"))
+                view.displayStats(line);
+        }
     }
 
     /**
@@ -287,13 +341,51 @@ public class Main {
      * @param writer  the csv writer
      * @param players the list of players
      */
-    public static void writePlayersStats(CSVWriter writer, List<Player> players) {
-        List<String> line = new ArrayList<>();
+    public static List<String> addPlayersStats(CSVWriter writer, List<Player> players, List<String> line) {
+        List<String> newLine = new ArrayList<>(line);
         for (Player player : players) {
-            line.add(player.getClass().getSimpleName());
-            line.add(player.getName());
-            line.add(String.valueOf(player.getPoints()));
+            newLine.add(player.getClass().getSimpleName());
+            newLine.add(player.getName());
+            newLine.add(String.valueOf(player.getPoints()));
         }
+        return newLine;
+    }
+
+    /**
+     * Write the players stats in the csv file for a game with 2 strong and 2 weak bots
+     * @param writer the csv writer
+     * @param players the list of players
+     */
+    public static void writePlayersStats2Strong2Weak(CSVWriter writer, List<Player> players) {
+        List<String> line = new ArrayList<>();
+        line.add("2StrongVS2Weak");
+        line = addPlayersStats(writer, players, line);
+
+        writer.writeNext(line.toArray(String[]::new));
+    }
+
+    /**
+     * Write the players stats in the csv file for a game with 4 strong bots
+     * @param writer the csv writer
+     * @param players the list of players
+     */
+    public static void writePlayersStats4Strong(CSVWriter writer, List<Player> players) {
+        List<String> line = new ArrayList<>();
+        line.add("4Strong");
+        line = addPlayersStats(writer, players, line);
+
+        writer.writeNext(line.toArray(String[]::new));
+    }
+
+    /**
+     * Write the players stats in the csv file for a game with 2 random, 1 richard and 1 weak bot
+     * @param writer the csv writer
+     * @param players the list of players
+     */
+    public static void writePlayersStats2Random1Richard1Weak(CSVWriter writer, List<Player> players) {
+        List<String> line = new ArrayList<>();
+        line.add("2RandomVS1RichardVS1Weak");
+        line = addPlayersStats(writer, players, line);
 
         writer.writeNext(line.toArray(String[]::new));
     }
@@ -305,6 +397,7 @@ public class Main {
      */
     public static void writeFirstLine(CSVWriter writer) {
         List<String> line = new ArrayList<>();
+        line.add("GameType");
         for (int i = 0; i < 4; i++) {
             line.add("BotType");
             line.add("BotName");
@@ -322,10 +415,13 @@ public class Main {
      *
      * @param path the path of the csv file
      */
-    public static void removeLastLine(Path path) {
+    public static void removeLastLinesOfStats(Path path) {
         List<String[]> lines = recoverAllLines(path);
 
-        if (!lines.isEmpty()) lines.remove(lines.size() - 1);
+        if (!lines.isEmpty()) {
+            while (lines.get(lines.size() - 1)[0].equals("STATS"))
+                lines.remove(lines.size() - 1);
+        }
 
         try (CSVWriter writer = new CSVWriter(new FileWriter(path.toFile()))) {
             writer.writeAll(lines);
@@ -356,11 +452,28 @@ public class Main {
     }
 
     /**
+     * Add the last lines to the csv file
+     * @param path the path of the csv file
+     */
+    public static void addLastLines(Path path) {
+        // add all the type which are in the csv file in a list
+        List<String> types = new ArrayList<>();
+        List<String[]> lines = recoverAllLines(path);
+        for (int i = 1; i < lines.size(); i++) {
+            String[] s = lines.get(i);
+            if (!types.contains(s[0])) types.add(s[0]);
+        }
+        for (String type : types) {
+            addLineForType(path, type);
+        }
+    }
+
+    /**
      * Compute the stats of the games and add the last line to the csv file
      *
      * @param path the path of the csv file
      */
-    public static void addLastLine(Path path) {
+    public static void addLineForType(Path path, String type) {
         CSVWriter writer = null;
         try {
             writer = new CSVWriter(new FileWriter(path.toFile(), true));
@@ -380,7 +493,8 @@ public class Main {
             Map<String, Integer> countBotInGame = new HashMap<>();
 
             String[] s = lines.get(i);
-            for (int j = 0; j < s.length; j += 3) {
+            if (!s[0].equals(type)) continue;
+            for (int j = 1; j < s.length; j += 3) {
                 String botType = s[j];
                 int botPoints = Integer.parseInt(s[j + 2]);
 
@@ -403,7 +517,7 @@ public class Main {
             countGames++;
         }
 
-        List<String> line = generateNewLastLine(countPoints, countGamesBotUnit, countGamesBot, countWin, countGames);
+        List<String> line = generateNewLastLine(countPoints, countGamesBotUnit, countGamesBot, countWin, countGames, type);
 
         try {
             assert writer != null;
@@ -424,8 +538,10 @@ public class Main {
      * @param countGames        the number of games
      * @return the last line to add to the csv file
      */
-    public static List<String> generateNewLastLine(Map<String, Integer> countPoints, Map<String, Integer> countGamesBotUnit, Map<String, Integer> countGamesBot, Map<String, Integer> countWin, int countGames) {
+    public static List<String> generateNewLastLine(Map<String, Integer> countPoints, Map<String, Integer> countGamesBotUnit, Map<String, Integer> countGamesBot, Map<String, Integer> countWin, int countGames, String type) {
         List<String> line = new ArrayList<>();
+        line.add("STATS");
+        line.add(type);
         line.add("Nombre de parties");
         line.add(String.valueOf(countGames));
         for (Map.Entry<String, Integer> entry : countGamesBotUnit.entrySet()) {

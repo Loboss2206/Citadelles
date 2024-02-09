@@ -364,19 +364,15 @@ public class GameView {
     }
 
     /**
-     * Display the statistics of the CSV file
+     * Display the statistics of a line of the csv file
      *
-     * @param lines the lines of the statistics
+     * @param line the line to display
      */
-    public void displayStats(List<String[]> lines) {
-        String[] line = lines.get(lines.size() - 1);
-
-
-        LOGGER.log(LamaLevel.DEMO, "\nStatistiques : " +
-                line[0] + " : " + line[1]);
-
-        for (int i = 2; i < line.length; i += 11) {
-            LOGGER.log(LamaLevel.DEMO, line[i + 0] + " -> " +
+    public void displayStats(String[] line) {
+        LOGGER.log(LamaLevel.DEMO, line[1] + " : ");
+        LOGGER.log(LamaLevel.DEMO, "    " + line[2] + " : " + line[3]);
+        for (int i = 4; i < line.length; i += 11) {
+            LOGGER.log(LamaLevel.DEMO, "    " + line[i] + " -> " +
                     line[i + 1] + " : " + line[i + 2] + " | " +
                     line[i + 3] + " : " + line[i + 4] + " | " +
                     line[i + 5] + " : " + line[i + 6] + " | " +
